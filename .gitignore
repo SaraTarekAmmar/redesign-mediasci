@@ -12,6 +12,27 @@
 /backend/.env.backup
 /backend/.env.production
 /backend/*.db
+
+# Sandbox and local inspection artifacts
+/.agents/
+/.claude/
+/.deps/
+/backend_tree.txt
+/frontend_tree.txt
+/backend/.run-*.log
+/frontend/.run-*.log
+/**/__pycache__/
+*.pyc
+/frontend/i18n_batch1.cjs
+/frontend/scan_hardcoded.cjs
+/frontend/pages.txt
+/frontend/frontend_tree.txt
+/frontend/src/frontend.txt
+/frontend/src/frontend_tree.txt
+/frontend/src/pages.txt
+/read_doc.py
+/setup_guide.md
+/squirrel.toml
 /backend/.phpunit.result.cache
 .phpunit.result.cache
 /.venv

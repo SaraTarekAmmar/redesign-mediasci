@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="">
+    <title>Marketing Campaigns - Board - Media Sci</title>
+    <meta name="description" content="Media Sci - Enterprise Project Management">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Frappe Gantt -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
+    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.umd.js"></script>
+
+    <!-- jsPDF + html2canvas (client-side PDF export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- SheetJS (Excel export) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="http://localhost/projecttask/public/css/app.css">
+
+    </head>
+<body x-data="{ sidebarOpen: true, notifOpen: false }">
+
+<div class="app-shell" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+
+    
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <a href="http://localhost/projecttask/public/dashboard" class="brand-link">
+                <div class="brand-icon" style="background:linear-gradient(135deg,#4F46E5,#7C3AED);font-size:0.6rem;font-weight:900;letter-spacing:-0.5px">MS</div>
+                <span class="brand-name" style="font-size:1rem;font-weight:800;letter-spacing:-0.3px">Media Sci</span>
+            </a>
+            <button class="sidebar-toggle" @click="sidebarOpen = !sidebarOpen">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="http://localhost/projecttask/public/dashboard" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="http://localhost/projecttask/public/projects" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>Projects</span>
+            </a>
+            <a href="http://localhost/projecttask/public/teams" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Teams</span>
+            </a>
+            <a href="http://localhost/projecttask/public/departments" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <span>Departments</span>
+            </a>
+            <a href="http://localhost/projecttask/public/analytics" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Analytics</span>
+            </a>
+
+            <div class="nav-section-label">Enterprise Planning</div>
+            <a href="http://localhost/projecttask/public/roadmap" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/></svg>
+                <span>Global Roadmap</span>
+            </a>
+            <a href="http://localhost/projecttask/public/scope/1" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span>Project Scope</span>
+            </a>
+            <a href="http://localhost/projecttask/public/change" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2 22l5.5-5.5"></path></svg>
+                <span>Change Requests</span>
+            </a>
+
+            <div class="nav-section-label">Enterprise Modules</div>
+            <a href="http://localhost/projecttask/public/risks" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Risk Register</span>
+            </a>
+            <a href="http://localhost/projecttask/public/resources" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Resources</span>
+            </a>
+            <a href="http://localhost/projecttask/public/documents" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Documents</span>
+            </a>
+            <a href="http://localhost/projecttask/public/reports" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Analytics</span>
+            </a>
+            <a href="http://localhost/projecttask/public/time-logs" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Time Tracking</span>
+            </a>
+
+                        <div class="nav-section-label">Admin</div>
+            <a href="http://localhost/projecttask/public/users" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Users</span>
+            </a>
+            <a href="http://localhost/projecttask/public/admin-tasks" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span>Task Table</span>
+            </a>
+            <a href="http://localhost/projecttask/public/recovery" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+                <span>Recovery</span>
+            </a>
+            
+                        <div class="nav-section-label">Current Project</div>
+            <a href="http://localhost/projecttask/public/projects/2/board" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18"/><rect x="10" y="3" width="5" height="12"/><rect x="17" y="3" width="5" height="16"/></svg>
+                <span>Board</span>
+            </a>
+            <a href="http://localhost/projecttask/public/projects/2/backlog" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span>Backlog</span>
+            </a>
+            <a href="http://localhost/projecttask/public/projects/2/sprints" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Sprints</span>
+            </a>
+            <a href="http://localhost/projecttask/public/projects/2/roadmap" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l4-8 4 4 4-6 4 10"/></svg>
+                <span>Roadmap</span>
+            </a>
+            <a href="http://localhost/projecttask/public/projects/2/settings" class="nav-item ">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+            </a>
+                    </nav>
+
+        <div class="sidebar-bottom">
+            <a href="http://localhost/projecttask/public/profile" class="user-menu">
+                <img src="https://ui-avatars.com/api/?name=Super+Admin&amp;background=4f46e5&amp;color=fff&amp;size=128" alt="avatar" class="user-avatar">
+                <div class="user-info">
+                    <div class="user-name">Super Admin</div>
+                    <div class="user-role">super-admin</div>
+                </div>
+            </a>
+            <form method="POST" action="http://localhost/projecttask/public/logout" style="display:inline">
+                <input type="hidden" name="_token" value="" autocomplete="off">                <button type="submit" class="logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    
+    <main class="main-content">
+        
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="breadcrumb">
+    <a href="http://localhost/projecttask/public/projects">Projects</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="http://localhost/projecttask/public/projects/2/board">Marketing Campaigns</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">Board</span>
+</div>
+            </div>
+            <div class="topbar-right">
+                
+                <div class="global-search" x-data="{ open: false, q: '' }">
+                    <div class="search-trigger" @click="open = true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <span>Search issues...</span>
+                        <kbd>⌘K</kbd>
+                    </div>
+                </div>
+                
+                <div id="globalTimerPill" style="display:none;align-items:center;gap:6px;background:rgba(79,70,229,.15);border:1px solid rgba(79,70,229,.3);border-radius:20px;padding:4px 12px;cursor:pointer" onclick="window.location='time-logs'" title="Timer running - click to manage">
+                    <span style="width:7px;height:7px;border-radius:50%;background:#4f46e5;animation:pulse 1.5s infinite"></span>
+                    <span id="globalTimerText" style="font-size:11px;font-weight:700;color:#818cf8;font-family:monospace">00:00</span>
+                </div>
+                
+                <div class="notif-wrapper" x-data="{ open: false }">
+                    <button class="icon-btn" @click="open = !open" id="notif-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                            </button>
+                    <div class="notif-panel" x-show="open" @click.outside="open = false" x-cloak>
+                        <div class="notif-header">
+                            <h3>Notifications</h3>
+                            <button class="mark-all-btn" onclick="fetch('/notifications/read-all',{method:'POST',headers:{'X-CSRF-TOKEN':''}}).then(()=>location.reload())">Mark all read</button>
+                        </div>
+                        <div class="notif-list">
+                                                        <div class="notif-empty">No notifications</div>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+                
+        <div class="page-content">
+            <div x-data="boardApp()" x-init="init()" id="board-root">
+
+
+<div class="page-header">
+    <div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <h1 class="page-title">Marketing Campaigns</h1>
+                        <span style="font-size:0.75rem;padding:3px 10px;border-radius:20px;font-weight:600;background:#4F46E522;color:#4F46E5">Engineering</span>
+                    </div>
+            </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        
+        <select class="form-control" style="width:auto; height:32px; padding:2px 24px 2px 8px; font-size:0.875rem;" x-model="filterSprint">
+                        <option value="all">All Tasks in Backlog</option>
+        </select>
+        
+        
+        <div class="avatar-stack">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&amp;background=4f46e5&amp;color=fff&amp;size=128" class="avatar" title="Admin User" style="cursor:pointer" :style="filterAssignee == 2 ? 'border: 2px solid var(--accent)' : ''" @click="filterAssignee = filterAssignee == 2 ? null : 2">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+Leader&amp;background=4f46e5&amp;color=fff&amp;size=128" class="avatar" title="Sarah Leader" style="cursor:pointer" :style="filterAssignee == 3 ? 'border: 2px solid var(--accent)' : ''" @click="filterAssignee = filterAssignee == 3 ? null : 3">
+                        <img src="https://ui-avatars.com/api/?name=Alex+Developer&amp;background=4f46e5&amp;color=fff&amp;size=128" class="avatar" title="Alex Developer" style="cursor:pointer" :style="filterAssignee == 4 ? 'border: 2px solid var(--accent)' : ''" @click="filterAssignee = filterAssignee == 4 ? null : 4">
+                        <img src="https://ui-avatars.com/api/?name=Jordan+Dev&amp;background=4f46e5&amp;color=fff&amp;size=128" class="avatar" title="Jordan Dev" style="cursor:pointer" :style="filterAssignee == 5 ? 'border: 2px solid var(--accent)' : ''" @click="filterAssignee = filterAssignee == 5 ? null : 5">
+                        <img src="https://ui-avatars.com/api/?name=Chris+Viewer&amp;background=4f46e5&amp;color=fff&amp;size=128" class="avatar" title="Chris Viewer" style="cursor:pointer" :style="filterAssignee == 6 ? 'border: 2px solid var(--accent)' : ''" @click="filterAssignee = filterAssignee == 6 ? null : 6">
+                    </div>
+                <button class="btn btn-secondary btn-sm" @click="showNewColumn = true" title="Add workflow step">
+            ➕ New Step
+        </button>
+                        <button class="btn btn-primary btn-sm" @click="showCreateIssue = true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Issue
+        </button>
+    </div>
+</div>
+
+
+<div class="modal-overlay" x-show="showNewColumn" x-cloak @click.self="showNewColumn=false">
+    <div class="modal modal-sm">
+        <div class="modal-header">
+            <h2 class="modal-title">➕ Add Workflow Step</h2>
+            <button class="close-btn" @click="showNewColumn=false">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Step Name *</label>
+                <input type="text" class="form-control" x-model="newColumnName" placeholder="e.g. Testing, Review, QA">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Color</label>
+                <input type="color" class="form-control" x-model="newColumnColor" style="height:40px;padding:4px" value="#7C3AED">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" @click="showNewColumn=false">Cancel</button>
+            <button class="btn btn-primary" @click="addColumn()">Add Step</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-overlay" x-show="showCloseSprint" x-cloak @click.self="showCloseSprint=false">
+    <div class="modal modal-sm">
+        <div class="modal-header">
+            <h2 class="modal-title">🏁 Close Sprint</h2>
+            <button class="close-btn" @click="showCloseSprint=false">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:16px">
+                Unfinished tasks will be moved based on your choice:
+            </p>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-tertiary);border-radius:8px;cursor:pointer;border:2px solid transparent" :style="closeAction==='backlog'?'border-color:var(--accent)':''">
+                    <input type="radio" x-model="closeAction" value="backlog" style="accent-color:var(--accent)">
+                    <div>
+                        <div style="font-weight:600">Move to Backlog</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted)">Unfinished tasks return to the backlog</div>
+                    </div>
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-tertiary);border-radius:8px;cursor:pointer;border:2px solid transparent" :style="closeAction==='sprint'?'border-color:var(--accent)':''">
+                    <input type="radio" x-model="closeAction" value="sprint" style="accent-color:var(--accent)">
+                    <div>
+                        <div style="font-weight:600">Move to New Sprint</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted)">Creates a new sprint with these tasks</div>
+                    </div>
+                </label>
+            </div>
+            <div x-show="closeAction==='sprint'" style="margin-top:14px">
+                <label class="form-label">New Sprint Name</label>
+                <input type="text" class="form-control" x-model="newSprintName" placeholder="e.g. Sprint 2">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" @click="showCloseSprint=false">Cancel</button>
+            <button class="btn btn-primary" @click="closeSprint()">Close Sprint</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="board-wrap" id="board-columns">
+        <div class="board-column" id="col-5">
+        <div class="column-header">
+            <div class="column-title">
+                <span class="column-dot" style="background:#6B7280"></span>
+                To Do
+            </div>
+            <span class="column-count" x-text="getColumnCount(5)">0</span>
+        </div>
+        <div class="column-issues"
+             id="issue-list-5"
+             data-status="5"
+             @dragover.prevent="dragover = 5"
+             @dragleave="dragover = null">
+            <template x-for="issue in getIssues(5)" :key="issue.id">
+                <div class="issue-card"
+                     draggable="true"
+                     @click="openIssue(issue)"
+                     @dragstart="dragStart($event, issue)"
+                     @dragend="dragEnd($event)">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span class="type-icon" :style="`background:${issue.type.color}22;color:${issue.type.color}`" x-text="issue.type.icon"></span>
+                        <span class="issue-card-key" x-text="issue.key"></span>
+                        <template x-if="issue.priority">
+                            <span style="font-size:0.7rem;margin-left:auto" :title="issue.priority?.name" x-text="issue.priority?.icon || ''"></span>
+                        </template>
+                    </div>
+                    <div class="issue-card-title" x-text="issue.title"></div>
+                    
+                    <template x-if="issue.labels && issue.labels.length">
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                            <template x-for="label in (issue.labels||[]).slice(0,2)" :key="label.id">
+                                <span style="font-size:0.68rem;padding:1px 6px;border-radius:10px;font-weight:500"
+                                      :style="`background:${label.color}22;color:${label.color}`"
+                                      x-text="label.name"></span>
+                            </template>
+                        </div>
+                    </template>
+                    <div class="issue-card-footer">
+                        <div class="issue-labels">
+                            <template x-for="label in (issue.labels||[]).slice(0,3)" :key="label.id">
+                                <span class="issue-label-dot" :style="`background:${label.color}`" :title="label.name"></span>
+                            </template>
+                        </div>
+                        <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+                            <span x-show="issue.story_points" style="font-size:0.72rem;background:var(--bg-hover);padding:2px 6px;border-radius:10px" x-text="(issue.story_points||'') + ' SP'"></span>
+                            
+                            <div class="avatar-stack" style="margin:0">
+                                <template x-for="a in (issue.assignees||[]).slice(0,3)" :key="a.id">
+                                    <img :src="a.avatar_url || `https://ui-avatars.com/api/?name=${a.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="a.name">
+                                </template>
+                                <template x-if="!issue.assignees?.length && issue.assignee">
+                                    <img :src="issue.assignee.avatar_url || `https://ui-avatars.com/api/?name=${issue.assignee.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="issue.assignee.name">
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <button class="add-issue-btn" @click="createInStatus = 5; showCreateIssue = true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add issue
+            </button>
+        </div>
+    </div>
+        <div class="board-column" id="col-6">
+        <div class="column-header">
+            <div class="column-title">
+                <span class="column-dot" style="background:#3B82F6"></span>
+                In Progress
+            </div>
+            <span class="column-count" x-text="getColumnCount(6)">0</span>
+        </div>
+        <div class="column-issues"
+             id="issue-list-6"
+             data-status="6"
+             @dragover.prevent="dragover = 6"
+             @dragleave="dragover = null">
+            <template x-for="issue in getIssues(6)" :key="issue.id">
+                <div class="issue-card"
+                     draggable="true"
+                     @click="openIssue(issue)"
+                     @dragstart="dragStart($event, issue)"
+                     @dragend="dragEnd($event)">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span class="type-icon" :style="`background:${issue.type.color}22;color:${issue.type.color}`" x-text="issue.type.icon"></span>
+                        <span class="issue-card-key" x-text="issue.key"></span>
+                        <template x-if="issue.priority">
+                            <span style="font-size:0.7rem;margin-left:auto" :title="issue.priority?.name" x-text="issue.priority?.icon || ''"></span>
+                        </template>
+                    </div>
+                    <div class="issue-card-title" x-text="issue.title"></div>
+                    
+                    <template x-if="issue.labels && issue.labels.length">
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                            <template x-for="label in (issue.labels||[]).slice(0,2)" :key="label.id">
+                                <span style="font-size:0.68rem;padding:1px 6px;border-radius:10px;font-weight:500"
+                                      :style="`background:${label.color}22;color:${label.color}`"
+                                      x-text="label.name"></span>
+                            </template>
+                        </div>
+                    </template>
+                    <div class="issue-card-footer">
+                        <div class="issue-labels">
+                            <template x-for="label in (issue.labels||[]).slice(0,3)" :key="label.id">
+                                <span class="issue-label-dot" :style="`background:${label.color}`" :title="label.name"></span>
+                            </template>
+                        </div>
+                        <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+                            <span x-show="issue.story_points" style="font-size:0.72rem;background:var(--bg-hover);padding:2px 6px;border-radius:10px" x-text="(issue.story_points||'') + ' SP'"></span>
+                            
+                            <div class="avatar-stack" style="margin:0">
+                                <template x-for="a in (issue.assignees||[]).slice(0,3)" :key="a.id">
+                                    <img :src="a.avatar_url || `https://ui-avatars.com/api/?name=${a.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="a.name">
+                                </template>
+                                <template x-if="!issue.assignees?.length && issue.assignee">
+                                    <img :src="issue.assignee.avatar_url || `https://ui-avatars.com/api/?name=${issue.assignee.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="issue.assignee.name">
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <button class="add-issue-btn" @click="createInStatus = 6; showCreateIssue = true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add issue
+            </button>
+        </div>
+    </div>
+        <div class="board-column" id="col-7">
+        <div class="column-header">
+            <div class="column-title">
+                <span class="column-dot" style="background:#F59E0B"></span>
+                In Review
+            </div>
+            <span class="column-count" x-text="getColumnCount(7)">0</span>
+        </div>
+        <div class="column-issues"
+             id="issue-list-7"
+             data-status="7"
+             @dragover.prevent="dragover = 7"
+             @dragleave="dragover = null">
+            <template x-for="issue in getIssues(7)" :key="issue.id">
+                <div class="issue-card"
+                     draggable="true"
+                     @click="openIssue(issue)"
+                     @dragstart="dragStart($event, issue)"
+                     @dragend="dragEnd($event)">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span class="type-icon" :style="`background:${issue.type.color}22;color:${issue.type.color}`" x-text="issue.type.icon"></span>
+                        <span class="issue-card-key" x-text="issue.key"></span>
+                        <template x-if="issue.priority">
+                            <span style="font-size:0.7rem;margin-left:auto" :title="issue.priority?.name" x-text="issue.priority?.icon || ''"></span>
+                        </template>
+                    </div>
+                    <div class="issue-card-title" x-text="issue.title"></div>
+                    
+                    <template x-if="issue.labels && issue.labels.length">
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                            <template x-for="label in (issue.labels||[]).slice(0,2)" :key="label.id">
+                                <span style="font-size:0.68rem;padding:1px 6px;border-radius:10px;font-weight:500"
+                                      :style="`background:${label.color}22;color:${label.color}`"
+                                      x-text="label.name"></span>
+                            </template>
+                        </div>
+                    </template>
+                    <div class="issue-card-footer">
+                        <div class="issue-labels">
+                            <template x-for="label in (issue.labels||[]).slice(0,3)" :key="label.id">
+                                <span class="issue-label-dot" :style="`background:${label.color}`" :title="label.name"></span>
+                            </template>
+                        </div>
+                        <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+                            <span x-show="issue.story_points" style="font-size:0.72rem;background:var(--bg-hover);padding:2px 6px;border-radius:10px" x-text="(issue.story_points||'') + ' SP'"></span>
+                            
+                            <div class="avatar-stack" style="margin:0">
+                                <template x-for="a in (issue.assignees||[]).slice(0,3)" :key="a.id">
+                                    <img :src="a.avatar_url || `https://ui-avatars.com/api/?name=${a.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="a.name">
+                                </template>
+                                <template x-if="!issue.assignees?.length && issue.assignee">
+                                    <img :src="issue.assignee.avatar_url || `https://ui-avatars.com/api/?name=${issue.assignee.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="issue.assignee.name">
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <button class="add-issue-btn" @click="createInStatus = 7; showCreateIssue = true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add issue
+            </button>
+        </div>
+    </div>
+        <div class="board-column" id="col-8">
+        <div class="column-header">
+            <div class="column-title">
+                <span class="column-dot" style="background:#10B981"></span>
+                Done
+            </div>
+            <span class="column-count" x-text="getColumnCount(8)">0</span>
+        </div>
+        <div class="column-issues"
+             id="issue-list-8"
+             data-status="8"
+             @dragover.prevent="dragover = 8"
+             @dragleave="dragover = null">
+            <template x-for="issue in getIssues(8)" :key="issue.id">
+                <div class="issue-card"
+                     draggable="true"
+                     @click="openIssue(issue)"
+                     @dragstart="dragStart($event, issue)"
+                     @dragend="dragEnd($event)">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span class="type-icon" :style="`background:${issue.type.color}22;color:${issue.type.color}`" x-text="issue.type.icon"></span>
+                        <span class="issue-card-key" x-text="issue.key"></span>
+                        <template x-if="issue.priority">
+                            <span style="font-size:0.7rem;margin-left:auto" :title="issue.priority?.name" x-text="issue.priority?.icon || ''"></span>
+                        </template>
+                    </div>
+                    <div class="issue-card-title" x-text="issue.title"></div>
+                    
+                    <template x-if="issue.labels && issue.labels.length">
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                            <template x-for="label in (issue.labels||[]).slice(0,2)" :key="label.id">
+                                <span style="font-size:0.68rem;padding:1px 6px;border-radius:10px;font-weight:500"
+                                      :style="`background:${label.color}22;color:${label.color}`"
+                                      x-text="label.name"></span>
+                            </template>
+                        </div>
+                    </template>
+                    <div class="issue-card-footer">
+                        <div class="issue-labels">
+                            <template x-for="label in (issue.labels||[]).slice(0,3)" :key="label.id">
+                                <span class="issue-label-dot" :style="`background:${label.color}`" :title="label.name"></span>
+                            </template>
+                        </div>
+                        <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+                            <span x-show="issue.story_points" style="font-size:0.72rem;background:var(--bg-hover);padding:2px 6px;border-radius:10px" x-text="(issue.story_points||'') + ' SP'"></span>
+                            
+                            <div class="avatar-stack" style="margin:0">
+                                <template x-for="a in (issue.assignees||[]).slice(0,3)" :key="a.id">
+                                    <img :src="a.avatar_url || `https://ui-avatars.com/api/?name=${a.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="a.name">
+                                </template>
+                                <template x-if="!issue.assignees?.length && issue.assignee">
+                                    <img :src="issue.assignee.avatar_url || `https://ui-avatars.com/api/?name=${issue.assignee.name}&background=4f46e5&color=fff&size=32`"
+                                         class="avatar" style="width:22px;height:22px" :title="issue.assignee.name">
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <button class="add-issue-btn" @click="createInStatus = 8; showCreateIssue = true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add issue
+            </button>
+        </div>
+    </div>
+    </div>
+
+
+<div class="modal-overlay" x-show="showCreateIssue" x-cloak @click.self="showCreateIssue = false">
+    <div class="modal modal-md">
+        <div class="modal-header">
+            <h2 class="modal-title">Create Issue</h2>
+            <button class="close-btn" @click="showCreateIssue = false">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Issue Type</label>
+                <select class="form-control" x-model="newIssue.issue_type_id">
+                                        <option value="1">⚡ Epic</option>
+                                        <option value="2">📖 Story</option>
+                                        <option value="3">✅ Task</option>
+                                        <option value="4">🐛 Bug</option>
+                                        <option value="5">↳ Sub-task</option>
+                                    </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Title *</label>
+                <input type="text" class="form-control" x-model="newIssue.title" placeholder="Issue summary..." @keyup.enter="createIssue()">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select class="form-control" x-model="newIssue.issue_priority_id">
+                        <option value="">- None -</option>
+                                                <option value="1">🔴 Critical</option>
+                                                <option value="2">🟠 High</option>
+                                                <option value="3">🟡 Medium</option>
+                                                <option value="4">🟢 Low</option>
+                                                <option value="5">⚪ Lowest</option>
+                                            </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assignee</label>
+                    <select class="form-control" x-model="newIssue.assignee_id">
+                        <option value="">- Unassigned -</option>
+                                                <option value="2">Admin User</option>
+                                                <option value="3">Sarah Leader</option>
+                                                <option value="4">Alex Developer</option>
+                                                <option value="5">Jordan Dev</option>
+                                                <option value="6">Chris Viewer</option>
+                                            </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Story Points</label>
+                <input type="number" class="form-control" x-model="newIssue.story_points" placeholder="0" min="0">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" @click="showCreateIssue = false">Cancel</button>
+            <button class="btn btn-primary" @click="createIssue()" :disabled="!newIssue.title">Create Issue</button>
+        </div>
+    </div>
+</div>
+
+</div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align:center;padding:16px 24px;font-size:0.75rem;color:var(--text-muted);border-top:1px solid var(--border-light);margin-top:auto">
+            Developed by <span style="color:var(--accent);font-weight:700">Media Sci</span> © 2026
+        </footer>
+    </main>
+</div>
+
+<script>
+function boardApp() {
+    return {
+        issues: [],
+        showCreateIssue: false,
+        createInStatus: 5,
+        draggedIssue: null,
+        filterAssignee: null,
+        filterSprint: 'all',
+        // New Workflow Step
+        showNewColumn: false,
+        newColumnName: '',
+        newColumnColor: '#7C3AED',
+        // Sprint close
+        showCloseSprint: false,
+        closeAction: 'backlog',
+        newSprintName: '',
+        newIssue: { title:'', issue_type_id: 3, issue_priority_id:'', assignee_id:'', story_points:'' },
+
+        async init() {
+            await this.loadIssues();
+            this.$nextTick(() => this.initSortable());
+        },
+
+        async loadIssues() {
+            const res = await api('/api/projects/2/issues?per_page=200&sort=position');
+            this.issues = res.data || [];
+        },
+
+        getIssues(statusId) {
+            return this.issues.filter(i => {
+                const statusMatch = i.issue_status_id == statusId;
+                const assigneeMatch = !this.filterAssignee || i.assignee_id == this.filterAssignee;
+                
+                let sprintMatch = true;
+                if (this.filterSprint === 'current') {
+                    const currentSprintId = null;
+                    sprintMatch = currentSprintId && (i.sprints || []).some(s => s.id === currentSprintId);
+                }
+                
+                return statusMatch && assigneeMatch && sprintMatch;
+            });
+        },
+
+        getColumnCount(statusId) {
+            return this.getIssues(statusId).length;
+        },
+
+        initSortable() {
+            document.querySelectorAll('[id^="issue-list-"]').forEach(el => {
+                Sortable.create(el, {
+                    group: 'issues',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: (evt) => this.onDrop(evt),
+                });
+            });
+        },
+
+        async onDrop(evt) {
+            const issueId = parseInt(evt.item.getAttribute('data-id') || 0);
+            const toStatusId = parseInt(evt.to.dataset.status);
+            const issue = this.issues.find(i => i.id === issueId);
+            if (!issue || issue.issue_status_id === toStatusId) return;
+
+            // Update locally immediately
+            issue.issue_status_id = toStatusId;
+
+            // Send to API
+            try {
+                await api(`/api/issues/${issueId}/transition`, {
+                    method: 'POST',
+                    body: JSON.stringify({ status_id: toStatusId }),
+                });
+            } catch(e) {
+                alert('Failed to update status: ' + e.message);
+                await this.loadIssues();
+            }
+        },
+
+        dragStart(evt, issue) {
+            this.draggedIssue = issue;
+            evt.target.setAttribute('data-id', issue.id);
+        },
+
+        dragEnd() { this.draggedIssue = null; },
+
+        async createIssue() {
+            if (!this.newIssue.title.trim()) return;
+            try {
+                const issue = await api('/api/projects/2/issues', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        ...this.newIssue,
+                        issue_status_id: this.createInStatus || 5,
+                                            }),
+                });
+                                this.issues.unshift(issue);
+                this.showCreateIssue = false;
+                this.newIssue = { title:'', issue_type_id: 3, issue_priority_id:'', assignee_id:'', story_points:'' };
+            } catch(e) { alert(e.message); }
+        },
+
+        openIssue(issue) {
+            window.location = `http://localhost/projecttask/public/projects/2/issues/${issue.id}`;
+        },
+
+        // ── New Workflow Step ──
+        async addColumn() {
+            if (!this.newColumnName.trim()) return;
+            try {
+                const col = await api('/api/boards/2/columns', {
+                    method: 'POST',
+                    body: JSON.stringify({ name: this.newColumnName, color: this.newColumnColor, is_done: false }),
+                });
+                this.showNewColumn = false;
+                this.newColumnName = '';
+                location.reload(); // reload to show new column
+            } catch(e) { alert('Failed to create step: ' + e.message); }
+        },
+
+        // ── Close Sprint with options ──
+        async closeSprint() {
+            try {
+                await api('/api/sprints/0/complete', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action:           this.closeAction,
+                        new_sprint_name:  this.closeAction === 'sprint' ? this.newSprintName : undefined,
+                    }),
+                });
+                this.showCloseSprint = false;
+                location.reload();
+            } catch(e) { alert('Failed to close sprint: ' + e.message); }
+        },
+    };
+}
+
+</script>
+<script>
+// Global AJAX helper
+const _APP_URL  = 'http://localhost/projecttask/public';
+const _API_BASE = _APP_URL;
+window.api = async (url, options = {}) => {
+    const fullUrl = url.startsWith('/') ? _API_BASE + url : url;
+    const res = await fetch(fullUrl, {
+        headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept':'application/json', ...options.headers },
+        ...options,
+    });
+    if (!res.ok) { const err = await res.json().catch(() => ({ message: 'Request failed' })); throw new Error(err.message || 'Request failed'); }
+    return res.json();
+};
+
+// ── Global live timer pill ──
+(async function initGlobalTimer() {
+    let timerInterval = null;
+    let startedAt     = null;
+    async function checkTimer() {
+        try {
+            const res  = await fetch('time-logs/running', { headers: { Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } });
+            const data = await res.json();
+            const pill = document.getElementById('globalTimerPill');
+            if (!pill) return;
+            if (data.running) {
+                startedAt = new Date(data.started_at);
+                pill.style.display = 'flex';
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    const diff = Math.floor((Date.now() - startedAt) / 1000);
+                    const h = String(Math.floor(diff/3600)).padStart(2,'0');
+                    const m = String(Math.floor((diff%3600)/60)).padStart(2,'0');
+                    const s = String(diff%60).padStart(2,'0');
+                    const el = document.getElementById('globalTimerText');
+                    if (el) el.textContent = `${h}:${m}:${s}`;
+                }, 1000);
+            } else {
+                if (pill) pill.style.display = 'none';
+                clearInterval(timerInterval);
+            }
+        } catch (e) { /* swallow */ }
+    }
+    checkTimer();
+    setInterval(checkTimer, 30000); // re-check every 30s
+})();
+</script>
+</body>
+</html>
+

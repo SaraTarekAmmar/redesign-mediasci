@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Roadmap & Project Planning</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Frappe Gantt CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Frappe Gantt JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.js"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #f3f4f6;
+            --bg-sidebar: #1f2937;
+            --bg-card: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-light: #f9fafb;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --not-started: #9ca3af;
+            --in-progress: #3b82f6;
+            --completed: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        
+        body { background: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background: var(--bg-sidebar); color: var(--text-light); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid #374151; }
+        .nav-item { padding: 15px 20px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
+        .nav-item:hover, .nav-item.active { background: #374151; border-left: 4px solid var(--primary); }
+
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .header { background: var(--bg-card); padding: 15px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .content { padding: 24px; }
+
+        /* Cards & UI Elements */
+        .card { background: var(--bg-card); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
+        .tab { padding: 10px 15px; cursor: pointer; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+        .tab:hover { color: var(--primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.875rem; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.875rem; transition: background 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .toast { background: #333; color: white; padding: 12px 20px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Gantt Custom Colors */
+        .gantt .bar-wrapper.status-not_started .bar { fill: var(--not-started); }
+        .gantt .bar-wrapper.status-not_started .bar-progress { fill: #888; }
+        .gantt .bar-wrapper.status-in_progress .bar { fill: var(--in-progress); }
+        .gantt .bar-wrapper.status-in_progress .bar-progress { fill: #2563eb; }
+        .gantt .bar-wrapper.status-completed .bar { fill: var(--completed); }
+        .gantt .bar-wrapper.status-completed .bar-progress { fill: #059669; }
+
+        .chart-container { position: relative; height: 300px; width: 100%; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-approved { background: #d1fae5; color: #059669; }
+        .badge-rejected { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body x-data="appData()" x-init="init()">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">ProjectTask UI</div>
+        <div class="nav-item" :class="{'active': activeSidebar === 'roadmap'}" @click="setSidebar('roadmap')">
+            📊 Roadmap
+        </div>
+        <div class="nav-item" :class="{'active': activeSidebar === 'scope'}" @click="setSidebar('scope')">
+            📋 Scope
+        </div>
+        <div class="nav-item" :class="{'active': activeSidebar === 'change'}" @click="setSidebar('change')">
+            🔄 Change Management
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <span style="font-weight:600; font-size:1.1rem" x-text="activeSidebar.toUpperCase() + ' MODULE'"></span>
+            </div>
+            <div>
+                <select class="form-control" style="width: 200px;" x-model="selectedProject" @change="onProjectChange()">
+                    <option value="">-- Select Project --</option>
+                    <template x-for="p in projects" :key="p.id">
+                        <option :value="p.id" x-text="p.name"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- ROADMAP MODULE -->
+            <div x-show="activeSidebar === 'roadmap'" style="display: none;" x-transition>
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab" :class="{'active': activeRoadmapTab === 'single'}" @click="activeRoadmapTab = 'single'; renderGantt()">Single Project</div>
+                        <div class="tab" :class="{'active': activeRoadmapTab === 'multi'}" @click="activeRoadmapTab = 'multi'; renderMultiGantt()">Multi Project</div>
+                        <div class="tab" :class="{'active': activeRoadmapTab === 'milestones'}" @click="activeRoadmapTab = 'milestones'">Milestones</div>
+                        <div class="tab" :class="{'active': activeRoadmapTab === 'mandays'}" @click="activeRoadmapTab = 'mandays'; renderCharts()">Man-Days</div>
+                        <div class="tab" :class="{'active': activeRoadmapTab === 'manhours'}" @click="activeRoadmapTab = 'manhours'; renderCharts()">Man-Hours</div>
+                    </div>
+
+                    <!-- Single Project Gantt -->
+                    <div x-show="activeRoadmapTab === 'single'">
+                        <div x-show="!selectedProject" style="color:var(--text-muted)">Please select a project from the top right.</div>
+                        <div x-show="selectedProject">
+                            <svg id="gantt-single"></svg>
+                        </div>
+                    </div>
+
+                    <!-- Multi Project Gantt -->
+                    <div x-show="activeRoadmapTab === 'multi'">
+                        <div style="margin-bottom: 15px; display:flex; gap:15px;">
+                            <strong>Select Projects:</strong>
+                            <template x-for="p in projects" :key="p.id">
+                                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
+                                    <input type="checkbox" :value="p.id" x-model="multiSelectedProjects" @change="renderMultiGantt()"> 
+                                    <span x-text="p.name"></span>
+                                </label>
+                            </template>
+                        </div>
+                        <svg id="gantt-multi"></svg>
+                    </div>
+
+                    <!-- Milestones -->
+                    <div x-show="activeRoadmapTab === 'milestones'">
+                        <div x-show="!selectedProject" style="color:var(--text-muted)">Please select a project from the top right.</div>
+                        <div x-show="selectedProject">
+                            <template x-for="m in currentProjectMilestones" :key="m.id">
+                                <div class="card" style="border-left: 4px solid var(--primary); padding: 15px;">
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <strong x-text="m.title"></strong>
+                                        <span class="badge" :class="'badge-' + (m.status === 'Completed' ? 'approved' : 'pending')" x-text="m.status"></span>
+                                    </div>
+                                    <p style="font-size:0.875rem; color:var(--text-muted); margin: 5px 0;" x-text="m.description"></p>
+                                    <small x-text="'Date: ' + m.date"></small>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Workload Charts -->
+                    <div x-show="activeRoadmapTab === 'mandays' || activeRoadmapTab === 'manhours'">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="card">
+                                <h3>Workload per Task</h3>
+                                <div class="chart-container"><canvas id="taskChart"></canvas></div>
+                            </div>
+                            <div class="card">
+                                <h3>Workload per User</h3>
+                                <div class="chart-container"><canvas id="userChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCOPE MODULE -->
+            <div x-show="activeSidebar === 'scope'" style="display: none;" x-transition>
+                <div x-show="!selectedProject" class="card" style="color:var(--text-muted)">Please select a project to view its Scope.</div>
+                <div x-show="selectedProject" class="card">
+                    <h2 style="margin-bottom:20px">Project Scope</h2>
+                    <div class="form-group">
+                        <label class="form-label">Project Description</label>
+                        <textarea class="form-control" x-model="scopeForm.description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Scope Details</label>
+                        <textarea class="form-control" x-model="scopeForm.details"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deliverables</label>
+                        <textarea class="form-control" x-model="scopeForm.deliverables" placeholder="Comma separated..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Objectives</label>
+                        <textarea class="form-control" x-model="scopeForm.objectives" placeholder="Comma separated..."></textarea>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
+                        <label class="form-label">Attachments</label>
+                        <input type="file" id="scopeFiles" multiple class="form-control" @change="handleFileUpload($event, 'scope')">
+                        <ul style="margin-top:10px; font-size:0.875rem; list-style-position: inside;">
+                            <template x-for="(file, idx) in scopeForm.files" :key="idx">
+                                <li x-text="file"></li>
+                            </template>
+                        </ul>
+                    </div>
+
+                    <button class="btn btn-primary" @click="saveScope()">Save Scope</button>
+                </div>
+            </div>
+
+            <!-- CHANGE MANAGEMENT MODULE -->
+            <div x-show="activeSidebar === 'change'" style="display: none;" x-transition>
+                <div x-show="!selectedProject" class="card" style="color:var(--text-muted)">Please select a project.</div>
+                <div x-show="selectedProject" class="card">
+                    <div class="tabs">
+                        <div class="tab" :class="{'active': activeChangeTab === 'request'}" @click="activeChangeTab = 'request'">Change Request</div>
+                        <div class="tab" :class="{'active': activeChangeTab === 'approval'}" @click="activeChangeTab = 'approval'">Change Approval</div>
+                        <div class="tab" :class="{'active': activeChangeTab === 'summary'}" @click="activeChangeTab = 'summary'; renderSummaryChart()">Summary</div>
+                    </div>
+
+                    <!-- Request Form -->
+                    <div x-show="activeChangeTab === 'request'">
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" x-model="newChange.title">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" x-model="newChange.description"></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                            <div class="form-group">
+                                <label class="form-label">Requested By</label>
+                                <input type="text" class="form-control" x-model="newChange.requestedBy">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" x-model="newChange.date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Upload File</label>
+                            <input type="file" class="form-control" @change="handleFileUpload($event, 'changeRequest')">
+                            <ul style="margin-top:5px; font-size:0.8rem;"><li x-text="newChange.file"></li></ul>
+                        </div>
+                        <button class="btn btn-primary" @click="submitChangeRequest()">Submit Request</button>
+                    </div>
+
+                    <!-- Approvals List -->
+                    <div x-show="activeChangeTab === 'approval'">
+                        <template x-for="c in currentProjectChanges" :key="c.id">
+                            <div class="card" style="background:#f9fafb; border:1px solid var(--border);">
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                    <div>
+                                        <h4 x-text="c.title"></h4>
+                                        <p style="font-size:0.875rem; color:var(--text-muted); margin:4px 0;" x-text="c.description"></p>
+                                        <small x-text="'Req: ' + c.requestedBy + ' on ' + c.date"></small>
+                                        <div x-show="c.file" style="margin-top:5px;font-size:0.8rem;">📎 <span x-text="c.file"></span></div>
+                                    </div>
+                                    <span class="badge" :class="'badge-' + c.status.toLowerCase()" x-text="c.status"></span>
+                                </div>
+                                
+                                <div style="margin-top:15px; padding-top:15px; border-top:1px dashed #ccc;">
+                                    <div class="form-group">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-control" x-model="c.status">
+                                            <option value="Pending">Pending</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Rejected">Rejected</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Approval Notes</label>
+                                        <textarea class="form-control" rows="1" x-model="c.notes"></textarea>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" @click="saveChanges()">Save Approval</button>
+                                </div>
+                            </div>
+                        </template>
+                        <div x-show="currentProjectChanges.length === 0" style="color:var(--text-muted)">No change requests found.</div>
+                    </div>
+
+                    <!-- Summary Dashboard -->
+                    <div x-show="activeChangeTab === 'summary'">
+                        <div style="display:flex; gap:15px; margin-bottom:20px;">
+                            <div class="card" style="flex:1; text-align:center;">
+                                <h2 x-text="summaryStats.total"></h2>
+                                <small>Total Requests</small>
+                            </div>
+                            <div class="card" style="flex:1; text-align:center; color:var(--success)">
+                                <h2 x-text="summaryStats.approved"></h2>
+                                <small>Approved</small>
+                            </div>
+                            <div class="card" style="flex:1; text-align:center; color:var(--danger)">
+                                <h2 x-text="summaryStats.rejected"></h2>
+                                <small>Rejected</small>
+                            </div>
+                            <div class="card" style="flex:1; text-align:center; color:var(--warning)">
+                                <h2 x-text="summaryStats.pending"></h2>
+                                <small>Pending</small>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="max-width:400px; margin:0 auto;">
+                            <canvas id="summaryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container">
+        <template x-for="t in toasts" :key="t.id">
+            <div class="toast" x-text="t.message"></div>
+        </template>
+    </div>
+
+    <script>
+        const initialData = {
+            projects: [
+                { id: 1, name: 'ERP Migration' },
+                { id: 2, name: 'Mobile App Redesign' }
+            ],
+            tasks: [
+                { id: 'T1', project_id: 1, name: 'Phase 1: Planning', start: '2025-01-05', end: '2025-01-15', progress: 100, status: 'completed', dependencies: '', user: 'Alice', man_hours: 40 },
+                { id: 'T2', project_id: 1, name: 'Requirement Gathering', start: '2025-01-16', end: '2025-01-25', progress: 50, status: 'in_progress', dependencies: 'T1', user: 'Bob', man_hours: 60 },
+                { id: 'T3', project_id: 1, name: 'Architecture Setup', start: '2025-01-26', end: '2025-02-10', progress: 0, status: 'not_started', dependencies: 'T2', user: 'Alice', man_hours: 120 },
+                { id: 'T4', project_id: 2, name: 'UI/UX Wireframes', start: '2025-01-10', end: '2025-01-20', progress: 80, status: 'in_progress', dependencies: '', user: 'Charlie', man_hours: 50 },
+                { id: 'T5', project_id: 2, name: 'Frontend Dev', start: '2025-01-22', end: '2025-02-15', progress: 0, status: 'not_started', dependencies: 'T4', user: 'Dave', man_hours: 160 }
+            ],
+            milestones: [
+                { id: 1, project_id: 1, title: 'Planning Sign-off', description: 'All requirements finalized.', date: '2025-01-25', status: 'Pending' },
+                { id: 2, project_id: 2, title: 'Design Approval', description: 'Client approves wireframes.', date: '2025-01-21', status: 'Completed' }
+            ],
+            scopes: {},
+            changes: []
+        };
+
+        function appData() {
+            return {
+                db: null,
+                activeSidebar: 'roadmap',
+                activeRoadmapTab: 'single',
+                activeChangeTab: 'request',
+                selectedProject: '',
+                multiSelectedProjects: [1, 2],
+                toasts: [],
+                ganttInstance: null,
+                multiGanttInstance: null,
+                charts: {},
+                
+                // Forms
+                scopeForm: { description: '', details: '', deliverables: '', objectives: '', files: [] },
+                newChange: { title: '', description: '', requestedBy: '', date: '', file: '' },
+
+                init() {
+                    this.loadDB();
+                },
+
+                loadDB() {
+                    const saved = localStorage.getItem('projectPlannerDB');
+                    if (saved) {
+                        this.db = JSON.parse(saved);
+                    } else {
+                        this.db = JSON.parse(JSON.stringify(initialData));
+                        this.saveDB();
+                    }
+                },
+
+                saveDB() {
+                    localStorage.setItem('projectPlannerDB', JSON.stringify(this.db));
+                },
+
+                showToast(message) {
+                    const id = Date.now();
+                    this.toasts.push({ id, message });
+                    setTimeout(() => {
+                        this.toasts = this.toasts.filter(t => t.id !== id);
+                    }, 3000);
+                },
+
+                get projects() { return this.db.projects; },
+                
+                get currentProjectTasks() { 
+                    if (!this.selectedProject) return [];
+                    return this.db.tasks.filter(t => t.project_id == this.selectedProject);
+                },
+
+                get currentProjectMilestones() {
+                    if (!this.selectedProject) return [];
+                    return this.db.milestones.filter(m => m.project_id == this.selectedProject);
+                },
+
+                get currentProjectChanges() {
+                    if (!this.selectedProject) return [];
+                    return this.db.changes.filter(c => c.project_id == this.selectedProject);
+                },
+
+                get summaryStats() {
+                    const changes = this.currentProjectChanges;
+                    return {
+                        total: changes.length,
+                        approved: changes.filter(c => c.status === 'Approved').length,
+                        rejected: changes.filter(c => c.status === 'Rejected').length,
+                        pending: changes.filter(c => c.status === 'Pending').length,
+                    }
+                },
+
+                setSidebar(tab) {
+                    this.activeSidebar = tab;
+                    if (tab === 'roadmap') this.$nextTick(() => this.renderGantt());
+                    if (tab === 'scope') this.loadScope();
+                    if (tab === 'change') this.activeChangeTab = 'request';
+                },
+
+                onProjectChange() {
+                    if (this.activeSidebar === 'roadmap' && this.activeRoadmapTab === 'single') this.renderGantt();
+                    if (this.activeSidebar === 'roadmap' && (this.activeRoadmapTab === 'mandays' || this.activeRoadmapTab === 'manhours')) this.renderCharts();
+                    if (this.activeSidebar === 'scope') this.loadScope();
+                },
+
+                // GANTT
+                prepareGanttTasks(tasks) {
+                    return tasks.map(t => ({
+                        id: t.id,
+                        name: t.name,
+                        start: t.start,
+                        end: t.end,
+                        progress: t.progress,
+                        dependencies: t.dependencies,
+                        custom_class: 'status-' + t.status
+                    }));
+                },
+
+                renderGantt() {
+                    if (!this.selectedProject) return;
+                    const tasks = this.prepareGanttTasks(this.currentProjectTasks);
+                    if (tasks.length === 0) return;
+
+                    this.$nextTick(() => {
+                        document.getElementById('gantt-single').innerHTML = '';
+                        this.ganttInstance = new Gantt('#gantt-single', tasks, {
+                            view_mode: 'Week',
+                            date_format: 'YYYY-MM-DD',
+                            custom_popup_html: (task) => `<div style="padding:10px;"><h5>${task.name}</h5><p>Duration: ${task.end.diff(task.start, 'days')} days</p></div>`,
+                            on_date_change: (task, start, end) => {
+                                const dbTask = this.db.tasks.find(t => t.id === task.id);
+                                if (dbTask) {
+                                    dbTask.start = start.toISOString().slice(0,10);
+                                    dbTask.end = end.toISOString().slice(0,10);
+                                    
+                                    // Simulated auto-update dependency
+                                    const dependent = this.db.tasks.find(t => t.dependencies === task.id);
+                                    if(dependent) {
+                                        const dStart = new Date(dbTask.end);
+                                        dStart.setDate(dStart.getDate() + 1);
+                                        
+                                        // Skip weekends (Friday/Saturday logic as requested)
+                                        if(dStart.getDay() === 5) dStart.setDate(dStart.getDate() + 2); // if Friday, move to Sunday
+                                        if(dStart.getDay() === 6) dStart.setDate(dStart.getDate() + 1); // if Saturday, move to Sunday
+                                        
+                                        const dur = new Date(dependent.end) - new Date(dependent.start);
+                                        const dEnd = new Date(dStart.getTime() + dur);
+                                        
+                                        dependent.start = dStart.toISOString().slice(0,10);
+                                        dependent.end = dEnd.toISOString().slice(0,10);
+                                        this.showToast(`Updated dependent task: ${dependent.name}`);
+                                    }
+
+                                    this.saveDB();
+                                    this.showToast('Gantt dates updated!');
+                                    this.renderGantt(); // re-render to reflect cascade
+                                }
+                            }
+                        });
+                    });
+                },
+
+                renderMultiGantt() {
+                    if (this.multiSelectedProjects.length === 0) return;
+                    let tasks = [];
+                    this.multiSelectedProjects.forEach(pid => {
+                        const pTasks = this.db.tasks.filter(t => t.project_id == pid).map(t => {
+                            const pName = this.projects.find(p=>p.id==pid).name;
+                            return {...t, name: `[${pName}] ${t.name}`, id: 'M_'+t.id, dependencies: t.dependencies ? 'M_'+t.dependencies : ''}
+                        });
+                        tasks = tasks.concat(pTasks);
+                    });
+
+                    if(tasks.length === 0) return;
+
+                    this.$nextTick(() => {
+                        document.getElementById('gantt-multi').innerHTML = '';
+                        this.multiGanttInstance = new Gantt('#gantt-multi', this.prepareGanttTasks(tasks), {
+                            view_mode: 'Week',
+                            readonly: true // Read-only for multi-view
+                        });
+                    });
+                },
+
+                // CHARTS
+                destroyChart(id) {
+                    if (this.charts[id]) { this.charts[id].destroy(); }
+                },
+
+                renderCharts() {
+                    if (!this.selectedProject) return;
+                    this.$nextTick(() => {
+                        const tasks = this.currentProjectTasks;
+                        const isHours = this.activeRoadmapTab === 'manhours';
+                        const divisor = isHours ? 1 : 8; // 8 hours = 1 day
+
+                        // Task Chart
+                        const taskLabels = tasks.map(t => t.name);
+                        const taskData = tasks.map(t => t.man_hours / divisor);
+                        
+                        this.destroyChart('taskChart');
+                        const ctx1 = document.getElementById('taskChart').getContext('2d');
+                        this.charts['taskChart'] = new Chart(ctx1, {
+                            type: 'bar',
+                            data: { labels: taskLabels, datasets: [{ label: isHours ? 'Man-Hours' : 'Man-Days', data: taskData, backgroundColor: 'rgba(79, 70, 229, 0.6)' }] },
+                            options: { maintainAspectRatio: false }
+                        });
+
+                        // User Chart
+                        const userMap = {};
+                        tasks.forEach(t => { userMap[t.user] = (userMap[t.user] || 0) + (t.man_hours / divisor); });
+                        
+                        this.destroyChart('userChart');
+                        const ctx2 = document.getElementById('userChart').getContext('2d');
+                        this.charts['userChart'] = new Chart(ctx2, {
+                            type: 'doughnut',
+                            data: { labels: Object.keys(userMap), datasets: [{ data: Object.values(userMap), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'] }] },
+                            options: { maintainAspectRatio: false }
+                        });
+                    });
+                },
+
+                renderSummaryChart() {
+                    this.$nextTick(() => {
+                        this.destroyChart('summaryChart');
+                        const stats = this.summaryStats;
+                        const ctx = document.getElementById('summaryChart').getContext('2d');
+                        this.charts['summaryChart'] = new Chart(ctx, {
+                            type: 'pie',
+                            data: { 
+                                labels: ['Approved', 'Rejected', 'Pending'], 
+                                datasets: [{ data: [stats.approved, stats.rejected, stats.pending], backgroundColor: ['#10b981', '#ef4444', '#f59e0b'] }] 
+                            }
+                        });
+                    });
+                },
+
+                // SCOPE
+                loadScope() {
+                    if (!this.selectedProject) return;
+                    const sc = this.db.scopes[this.selectedProject] || { description: '', details: '', deliverables: '', objectives: '', files: [] };
+                    this.scopeForm = JSON.parse(JSON.stringify(sc));
+                },
+
+                saveScope() {
+                    this.db.scopes[this.selectedProject] = JSON.parse(JSON.stringify(this.scopeForm));
+                    this.saveDB();
+                    this.showToast('Scope saved successfully!');
+                },
+
+                // CHANGES
+                submitChangeRequest() {
+                    if(!this.newChange.title) return;
+                    const req = {
+                        id: Date.now(),
+                        project_id: this.selectedProject,
+                        title: this.newChange.title,
+                        description: this.newChange.description,
+                        requestedBy: this.newChange.requestedBy,
+                        date: this.newChange.date,
+                        file: this.newChange.file,
+                        status: 'Pending',
+                        notes: ''
+                    };
+                    this.db.changes.push(req);
+                    this.saveDB();
+                    this.newChange = { title: '', description: '', requestedBy: '', date: '', file: '' };
+                    this.showToast('Change request submitted!');
+                },
+
+                saveChanges() {
+                    this.saveDB();
+                    this.showToast('Approval status updated!');
+                },
+
+                // FILE HANDLING SIMULATION
+                handleFileUpload(event, target) {
+                    const files = Array.from(event.target.files).map(f => f.name);
+                    if (target === 'scope') {
+                        this.scopeForm.files = [...(this.scopeForm.files || []), ...files];
+                    } else if (target === 'changeRequest') {
+                        this.newChange.file = files[0];
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
