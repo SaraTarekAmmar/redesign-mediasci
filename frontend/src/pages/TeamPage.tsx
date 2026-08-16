@@ -83,17 +83,17 @@ export default function TeamPage() {
     <div className="h-full overflow-y-auto p-5" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-screen-2xl space-y-5">
       {/* Team Header & Switcher */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+      <div className="bg-card p-6 rounded-xl border border-border shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
               <FolderKanban className="h-4 w-4" />
               {isRTL ? "فريق العمل المباشر" : "Team Execution View"}
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            <h1 className="text-2xl font-bold text-foreground mt-1">
               {currentTeam?.name || (isRTL ? "تفاصيل الفريق" : "Team Details")}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               {currentTeam?.description || (isRTL ? "عرض أعضاء الفريق والموارد المخصصة لهذا الفريق" : "Resources assigned strictly to this team.")}
             </p>
           </div>
@@ -115,8 +115,8 @@ export default function TeamPage() {
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-lg border transition-all",
                   selectedTeamId === tm.id
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                    : "bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-100"
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-muted text-muted-foreground border-border hover:bg-accent"
                 )}
               >
                 {tm.name}
@@ -126,19 +126,19 @@ export default function TeamPage() {
         </div>
 
         {/* Team Overview Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-border">
           <div>
-            <span className="text-xs text-slate-500 block">{isRTL ? "إجمالي أعضاء الفريق" : "Team Members"}</span>
-            <span className="text-xl font-bold text-slate-900 dark:text-white">{teamResources.length}</span>
+            <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي أعضاء الفريق" : "Team Members"}</span>
+            <span className="text-xl font-bold text-foreground">{teamResources.length}</span>
           </div>
           <div>
-            <span className="text-xs text-slate-500 block">{isRTL ? "إجمالي السعة الأسبوعية" : "Total Capacity"}</span>
-            <span className="text-xl font-bold text-indigo-600">
+            <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي السعة الأسبوعية" : "Total Capacity"}</span>
+            <span className="text-xl font-bold text-primary">
               {teamResources.reduce((acc, r) => acc + (r.weekly_capacity || 40), 0)} hrs
             </span>
           </div>
           <div>
-            <span className="text-xs text-slate-500 block">{isRTL ? "متوسط الاستغلال" : "Avg Utilization"}</span>
+            <span className="text-xs text-muted-foreground block">{isRTL ? "متوسط الاستغلال" : "Avg Utilization"}</span>
             <span className="text-xl font-bold text-emerald-600">
               {teamResources.length
                 ? Math.round(teamResources.reduce((acc, r) => acc + r.utilization_percentage, 0) / teamResources.length)
@@ -149,25 +149,25 @@ export default function TeamPage() {
       </div>
 
       {/* Team Members List (NO global search, NO department filter, NO team dropdown) */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-between">
-          <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="h-4 w-4 text-indigo-600" />
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-border bg-muted/50 flex items-center justify-between">
+          <h3 className="font-semibold text-foreground flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
             {isRTL ? "أعضاء هذا الفريق" : "Assigned Team Resources"}
           </h3>
-          <span className="text-xs text-slate-500 font-normal">
+          <span className="text-xs text-muted-foreground font-normal">
             {isRTL ? "معروض فقط الموارد المنضمة لهذا الفريق" : "Filtered strictly to selected team"}
           </span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-slate-500">{isRTL ? "جاري التحميل..." : "Loading team members..."}</div>
+          <div className="p-12 text-center text-muted-foreground">{isRTL ? "جاري التحميل..." : "Loading team members..."}</div>
         ) : teamResources.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">{isRTL ? "لا يوجد أعضاء في هذا الفريق بعد." : "No resources assigned to this team yet."}</div>
+          <div className="p-12 text-center text-muted-foreground">{isRTL ? "لا يوجد أعضاء في هذا الفريق بعد." : "No resources assigned to this team yet."}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 font-medium">
+              <thead className="bg-muted text-muted-foreground font-medium">
                 <tr>
                   <th className="p-4">{isRTL ? "العضو" : "Member"}</th>
                   <th className="p-4">{isRTL ? "المنصب" : "Position"}</th>
@@ -175,29 +175,29 @@ export default function TeamPage() {
                   <th className="p-4">{isRTL ? "الحالة" : "Status"}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+              <tbody className="divide-y divide-border">
                 {teamResources.map((r) => (
                   <tr
                     key={r.id}
                     onClick={() => setSelectedResource(r)}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors"
+                    className="hover:bg-muted/60 cursor-pointer transition-colors"
                   >
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <UserAvatar name={r.name} avatarUrl={r.avatar_url} size="md" />
                         <div>
-                          <div className="font-semibold text-slate-900 dark:text-white">{r.name}</div>
-                          <div className="text-xs text-slate-500">{r.email}</div>
+                          <div className="font-semibold text-foreground">{r.name}</div>
+                          <div className="text-xs text-muted-foreground">{r.email}</div>
                         </div>
                       </div>
                     </td>
                     <td className="p-4">
-                      <div className="font-medium text-slate-900 dark:text-white">{r.position}</div>
-                      <div className="text-xs text-slate-500">{r.seniority}</div>
+                      <div className="font-medium text-foreground">{r.position}</div>
+                      <div className="text-xs text-muted-foreground">{r.seniority}</div>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-16 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                        <div className="w-16 bg-muted h-2 rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full",
@@ -206,7 +206,7 @@ export default function TeamPage() {
                             style={{ width: `${Math.min(r.utilization_percentage, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <span className="text-xs font-semibold text-foreground">
                           {r.utilization_percentage}%
                         </span>
                       </div>
@@ -233,7 +233,7 @@ export default function TeamPage() {
                 <UserAvatar name={selectedResource.name} avatarUrl={selectedResource.avatar_url} size="md" />
                 <div>
                   <div className="text-lg font-bold">{selectedResource.name}</div>
-                  <div className="text-xs text-slate-500 font-normal">{selectedResource.position} • {selectedResource.seniority}</div>
+                  <div className="text-xs text-muted-foreground font-normal">{selectedResource.position} • {selectedResource.seniority}</div>
                 </div>
               </DialogTitle>
             </DialogHeader>
@@ -241,12 +241,12 @@ export default function TeamPage() {
             <div className="space-y-4 py-4 border-t border-b text-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-slate-500 block text-xs">{isRTL ? "البريد الإلكتروني" : "Email"}</span>
+                  <span className="text-muted-foreground block text-xs">{isRTL ? "البريد الإلكتروني" : "Email"}</span>
                   <span className="font-medium">{selectedResource.email}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-xs">{isRTL ? "نسبة الاستغلال" : "Utilization"}</span>
-                  <span className="font-semibold text-indigo-600">{selectedResource.utilization_percentage}%</span>
+                  <span className="text-muted-foreground block text-xs">{isRTL ? "نسبة الاستغلال" : "Utilization"}</span>
+                  <span className="font-semibold text-primary">{selectedResource.utilization_percentage}%</span>
                 </div>
               </div>
             </div>

@@ -239,7 +239,7 @@ function ProjectWorkforcePage() {
       {loading ? <div className="flex items-center justify-center py-16 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
         <div className="space-y-5">
           <div className="grid gap-4 xl:grid-cols-2">
-            <AssignmentSection title="Internal assignments" icon={<Layers className="h-4 w-4 text-blue-500" />} actions={canEdit ? <>
+            <AssignmentSection title="Internal assignments" icon={<Layers className="h-4 w-4 text-primary" />} actions={canEdit ? <>
               <Button size="sm" variant="outline" onClick={() => setPickerOpen("team")}><Plus className="me-1 h-3.5 w-3.5" />Team</Button>
               <Button size="sm" variant="outline" onClick={() => setPickerOpen("resource")}><Plus className="me-1 h-3.5 w-3.5" />Resource</Button>
             </> : null}>

@@ -50,18 +50,18 @@ const parseDate = (value?: string | null) => {
 const clamp = (value: number) => Math.max(0, Math.min(100, value));
 
 const toneClass = (tone: TimelineTaskMarker["tone"], selected: boolean) => {
-  if (selected) return "border-blue-500 bg-blue-600 text-white shadow-sm shadow-blue-200";
+  if (selected) return "border-primary bg-primary text-primary-foreground shadow-sm";
   switch (tone) {
     case "done":
-      return "border-emerald-200 bg-white text-emerald-600";
+      return "border-emerald-200 bg-card text-emerald-600";
     case "late":
-      return "border-rose-200 bg-white text-rose-600";
+      return "border-rose-200 bg-card text-rose-600";
     case "blocked":
       return "border-rose-200 bg-rose-50 text-rose-600";
     case "pending":
-      return "border-slate-200 bg-white text-slate-400";
+      return "border-border bg-card text-muted-foreground";
     default:
-      return "border-blue-200 bg-white text-blue-600";
+      return "border-border bg-card text-muted-foreground";
   }
 };
 
@@ -133,7 +133,7 @@ export function TimelineComparisonGraph({
       key: "planned" as const,
       label: t("planning.expectedTargetPlan", { defaultValue: "Expected Target Plan" }),
       count: `${plannedTasks.length} tasks planned`,
-      color: "bg-blue-500",
+      color: "bg-foreground/40",
       tone: "planned" as const,
       items: plannedTasks,
       resolveDate: (task: TimelineTaskMarker) => task.plannedDate ?? task.dueDate,
@@ -150,18 +150,18 @@ export function TimelineComparisonGraph({
   ];
 
   return (
-    <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-200 px-4 py-3.5">
+    <div className="overflow-hidden rounded-[24px] border border-border bg-card shadow-sm">
+      <div className="border-b border-border px-4 py-3.5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold text-slate-900">{t("planning.timeline", { defaultValue: "Plan vs Actual Timeline" })}</h2>
-            <p className="mt-0.5 text-xs text-slate-500">{t("planning.timelineHint", { defaultValue: "Shared timeline view for milestones, tasks, and dependencies." })}</p>
+            <h2 className="text-[15px] font-semibold text-foreground">{t("planning.timeline", { defaultValue: "Plan vs Actual Timeline" })}</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t("planning.timelineHint", { defaultValue: "Shared timeline view for milestones, tasks, and dependencies." })}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-slate-500">
-            <span className="flex items-center gap-2"><span className="h-1.5 w-5 rounded-full bg-blue-500" />Planned</span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-2"><span className="h-1.5 w-5 rounded-full bg-foreground/40" />Planned</span>
             <span className="flex items-center gap-2"><span className="h-1.5 w-5 rounded-full bg-emerald-500" />Actual</span>
             <span className="flex items-center gap-1.5 text-emerald-600"><CheckCircle2 className="h-3.5 w-3.5" />On time</span>
-            <span className="flex items-center gap-1.5 text-blue-500"><ArrowRight className="h-3.5 w-3.5" />In progress</span>
+            <span className="flex items-center gap-1.5 text-primary"><ArrowRight className="h-3.5 w-3.5" />In progress</span>
             <span className="flex items-center gap-1.5 text-rose-500"><ShieldAlert className="h-3.5 w-3.5" />Blocked</span>
             <span className="flex items-center gap-1.5 text-emerald-500">← Early</span>
             <span className="flex items-center gap-1.5 text-rose-500">! Late</span>
@@ -172,7 +172,7 @@ export function TimelineComparisonGraph({
       <div className="relative overflow-x-auto">
         <div className="relative min-w-[960px]">
           <div
-            className="grid items-end border-b border-slate-200 bg-slate-50/70 text-[11px] uppercase tracking-[0.14em] text-slate-500"
+            className="grid items-end border-b border-border bg-muted/70 text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
             style={{ gridTemplateColumns: `${TRACK_LEFT}px minmax(0,1fr)`, height: AXIS_HEIGHT }}
           >
             <div />
@@ -193,29 +193,29 @@ export function TimelineComparisonGraph({
               {ticks.map((tick, index) => (
                 <span
                   key={`${tick.toISOString()}-grid`}
-                  className={cn("absolute top-0 bottom-0 border-l", index === ticks.length - 1 ? "border-slate-200" : "border-slate-200/70")}
+                  className={cn("absolute top-0 bottom-0 border-l", index === ticks.length - 1 ? "border-border" : "border-border/70")}
                   style={{ left: `${(index / (ticks.length - 1)) * 100}%` }}
                 />
               ))}
-              <div className="absolute bottom-0 top-0 border-l-2 border-dashed border-blue-500/45" style={{ left: `${todayLeft}%` }}>
-                <span className="absolute -top-2 -translate-x-1/2 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-600">Today</span>
+              <div className="absolute bottom-0 top-0 border-l-2 border-dashed border-primary/50" style={{ left: `${todayLeft}%` }}>
+                <span className="absolute -top-2 -translate-x-1/2 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Today</span>
               </div>
             </div>
 
             {trackRows.map((row, rowIndex) => (
               <div
                 key={row.key}
-                className={cn("grid border-b border-slate-100", rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50/35")}
+                className={cn("grid border-b border-border/60", rowIndex % 2 === 0 ? "bg-card" : "bg-muted/35")}
                 style={{ gridTemplateColumns: `${TRACK_LEFT}px minmax(0,1fr)`, minHeight: ROW_HEIGHT }}
                 onClick={() => row.items[0] && onSelectMilestone(String(row.items[0].milestoneId))}
               >
                 <div className="px-4 py-4">
-                  <p className="text-sm font-semibold text-slate-900">{row.label}</p>
-                  <p className="mt-1 text-xs text-slate-500">{row.count}</p>
+                  <p className="text-sm font-semibold text-foreground">{row.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{row.count}</p>
                 </div>
 
                 <div className="relative px-4 py-4">
-                  <div className={cn("absolute left-4 right-4 top-1/2 h-px -translate-y-1/2", row.key === "planned" ? "bg-blue-100" : "bg-emerald-100")} />
+                  <div className={cn("absolute left-4 right-4 top-1/2 h-px -translate-y-1/2", row.key === "planned" ? "bg-foreground/15" : "bg-emerald-100")} />
 
                   {row.items.map((task, taskIndex) => {
                     const left = toLeft(row.resolveDate(task)) ?? 0;
@@ -242,15 +242,15 @@ export function TimelineComparisonGraph({
                       >
                         <span className={cn("relative flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-semibold", toneClass(task.tone, selected))}>
                           {label}
-                          <span className="absolute -bottom-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-white bg-white text-[8px] shadow-sm">
+                          <span className="absolute -bottom-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-card bg-card text-[8px] shadow-sm">
                             {task.arrow}
                           </span>
                         </span>
-                        <span className="mt-1 block text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                        <span className="mt-1 block text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                           {row.key === "planned" ? "P" : "A"}
                         </span>
                         {isMilestoneFocused && (
-                          <span className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-white" />
+                          <span className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-card" />
                         )}
                       </button>
                     );
@@ -258,7 +258,7 @@ export function TimelineComparisonGraph({
 
                   {hovered?.track === row.key && (
                     <div
-                      className="pointer-events-none absolute z-30 w-64 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg"
+                      className="pointer-events-none absolute z-30 w-64 -translate-x-1/2 rounded-2xl border border-border bg-card p-3 shadow-lg"
                       style={{ left: `${hovered.left}%`, top: 8 }}
                     >
                       {(() => {
@@ -268,22 +268,22 @@ export function TimelineComparisonGraph({
                           <>
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0">
-                                <p className="truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{task.key}</p>
-                                <p className="mt-1 line-clamp-2 text-sm font-semibold text-slate-900">{task.title}</p>
+                                <p className="truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{task.key}</p>
+                                <p className="mt-1 line-clamp-2 text-sm font-semibold text-foreground">{task.title}</p>
                               </div>
                               <Badge variant={task.tone === "late" || task.tone === "blocked" ? "destructive" : task.done ? "default" : "secondary"}>{task.done ? "Done" : task.status || "Planned"}</Badge>
                             </div>
-                            <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
-                              <div className="rounded-xl border border-slate-200 bg-slate-50 p-2">
-                                <p className="text-[10px] uppercase tracking-[0.12em] text-slate-500">Planned</p>
-                                <p className="mt-1 font-medium text-slate-900">{formatShortDate(task.plannedDate)}</p>
+                            <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-foreground">
+                              <div className="rounded-xl border border-border bg-muted p-2">
+                                <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Planned</p>
+                                <p className="mt-1 font-medium text-foreground">{formatShortDate(task.plannedDate)}</p>
                               </div>
-                              <div className="rounded-xl border border-slate-200 bg-slate-50 p-2">
-                                <p className="text-[10px] uppercase tracking-[0.12em] text-slate-500">Actual</p>
-                                <p className="mt-1 font-medium text-slate-900">{formatShortDate(task.actualDate)}</p>
+                              <div className="rounded-xl border border-border bg-muted p-2">
+                                <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Actual</p>
+                                <p className="mt-1 font-medium text-foreground">{formatShortDate(task.actualDate)}</p>
                               </div>
                             </div>
-                            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+                            <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                               <span>{task.assignee || "Unassigned"}</span>
                               <span>{task.delayDays > 0 ? `+${task.delayDays}d` : task.delayDays < 0 ? `${task.delayDays}d` : "On time"}</span>
                             </div>
@@ -300,7 +300,7 @@ export function TimelineComparisonGraph({
       </div>
 
       {!visibleTasks.length && (
-        <div className="px-5 py-10 text-center text-sm text-slate-500">{t("planning.noMilestones", { defaultValue: "No milestones available." })}</div>
+        <div className="px-5 py-10 text-center text-sm text-muted-foreground">{t("planning.noMilestones", { defaultValue: "No milestones available." })}</div>
       )}
     </div>
   );

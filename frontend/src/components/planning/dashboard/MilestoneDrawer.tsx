@@ -114,7 +114,7 @@ export const MilestoneDrawer: React.FC<MilestoneDrawerProps> = ({
               value={completionPct}
               size={56}
               strokeWidth={6}
-              color={isCompleted ? "stroke-emerald-500" : isBlocked ? "stroke-rose-500" : "stroke-indigo-500"}
+              color={isCompleted ? "stroke-emerald-500" : isBlocked ? "stroke-rose-500" : "stroke-primary"}
               label={<span className="text-xs font-bold text-foreground">{completionPct}%</span>}
             />
             <button
@@ -160,7 +160,7 @@ export const MilestoneDrawer: React.FC<MilestoneDrawerProps> = ({
           {/* Owner Resource */}
           <div className="p-4 rounded-xl border border-border bg-muted/20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
                 <User className="w-4 h-4" />
               </div>
               <div>
@@ -178,7 +178,7 @@ export const MilestoneDrawer: React.FC<MilestoneDrawerProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3.5 rounded-xl border border-border bg-card">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-                <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                <Calendar className="w-3.5 h-3.5 text-primary" />
                 <span>Planned Schedule</span>
               </div>
               <p className="text-xs font-semibold text-foreground">
@@ -236,7 +236,7 @@ export const MilestoneDrawer: React.FC<MilestoneDrawerProps> = ({
           {/* Deliverables Checklist */}
           <div>
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <FileText className="w-4 h-4 text-indigo-500" /> Deliverables ({milestone.deliverables?.length || 0})
+              <FileText className="w-4 h-4 text-primary" /> Deliverables ({milestone.deliverables?.length || 0})
             </h4>
             {!milestone.deliverables || milestone.deliverables.length === 0 ? (
               <p className="text-xs text-muted-foreground italic p-3 bg-muted/20 rounded-lg border border-border/50">

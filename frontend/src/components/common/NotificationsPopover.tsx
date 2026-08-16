@@ -117,15 +117,15 @@ export function NotificationsPopover() {
   const getIcon = (type: AppNotification["type"]) => {
     switch (type) {
       case "assignment":
-        return <UserCheck className="h-4 w-4 text-blue-500" />;
+        return <UserCheck className="h-4 w-4 text-primary" />;
       case "mention":
-        return <AtSign className="h-4 w-4 text-purple-500" />;
+        return <AtSign className="h-4 w-4 text-teal-500" />;
       case "sprint":
         return <Play className="h-4 w-4 text-emerald-500" />;
       case "change_request":
         return <Sparkles className="h-4 w-4 text-amber-500" />;
       default:
-        return <ShieldAlert className="h-4 w-4 text-indigo-500" />;
+        return <ShieldAlert className="h-4 w-4 text-muted-foreground" />;
     }
   };
 

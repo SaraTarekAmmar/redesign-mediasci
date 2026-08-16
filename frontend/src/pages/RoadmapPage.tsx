@@ -84,7 +84,7 @@ const blankPhaseDraft = (): PhaseDraft => ({
 
 const STATUS_COLORS: Record<string, string> = {
   todo: "bg-muted",
-  in_progress: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+  in_progress: "bg-primary/15 text-primary",
   done: "bg-green-500/15 text-green-600 dark:text-green-400",
 };
 
@@ -338,7 +338,7 @@ function RoadmapPage() {
           {[
             { label: t("roadmap.issues"), value: stats.total, color: "text-foreground" },
             { label: t("roadmap.done"), value: stats.done, color: "text-green-600 dark:text-green-400" },
-            { label: t("roadmap.inProgress"), value: stats.inProgress, color: "text-blue-600 dark:text-blue-400" },
+            { label: t("roadmap.inProgress"), value: stats.inProgress, color: "text-primary" },
             { label: t("roadmap.overdue"), value: stats.overdue, color: "text-rose-600 dark:text-rose-400" },
             { label: t("roadmap.storyPoints"), value: `${stats.donePoints}/${stats.totalPoints}`, color: "text-foreground" },
             { label: t("roadmap.totalProgress"), value: `${stats.total ? Math.round(stats.done / stats.total * 100) : 0}%`, color: "text-foreground" },
@@ -542,7 +542,7 @@ function RoadmapPage() {
                     <span className={cn(
                       "rounded-full px-2 py-0.5 text-[10px] font-medium",
                       isDone ? "bg-green-500/15 text-green-600 dark:text-green-400"
-                        : cat === "in_progress" ? "bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                        : cat === "in_progress" ? "bg-primary/15 text-primary"
                         : "bg-muted text-muted-foreground"
                     )}>
                       {status?.name ?? "Unknown"}

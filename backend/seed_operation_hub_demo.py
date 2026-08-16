@@ -22,6 +22,7 @@ from app.models.user import User, Role, user_roles_table
 from app.models.team import Department, Team
 from app.models.resource import Resource, Skill, ResourceSkill, ResourceAllocation
 from app.models.client import Client, ClientContact, ClientRequest
+from app.models.partner import Partner, PartnerMember, project_partner_members
 from app.models.project import Project
 from app.models.roadmap import Task
 from app.models.planning import (
@@ -107,7 +108,7 @@ def seed_demo_data():
 
         roles = {
             slug: upsert(db, Role, {"name": slug}, {"guard_name": "web"})
-            for slug in ["super-admin", "admin", "project-manager", "team-leader", "developer", "viewer"]
+            for slug in ["super-admin", "admin", "project-manager", "team-leader", "developer", "viewer", "partner", "client"]
         }
 
         departments = {
@@ -906,6 +907,85 @@ def seed_demo_data():
             {"title": "Confirm project budgets"},
             {"description": "Verify seeded budgets and alerts are visible.", "category": "finance", "priority": "medium", "status": "open", "assigned_to": users["superadmin@taskflow.dev"].id, "due_date": today + timedelta(days=3), "created_by": users["superadmin@taskflow.dev"].id},
         )
+
+        # ── Demo partner login: external org assigned to DBP, can receive/reassign tasks ──
+        partner_user = upsert(
+            db,
+            User,
+            {"email": "jordan@nimbusconsulting.example.com"},
+            {
+                "name": "Jordan Blake",
+                "password": hashed_pwd,
+                "role_id": roles["partner"].id,
+                "is_active": True,
+            },
+        )
+        ensure_role_assignment(db, partner_user, roles["partner"])
+
+        partner_org = upsert(
+            db,
+            Partner,
+            {"name": "Nimbus Consulting"},
+            {
+                "company": "Nimbus Consulting LLC",
+                "specialty": "QA & Regression Testing",
+                "email": "hello@nimbusconsulting.example.com",
+                "status": "active",
+                "notes": "External QA partner engaged for release regression coverage.",
+            },
+        )
+        partner_member = upsert(
+            db,
+            PartnerMember,
+            {"partner_id": partner_org.id, "email": "jordan@nimbusconsulting.example.com"},
+            {"user_id": partner_user.id, "name": "Jordan Blake", "role": "QA Lead", "is_active": 1},
+        )
+        dbp_project = all_projects.get("DBP")
+        if dbp_project is not None:
+            ensure_link(partner_org.projects, dbp_project)
+            member_link_exists = db.execute(
+                select(project_partner_members.c.id).where(
+                    project_partner_members.c.project_id == dbp_project.id,
+                    project_partner_members.c.partner_member_id == partner_member.id,
+                )
+            ).first()
+            if not member_link_exists:
+                db.execute(
+                    project_partner_members.insert().values(
+                        project_id=dbp_project.id, partner_member_id=partner_member.id
+                    )
+                )
+            # Hand them a real task so "we give partners tasks, they can reassign to us" is live.
+            regression_issue = (
+                db.query(Issue)
+                .filter(Issue.project_id == dbp_project.id, Issue.title.ilike("%Regression%"))
+                .first()
+            )
+            if regression_issue is not None:
+                regression_issue.external_assignee_id = partner_member.id
+                regression_issue.assignee_id = None
+
+        # ── Demo client login: sees DBP end-to-end, no visibility into our internal team ──
+        client_user = upsert(
+            db,
+            User,
+            {"email": "contact@abcbank.example.com"},
+            {
+                "name": "Morgan Lee",
+                "password": hashed_pwd,
+                "role_id": roles["client"].id,
+                "is_active": True,
+            },
+        )
+        ensure_role_assignment(db, client_user, roles["client"])
+        abc_bank = clients.get("ABC Bank")
+        if abc_bank is not None:
+            upsert(
+                db,
+                ClientContact,
+                {"client_id": abc_bank.id, "email": "contact@abcbank.example.com"},
+                {"name": "Morgan Lee", "role": "Client Sponsor", "is_primary": 0, "user_id": client_user.id},
+            )
 
         db.commit()
         print("Operation Hub demo seed applied.")

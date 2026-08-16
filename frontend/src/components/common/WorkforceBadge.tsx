@@ -14,7 +14,7 @@ export function WorkforceBadge({ type, className }: { type: "internal" | "extern
       className={cn(
         "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-none",
         isInternal
-          ? "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-300"
+          ? "border-primary/40 bg-primary/10 text-primary"
           : "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300",
         className
       )}

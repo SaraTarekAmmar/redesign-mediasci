@@ -46,8 +46,8 @@ export const IssueCard = React.memo(function IssueCard({ issue, onOpen, onDragSt
         }
       }}
       className={cn(
-        "group cursor-pointer select-none rounded-lg border border-border bg-card p-3 shadow-sm",
-        "transition-all hover:border-ring/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "card-hover group cursor-pointer select-none rounded-lg border border-border bg-card p-3",
+        "transition-all hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         dragging && "opacity-40"
       )}>
       
@@ -62,7 +62,7 @@ export const IssueCard = React.memo(function IssueCard({ issue, onOpen, onDragSt
         </div>
       }
 
-      <p className="text-sm font-medium leading-snug text-card-foreground line-clamp-3">
+      <p className="text-sm font-semibold leading-snug text-card-foreground line-clamp-3">
         {issue.title}
       </p>
 

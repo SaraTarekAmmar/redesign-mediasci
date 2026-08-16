@@ -141,7 +141,7 @@ export function CreateMenu({ onOpenIssueDialog, onOpenChangeRequestDialog }: Pro
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
       >
         <Plus className="h-4 w-4" aria-hidden="true" />
         {t("app.create")}

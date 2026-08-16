@@ -32,6 +32,8 @@ ROLES = [
     "hr-manager",
     "reviewer",
     "executive",
+    "partner",
+    "client",
 ]
 
 DEFAULT_USERS = [

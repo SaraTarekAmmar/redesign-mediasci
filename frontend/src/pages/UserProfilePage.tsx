@@ -127,11 +127,14 @@ const CURRENCIES = ["EGP", "USD", "EUR", "SAR", "AED", "GBP", "CAD", "QAR", "KWD
 
 const PROFICIENCY_LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert", "Master"];
 
+// ponytail: distinct per-category colors are worth keeping for fast scanning, but the
+// cool blue/indigo/purple/sky hues clashed with the warm cream+pink theme — swapped for
+// warmer equivalents (teal stands in for the cool slot, primary ties one state to brand).
 const seniorityBadgeColors: Record<string, string> = {
   intern: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
-  junior: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  mid: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
-  senior: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  junior: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
+  mid: "bg-primary/10 text-primary border-primary/20",
+  senior: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
   lead: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
 };
 
@@ -141,8 +144,8 @@ const availabilityBadgeColors: Record<string, string> = {
   "fully allocated": "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
   "on leave": "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
   "sick leave": "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20",
-  vacation: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
-  training: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+  vacation: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
+  training: "bg-primary/10 text-primary border-primary/20",
   inactive: "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20",
 };
 

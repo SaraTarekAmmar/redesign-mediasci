@@ -28,6 +28,8 @@ export interface UseAuthReturn {
   isHrManager: boolean;
   isReviewer: boolean;
   isExecutive: boolean;
+  isPartner: boolean;
+  isClient: boolean;
 }
 
 const normalizeRole = (role?: string | null) =>
@@ -160,5 +162,7 @@ export function useAuth(): UseAuthReturn {
     isHrManager: hasRole("hr-manager"),
     isReviewer: hasRole("reviewer"),
     isExecutive: hasRole("executive"),
+    isPartner: hasRole("partner"),
+    isClient: hasRole("client"),
   };
 }

@@ -304,6 +304,7 @@ def _fmt_project(p, db: Session) -> dict:
         "end_date": p.end_date.isoformat() if p.end_date else None,
         "color": p.color,
         "created_at": p.created_at.isoformat() if p.created_at else None,
+        "contractual_terms": p.contractual_terms,
     }
 
 
@@ -425,6 +426,24 @@ def get_project(
         ],
         "members_count": len(members),
     }
+
+
+@router.put("/projects/{project_id}/contractual-terms")
+def update_project_contractual_terms(
+    project_id: int,
+    body: dict,
+    current_user=Depends(require_roles("super-admin")),
+    db: Session = Depends(get_db),
+):
+    """Contractual terms are entered manually and only by a super-admin — never
+    auto-generated, never editable by regular admins or PMs."""
+    p = repo.get_project_by_id(db, project_id)
+    if not p:
+        raise HTTPException(404, "Project not found.")
+    p.contractual_terms = body.get("contractual_terms")
+    db.commit()
+    db.refresh(p)
+    return {"contractual_terms": p.contractual_terms}
 
 
 @router.put("/projects/{project_id}")

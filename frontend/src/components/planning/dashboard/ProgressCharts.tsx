@@ -27,7 +27,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
       <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-indigo-500" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">
               Planned vs Actual Completion %
             </h3>
@@ -47,7 +47,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
               <div className="w-full bg-muted h-3 rounded-full overflow-hidden relative">
                 {/* Target Baseline Marker Line */}
                 <div
-                  className="absolute top-0 bottom-0 w-0.5 bg-blue-500 z-10"
+                  className="absolute top-0 bottom-0 w-0.5 bg-foreground/50 z-10"
                   style={{ left: `${Math.min(item.plannedProgress, 100)}%` }}
                   title={`Planned: ${item.plannedProgress}%`}
                 />
@@ -56,7 +56,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
                   className={`h-full rounded-full transition-all duration-500 ${
                     item.actualProgress >= item.plannedProgress
                       ? "bg-emerald-500"
-                      : "bg-indigo-500"
+                      : "bg-amber-500"
                   }`}
                   style={{ width: `${Math.min(item.actualProgress, 100)}%` }}
                 />
@@ -70,7 +70,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
       <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-purple-500" />
+            <DollarSign className="w-5 h-5 text-teal-500" />
             <h3 className="text-sm font-semibold text-foreground">
               Effort & Budget Burn Summary
             </h3>
@@ -93,7 +93,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
                   </div>
                   <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                     <div
-                      className="bg-indigo-500 h-full rounded-full"
+                      className="bg-primary h-full rounded-full"
                       style={{
                         width: `${
                           item.plannedHours > 0
@@ -112,7 +112,7 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
                   </div>
                   <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                     <div
-                      className="bg-purple-500 h-full rounded-full"
+                      className="bg-teal-500 h-full rounded-full"
                       style={{
                         width: `${
                           item.plannedBudget > 0

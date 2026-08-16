@@ -38,6 +38,9 @@ function projectStageLabel(project: ProjectSummary, t: (key: string) => string) 
   if (project.classification === "presale") {
     return project.presale_type ? project.presale_type.toUpperCase() : t("projects.presale");
   }
+  if (project.classification === "rnd") {
+    return t("projects.rnd", { defaultValue: "R&D" });
+  }
   return t("settings.flowPostsale");
 }
 
@@ -126,7 +129,28 @@ function ProjectsPage() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && projects.length === 0 && (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border p-14 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-foreground/20 bg-primary text-primary-foreground">
+              <KanbanSquare className="h-6 w-6" />
+            </div>
+            <p className="text-base font-bold text-foreground">
+              {canCreate ? t("projects.emptyAdminTitle", { defaultValue: "Create your first project" }) : t("projects.emptyTitle", { defaultValue: "No projects yet" })}
+            </p>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              {canCreate
+                ? t("projects.emptyAdminSubtitle", { defaultValue: "Projects hold your issues, sprints, and roadmap. Set one up to get the team moving." })
+                : t("projects.emptySubtitle", { defaultValue: "You'll see projects here once one is created and you're added to it." })}
+            </p>
+            {canCreate && (
+              <Button size="sm" className="mt-2 gap-1.5" onClick={() => navigate("/projects/new")}>
+                <Plus className="h-4 w-4" /> {t("projects.newProject")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {!loading && !error && projects.length > 0 && (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => {
               const current = p.id === activeProjectId;
@@ -190,7 +214,7 @@ function ProjectsPage() {
                       <p className="text-xs text-muted-foreground">{t("projects.issuesLabel")}</p>
                     </div>
                     <span className="inline-flex items-center rounded-full border border-border bg-muted/40 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-                      {p.classification === "presale" ? t("projects.presale") : t("settings.flowPostsale")}
+                      {projectStageLabel(p, t)}
                     </span>
                     {current ?
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">

@@ -22,7 +22,7 @@ export const CriticalPathVisualization: React.FC<CriticalPathVisualizationProps>
     return (
       <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
         <div className="flex items-center gap-2 mb-2">
-          <Workflow className="w-5 h-5 text-indigo-500" />
+          <Workflow className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">
             Critical Path Chain
           </h3>
@@ -39,7 +39,7 @@ export const CriticalPathVisualization: React.FC<CriticalPathVisualizationProps>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <Workflow className="w-5 h-5 text-indigo-500" />
+            <Workflow className="w-5 h-5 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">
               Critical Path Sequence
             </h3>
@@ -76,7 +76,7 @@ export const CriticalPathVisualization: React.FC<CriticalPathVisualizationProps>
                       ? "border-rose-500/50 bg-rose-500/10 text-rose-700 dark:text-rose-300"
                       : isCompleted
                       ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                      : "border-indigo-500/40 bg-indigo-500/5 text-foreground"
+                      : "border-primary/40 bg-primary/5 text-foreground"
                   }`}
                 >
                   <div
@@ -85,7 +85,7 @@ export const CriticalPathVisualization: React.FC<CriticalPathVisualizationProps>
                         ? "bg-rose-500 text-white"
                         : isCompleted
                         ? "bg-emerald-500 text-white"
-                        : "bg-indigo-500 text-white"
+                        : "bg-primary text-primary-foreground"
                     }`}
                   >
                     {idx + 1}

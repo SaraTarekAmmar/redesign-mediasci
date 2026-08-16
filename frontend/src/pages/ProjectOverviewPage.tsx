@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Loader2, Users, Calendar, Sparkles, KanbanSquare, CheckSquare2, ListTodo, Map as MapIcon, BarChart3, Layers, Rocket, PencilLine, Building2, ArrowRight, AlertTriangle, Target } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "../components/common/PageHeader";
 import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
 import { useStore, lookups } from "../store/useStore";
 import { api, getActiveProjectId } from "../lib/api";
 import { cn } from "../lib/utils";
@@ -46,6 +48,7 @@ interface ProjectDetail {
   issues_count?: number;
   members_count?: number;
   sprints_count?: number;
+  contractual_terms?: string | null;
 }
 
 interface BriefingItem {
@@ -212,6 +215,10 @@ function ProjectOverviewPage({ projectId }: Props) {
   const { t } = useTranslation();
   const { hasRole } = useAuth();
   const canAdministerProject = hasRole("super-admin", "admin");
+  const isSuperAdmin = hasRole("super-admin");
+  const [termsDraft, setTermsDraft] = useState("");
+  const [termsEditing, setTermsEditing] = useState(false);
+  const [termsSaving, setTermsSaving] = useState(false);
   const activeProjectId = getActiveProjectId();
   const id = projectId ?? activeProjectId ?? "";
   const issues = useStore((s) => s.issues);
@@ -256,6 +263,7 @@ function ProjectOverviewPage({ projectId }: Props) {
         }
 
         setDetail(d);
+        setTermsDraft(d.contractual_terms ?? "");
         setClients(Array.isArray(c) ? c : []);
         setBriefing(b ?? buildFallbackBriefing(d, s, t));
         setStats(s);
@@ -409,8 +417,8 @@ function ProjectOverviewPage({ projectId }: Props) {
         <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
           <PerformanceChip
             label={t("projectOverview.health", { defaultValue: "Health" })}
-            value={healthState}
-            note={`${performanceSummary?.health.score ?? 0}/100`}
+            value={`${performanceSummary?.health.score ?? 0}/100`}
+            note={t("projectOverview.healthScore", { defaultValue: "Overall health score" })}
             tone={healthTone}
           />
           <PerformanceChip
@@ -492,6 +500,57 @@ function ProjectOverviewPage({ projectId }: Props) {
             tertiaryValue={performanceComparison ? formatVarianceDays(performanceComparison.dates.variance_days) : "—"}
           />
         </div>
+
+        {/* Contractual Terms — manual entry, super-admin only, never auto-generated */}
+        {isSuperAdmin && (
+          <div className="rounded-xl border border-border bg-card p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-bold text-foreground">{t("projectOverview.contractualTerms", { defaultValue: "Contractual Terms" })}</h2>
+              {!termsEditing ? (
+                <Button size="sm" variant="outline" onClick={() => setTermsEditing(true)}>
+                  {t("app.edit", { defaultValue: "Edit" })}
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" disabled={termsSaving} onClick={() => { setTermsDraft(detail?.contractual_terms ?? ""); setTermsEditing(false); }}>
+                    {t("app.cancel", { defaultValue: "Cancel" })}
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={termsSaving}
+                    onClick={async () => {
+                      setTermsSaving(true);
+                      try {
+                        await api.put(`/projects/${id}/contractual-terms`, { contractual_terms: termsDraft });
+                        setDetail((prev) => (prev ? { ...prev, contractual_terms: termsDraft } : prev));
+                        setTermsEditing(false);
+                      } catch {
+                        toast.error(t("projectOverview.contractualTermsSaveFailed", { defaultValue: "Failed to save contractual terms." }));
+                      } finally {
+                        setTermsSaving(false);
+                      }
+                    }}
+                  >
+                    {termsSaving ? t("app.saving", { defaultValue: "Saving…" }) : t("app.save", { defaultValue: "Save" })}
+                  </Button>
+                </div>
+              )}
+            </div>
+            {termsEditing ? (
+              <textarea
+                value={termsDraft}
+                onChange={(e) => setTermsDraft(e.target.value)}
+                rows={5}
+                className="mt-3 w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground outline-none focus:border-primary"
+                placeholder={t("projectOverview.contractualTermsPlaceholder", { defaultValue: "Enter contract terms, SLAs, payment schedule…" })}
+              />
+            ) : (
+              <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
+                {detail?.contractual_terms || t("projectOverview.contractualTermsEmpty", { defaultValue: "No contractual terms recorded yet." })}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* AI Briefing */}
         {briefing && (

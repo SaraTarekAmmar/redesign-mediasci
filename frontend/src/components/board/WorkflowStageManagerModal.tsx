@@ -266,7 +266,7 @@ export function WorkflowStageManagerModal({ open, onOpenChange, projectId, onSta
                             </Button>
                           </div>
                           <div className="flex items-center gap-1.5 mt-0.5 text-[10px]">
-                            {stg.is_initial && <span className="px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-600 font-semibold">Initial</span>}
+                            {stg.is_initial && <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-semibold">Initial</span>}
                             {stg.is_final && <span className="px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-600 font-semibold">Final</span>}
                             <span className="text-muted-foreground font-mono">{stg.category}</span>
                           </div>

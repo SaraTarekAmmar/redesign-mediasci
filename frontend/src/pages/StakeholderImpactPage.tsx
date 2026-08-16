@@ -146,7 +146,7 @@ function StakeholderImpactPage() {
                 yLabel="Communication score"
                 points={charts.influenceComms.map((p) => ({
                   x: p.x, y: p.y, r: 4 + (p.r / bubbleMaxR) * 10, label: `${p.name} · ${p.interactions} interactions`,
-                  colorHex: p.influence === "High" && p.score < 40 ? "#f43f5e" : p.influence === "High" && p.score > 70 ? "#10b981" : "#0C66E4",
+                  colorHex: p.influence === "High" && p.score < 40 ? "#f43f5e" : p.influence === "High" && p.score > 70 ? "#10b981" : "var(--foreground)",
                 }))}
               />
             ) : <p className="text-sm text-muted-foreground">{t("stakeholders.analytics.noData")}</p>}
@@ -172,7 +172,7 @@ function StakeholderImpactPage() {
             {responseTimeRows.length ? (
               <div className="space-y-1">
                 {responseTimeRows.map((r) => (
-                  <BarRow key={r.name} label={r.name} value={Math.round(r.value)} max={responseMax} color="#0C66E4" />
+                  <BarRow key={r.name} label={r.name} value={Math.round(r.value)} max={responseMax} color="var(--foreground)" />
                 ))}
               </div>
             ) : <p className="text-sm text-muted-foreground">{t("stakeholders.analytics.noData")}</p>}
@@ -198,7 +198,7 @@ function StakeholderImpactPage() {
             )}
           </Panel>
 
-          <Panel title={t("stakeholders.impact.insights")} action={<Lightbulb className="h-4 w-4 text-blue-500" />}>
+          <Panel title={t("stakeholders.impact.insights")} action={<Lightbulb className="h-4 w-4 text-primary" />}>
             {insights.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("stakeholders.impact.noInsights")}</p>
             ) : (
@@ -213,7 +213,7 @@ function StakeholderImpactPage() {
             )}
           </Panel>
 
-          <Panel title={t("stakeholders.impact.recommendations")} action={<Sparkles className="h-4 w-4 text-purple-500" />}>
+          <Panel title={t("stakeholders.impact.recommendations")} action={<Sparkles className="h-4 w-4 text-teal-500" />}>
             {recommendations.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("stakeholders.impact.noRecommendations")}</p>
             ) : (
@@ -222,7 +222,7 @@ function StakeholderImpactPage() {
                   <div key={i} className="rounded-lg border border-border bg-muted/20 p-2.5 text-xs">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-foreground">{r.name}</p>
-                      <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-[10px] font-medium text-purple-600 dark:text-purple-400">{r.quadrant}</span>
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">{r.quadrant}</span>
                     </div>
                     <p className="mt-1 text-muted-foreground">{r.rec}</p>
                   </div>

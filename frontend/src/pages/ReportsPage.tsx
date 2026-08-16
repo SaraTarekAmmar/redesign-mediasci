@@ -109,9 +109,12 @@ function ReportsPage() {
     const priority = task.priorityId ? lookups.priorityById[task.priorityId] : null;
     const assignee = getAssignee(task);
     const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : null;
-    const borderClass = accent === "blue" ? "border-blue-500/20" : "border-emerald-500/20";
-    const accentTextClass = accent === "blue" ? "text-blue-600 dark:text-blue-400" : "text-emerald-600 dark:text-emerald-400";
-    const chipClass = accent === "blue" ? "bg-blue-500/10 text-blue-700 dark:text-blue-300" : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+    {/* ponytail: "expected" track reads as a neutral baseline, "actual" (emerald) is the
+        one highlighted color — clearer hierarchy than two arbitrary hues, and drops the
+        off-brand blue. */}
+    const borderClass = accent === "blue" ? "border-foreground/15" : "border-emerald-500/20";
+    const accentTextClass = accent === "blue" ? "text-muted-foreground" : "text-emerald-600 dark:text-emerald-400";
+    const chipClass = accent === "blue" ? "bg-muted text-foreground" : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
 
     return (
       <div className={`pointer-events-none absolute inset-2 z-20 rounded-xl border bg-white p-4 shadow-xl ${borderClass}`}>
@@ -596,7 +599,7 @@ function ReportsPage() {
                 {isRTL ? "تصدير CSV" : "Export CSV"}
               </Button>
               <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportXlsx}>
-                <FileSpreadsheet className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <FileSpreadsheet className="h-4 w-4 text-muted-foreground" />
                 {isRTL ? "تصدير Excel" : "Export Excel"}
               </Button>
               <Button size="sm" className="gap-1.5" onClick={handleExportPdf}>
@@ -619,7 +622,7 @@ function ReportsPage() {
             }
             className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 cursor-pointer"
           >
-            <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+            <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-foreground/15 bg-muted text-foreground group-hover:scale-105 transition-transform">
               <Target className="h-4 w-4" />
             </span>
             <p className="text-xl font-bold text-foreground">{expectedPoints} pts</p>
@@ -676,7 +679,7 @@ function ReportsPage() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-4">
-            <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
+            <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-foreground/15 bg-muted text-foreground">
               <TrendingUp className="h-4 w-4" />
             </span>
             <p className="text-xl font-bold text-foreground">{spi} SPI</p>
@@ -731,7 +734,7 @@ function ReportsPage() {
               action={
                 <div className="flex items-center gap-4 text-xs">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded bg-blue-500/20 border border-blue-500/40" />
+                    <span className="h-3 w-3 rounded bg-foreground/15 border border-foreground/30" />
                     <span className="text-muted-foreground">{isRTL ? "مخطط" : "Planned"}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -765,7 +768,7 @@ function ReportsPage() {
                   {/* 1. EXPECTED PLAN TRACK */}
                   <div className="relative mb-8 pt-6">
                     <div className="flex items-center justify-between text-xs mb-3">
-                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      <span className="font-semibold text-muted-foreground">
                         {isRTL ? "الخطة المستهدفة" : "Expected Target Plan"}
                       </span>
                       <span className="text-muted-foreground text-[10px]">
@@ -774,12 +777,12 @@ function ReportsPage() {
                     </div>
                     
                     <div 
-                      className="relative w-full rounded bg-blue-500/5 border border-blue-500/10 flex items-center"
+                      className="relative w-full rounded bg-muted/40 border border-border flex items-center"
                       style={{ height: `${Math.max(1, maxExpectedLevel + 1) * 36 + 16 + (hoveredTask?.track === "expected" ? 96 : 0)}px` }}
                       onMouseLeave={() => hoveredTask?.track === "expected" && setHoveredTask(null)}
                     >
                       {/* Horizontal timeline track line */}
-                      <div className="absolute left-0 right-0 h-1 bg-blue-500/30 rounded-full mx-4" />
+                      <div className="absolute left-0 right-0 h-1 bg-foreground/20 rounded-full mx-4" />
 
                       {renderHoveredTaskCard("expected", "blue")}
                       

@@ -46,8 +46,8 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
     if (m.blocked) return "bg-rose-500 text-white border-rose-600 shadow-rose-500/20";
     if (m.status === "completed") return "bg-emerald-500 text-white border-emerald-600 shadow-emerald-500/20";
     if ((m.delayDays || 0) > 0) return "bg-amber-500 text-white border-amber-600 shadow-amber-500/20";
-    if (isPlannedRow) return "bg-blue-500 text-white border-blue-600 shadow-blue-500/20";
-    return "bg-indigo-500 text-white border-indigo-600 shadow-indigo-500/20";
+    if (isPlannedRow) return "bg-foreground/80 text-background border-foreground shadow-none";
+    return "bg-foreground/80 text-background border-foreground shadow-none";
   };
 
   return (
@@ -56,7 +56,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-500" />
+            <Calendar className="w-5 h-5 text-primary" />
             <h3 className="text-base font-semibold text-foreground">
               Planned vs Actual Timeline
             </h3>
@@ -70,7 +70,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Planned
+              <span className="w-2.5 h-2.5 rounded-full bg-foreground/50 inline-block" /> Planned
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Completed
@@ -114,7 +114,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
           {/* TOP ROW: Planned Timeline */}
           <div className="bg-muted/30 p-4 rounded-xl border border-border/60">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase flex items-center gap-1.5">
+              <span className="text-xs font-semibold text-muted-foreground tracking-wide uppercase flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" /> Baseline Planned Timeline
               </span>
               <span className="text-xs text-muted-foreground">
@@ -124,7 +124,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
 
             <div className="relative py-4">
               {/* Horizontal Connecting Line */}
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-blue-500/30 -translate-y-1/2" />
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-foreground/20 -translate-y-1/2" />
 
               {/* Milestone Nodes */}
               <div className="flex items-center justify-between relative z-10 gap-4">
@@ -134,7 +134,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
                     onClick={() => onSelectMilestone(m.id)}
                     onMouseEnter={() => setHoveredNode(m)}
                     onMouseLeave={() => setHoveredNode(null)}
-                    className="flex flex-col items-center group relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded-lg"
+                    className="flex flex-col items-center group relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
                   >
                     <div
                       className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs border-2 shadow-sm group-hover:scale-110 transition-all ${getNodeColor(
@@ -144,7 +144,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
                     >
                       ●
                     </div>
-                    <span className="text-xs font-medium text-foreground mt-2 max-w-[110px] truncate text-center group-hover:text-blue-500 transition-colors">
+                    <span className="text-xs font-medium text-foreground mt-2 max-w-[110px] truncate text-center group-hover:text-primary transition-colors">
                       {m.name}
                     </span>
                     <span className="text-[10px] text-muted-foreground mt-0.5">
@@ -179,7 +179,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
                     onClick={() => onSelectMilestone(m.id)}
                     onMouseEnter={() => setHoveredNode(m)}
                     onMouseLeave={() => setHoveredNode(null)}
-                    className="flex flex-col items-center group relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded-lg"
+                    className="flex flex-col items-center group relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
                   >
                     <div
                       className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs border-2 shadow-sm group-hover:scale-110 transition-all ${getNodeColor(
@@ -214,7 +214,7 @@ export const TimelineComparison: React.FC<TimelineComparisonProps> = ({
       {hoveredNode && (
         <div className="mt-4 p-3 rounded-lg border border-border bg-muted/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs animate-fade-in">
           <div className="flex items-center gap-2 min-w-0">
-            <Info className="w-4 h-4 text-blue-500 shrink-0" />
+            <Info className="w-4 h-4 text-primary shrink-0" />
             <span className="font-semibold text-foreground truncate">{hoveredNode.name}</span>
             {hoveredNode.ownerName && (
               <span className="text-muted-foreground truncate">· Owner: {hoveredNode.ownerName}</span>

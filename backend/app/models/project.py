@@ -52,6 +52,9 @@ class Project(Base):
     end_date = Column(Date)
     settings = Column(JSON)
     notes = Column(Text)
+    # Free-text contract terms, entered manually by a super-admin only (see the
+    # require_roles("super-admin") guard on the update endpoint) — never auto-generated.
+    contractual_terms = Column(Text)
     logo = Column(String(255))
     documents = Column(JSON)
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)

@@ -21,7 +21,7 @@ export const ResourceHeatmap: React.FC<ResourceHeatmapProps> = ({ resources }) =
     <div className="p-6 rounded-xl border border-border bg-card shadow-sm space-y-4 h-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <UsersRound className="w-5 h-5 text-indigo-500" />
+          <UsersRound className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">
             Resource Utilization & Capacity Heatmap
           </h3>

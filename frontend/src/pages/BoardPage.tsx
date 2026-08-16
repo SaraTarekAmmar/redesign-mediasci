@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import type { SavedViewConfig } from "../hooks/useSavedViews";
 import { useProjectCatalogStore } from "../store/useProjectCatalog";
 import { useAuth } from "../hooks/useAuth";
+import { KanbanSquare } from "lucide-react";
 
 function BoardPage() {
   const { t, i18n } = useTranslation();
@@ -243,16 +244,21 @@ function BoardPage() {
   return (
     <div className="flex h-full flex-col" dir={i18n.dir()}>
       <div className="border-b border-border px-5 py-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">
-              {sprint?.name} {t("board.title")}
-            </h1>
-            {sprint?.goal && (
-              <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Target className="h-3.5 w-3.5" /> {sprint.goal}
-              </p>
-            )}
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-primary text-primary-foreground">
+              <KanbanSquare className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-[1.4rem] font-bold tracking-tight text-foreground leading-tight">
+                {sprint?.name} {t("board.title")}
+              </h1>
+              {sprint?.goal && (
+                <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Target className="h-3.5 w-3.5" /> {sprint.goal}
+                </p>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3 text-sm">
             {sprint?.startDate && sprint?.endDate && (

@@ -19,7 +19,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ events }) => {
     <div className="p-6 rounded-xl border border-border bg-card shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="w-5 h-5 text-indigo-500" />
+          <Activity className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">
             Planning Audit Activity Feed
           </h3>
@@ -35,7 +35,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ events }) => {
       <div className="space-y-3 relative pl-4 border-l border-border">
         {events.slice(0, 6).map((e) => (
           <div key={e.id} className="relative group">
-            <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-indigo-500 ring-4 ring-card" />
+            <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-card" />
             <div className="text-xs">
               <span className="font-semibold text-foreground capitalize">
                 {e.action.replace("_", " ")}

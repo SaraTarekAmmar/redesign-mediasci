@@ -52,7 +52,7 @@ const FALLBACK_GLOBAL_SPRINTS: GlobalSprint[] = [
 
 const STATUS_STYLE: Record<GlobalSprint["status"], string> = {
   active: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-  planning: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400",
+  planning: "bg-primary/15 text-primary",
   completed: "bg-muted text-muted-foreground",
 };
 

@@ -83,7 +83,7 @@ export function VelocityChart({ sprints, average }: VelocityProps) {
                 width={barW}
                 height={plannedH}
                 rx={3}
-                className="fill-blue-500/30 hover:fill-blue-500/50 transition-colors cursor-pointer"
+                className="fill-foreground/25 hover:fill-foreground/40 transition-colors cursor-pointer"
                 onMouseEnter={() => setHoveredBar({ sprint: s, type: "planned", x: cx - barW, y: plannedY })}
                 onMouseLeave={() => setHoveredBar(null)}
               />
@@ -117,7 +117,7 @@ export function VelocityChart({ sprints, average }: VelocityProps) {
           }}
         >
           <p className="font-semibold text-foreground">{hoveredBar.sprint.name}</p>
-          <p className={hoveredBar.type === "planned" ? "text-blue-500" : "text-emerald-500"}>
+          <p className={hoveredBar.type === "planned" ? "text-foreground" : "text-emerald-500"}>
             {hoveredBar.type === "planned" ? "Planned" : "Completed"}: {hoveredBar.type === "planned" ? hoveredBar.sprint.planned : hoveredBar.sprint.completed} pts
           </p>
           <p className="text-muted-foreground text-[10px]">
@@ -129,7 +129,7 @@ export function VelocityChart({ sprints, average }: VelocityProps) {
       {/* Legend */}
       <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-blue-500/30" /> Planned
+          <span className="h-2.5 w-2.5 rounded-sm bg-foreground/25" /> Planned
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" /> Completed

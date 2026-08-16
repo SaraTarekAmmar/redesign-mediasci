@@ -14,6 +14,8 @@ class UserRole(str, enum.Enum):
     HR_MANAGER = "hr-manager"
     REVIEWER = "reviewer"
     EXECUTIVE = "executive"
+    PARTNER = "partner"
+    CLIENT = "client"
 
     @property
     def label(self) -> str:

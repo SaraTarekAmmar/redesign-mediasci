@@ -202,7 +202,7 @@ function ProjectCreatePage() {
     key: "",
     description: "",
     type: "scrum",
-    classification: "postsale" as "postsale" | "presale",
+    classification: "postsale" as "postsale" | "presale" | "rnd",
     presale_type: "",
     category: "",
     client_id: "",
@@ -368,13 +368,14 @@ function ProjectCreatePage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("projectCreate.classification")} *</Label>
-              <Select value={form.classification} onValueChange={(value) => setField("classification", value as "postsale" | "presale")}>
+              <Select value={form.classification} onValueChange={(value) => setField("classification", value as "postsale" | "presale" | "rnd")}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="presale">{t("projects.presale")}</SelectItem>
                   <SelectItem value="postsale">{t("settings.flowPostsale")}</SelectItem>
+                  <SelectItem value="rnd">{t("projects.rnd", { defaultValue: "R&D" })}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

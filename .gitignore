@@ -12,6 +12,7 @@
 /backend/.env.backup
 /backend/.env.production
 /backend/*.db
+/backend/uploads/
 
 # Sandbox and local inspection artifacts
 /.agents/
@@ -36,6 +37,7 @@
 /backend/.phpunit.result.cache
 .phpunit.result.cache
 /.venv
+/backend/.venv
 /fastapi-backend/.venv
 /fastapi-backend/.pytest_cache
 /fastapi-backend/__pycache__

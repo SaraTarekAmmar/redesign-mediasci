@@ -30,6 +30,7 @@ const ProjectWorkforcePage = lazy(() => import("./pages/ProjectWorkforcePage"));
 const AdministrationPage = lazy(() => import("./pages/AdministrationPage"));
 const RequestsPage = lazy(() => import("./pages/RequestsPage"));
 const ProposalBuilderPage = lazy(() => import("./pages/ProposalBuilderPage"));
+const PresentationBankPage = lazy(() => import("./pages/PresentationBankPage"));
 const ValidationPage = lazy(() => import("./pages/ValidationPage"));
 const PriorityImpactPage = lazy(() => import("./pages/PriorityImpactPage"));
 const ChangeRequestsAllPage = lazy(() => import("./pages/ChangeRequestsAllPage"));
@@ -200,6 +201,7 @@ export function App() {
                     <Route path="/clients" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><ClientsPage /></ProtectedRoute>} />
                     <Route path="/requests" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><RequestsPage /></ProtectedRoute>} />
                     <Route path="/proposals" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><ProposalBuilderPage /></ProtectedRoute>} />
+                    <Route path="/presentations" element={<ProtectedRoute permissions={["view-documents"]}><PresentationBankPage /></ProtectedRoute>} />
                     <Route path="/validation" element={<ProtectedRoute permissions={["view-projects"]}><ValidationPage /></ProtectedRoute>} />
                     <Route path="/priority-impact" element={<ProtectedRoute permissions={["view-projects"]}><PriorityImpactPage /></ProtectedRoute>} />
                     <Route path="/board" element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />

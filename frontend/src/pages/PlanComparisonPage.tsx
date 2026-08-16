@@ -294,7 +294,7 @@ export const PlanComparisonPage: React.FC = () => {
   if (loading) {
     return (
       <div className="h-full overflow-y-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-4" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
         <p className="text-sm text-muted-foreground font-medium">
           Loading Executive Dashboard Intelligence...
         </p>
@@ -338,10 +338,10 @@ export const PlanComparisonPage: React.FC = () => {
   return (
     <div className="h-full overflow-y-auto p-6 max-w-[1600px] mx-auto space-y-6 animate-fade-in">
       {/* ── Executive Header Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-card via-card to-indigo-500/5 p-6 rounded-2xl border border-border shadow-sm animate-slide-up">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-card via-card to-primary/5 p-6 rounded-2xl border border-border shadow-sm animate-slide-up">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
               Executive Dashboard
             </span>
             <span className="text-xs text-muted-foreground">· Single Source of Truth</span>
@@ -359,7 +359,7 @@ export const PlanComparisonPage: React.FC = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2 text-sm font-semibold">
-                <Layers3 className="w-4 h-4 text-indigo-500" />
+                <Layers3 className="w-4 h-4 text-primary" />
                 {activeProject?.name || "Select Project"}
                 <ChevronDown className="w-4 h-4 ml-1 opacity-60" />
               </Button>

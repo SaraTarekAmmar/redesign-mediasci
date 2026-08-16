@@ -52,7 +52,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Health Score
           </span>
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+          <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
             <Sparkles className="w-4 h-4" />
           </div>
         </div>
@@ -82,7 +82,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Execution Progress
           </span>
-          <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+          <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
             <Target className="w-4 h-4" />
           </div>
         </div>
@@ -96,7 +96,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-blue-500 inline-block shrink-0" /> Planned {data.plannedProgressPct}%
+              <span className="w-2 h-2 rounded-full bg-foreground/30 inline-block shrink-0" /> Planned {data.plannedProgressPct}%
             </div>
             {data.actualProgressPct >= data.plannedProgressPct ? (
               <span className="text-emerald-600 dark:text-emerald-400 flex items-center font-medium text-xs mt-1">
@@ -119,7 +119,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Schedule Variance
           </span>
-          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+          <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
             <Clock3 className="w-4 h-4" />
           </div>
         </div>
@@ -144,7 +144,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Budget Variance
           </span>
-          <div className="p-2 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
+          <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
             <DollarSign className="w-4 h-4" />
           </div>
         </div>
@@ -167,7 +167,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Forecast Finish
           </span>
-          <div className="p-2 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
+          <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
             <CalendarDays className="w-4 h-4" />
           </div>
         </div>

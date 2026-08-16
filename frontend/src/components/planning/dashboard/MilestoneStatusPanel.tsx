@@ -19,7 +19,7 @@ export const MilestoneStatusPanel: React.FC<MilestoneStatusPanelProps> = ({
     <div className="p-6 rounded-xl border border-border bg-card shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-indigo-500" />
+          <Layers className="w-5 h-5 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">
             Milestone Execution Cards
           </h3>
@@ -39,7 +39,7 @@ export const MilestoneStatusPanel: React.FC<MilestoneStatusPanelProps> = ({
             <div
               key={m.id}
               onClick={() => onSelectMilestone(m.id)}
-              className="p-4 rounded-xl border border-border bg-card hover:border-indigo-500/50 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-4 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -68,7 +68,7 @@ export const MilestoneStatusPanel: React.FC<MilestoneStatusPanelProps> = ({
                   </span>
                 </div>
 
-                <h4 className="text-sm font-bold text-foreground group-hover:text-indigo-500 transition-colors line-clamp-1 mb-1">
+                <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1">
                   {m.name}
                 </h4>
 
@@ -94,7 +94,7 @@ export const MilestoneStatusPanel: React.FC<MilestoneStatusPanelProps> = ({
                           ? "bg-emerald-500"
                           : isBlocked
                           ? "bg-rose-500"
-                          : "bg-indigo-500"
+                          : "bg-primary"
                       }`}
                       style={{ width: `${Math.min(m.completionPct || 0, 100)}%` }}
                     />
@@ -103,10 +103,10 @@ export const MilestoneStatusPanel: React.FC<MilestoneStatusPanelProps> = ({
 
                 <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                    <Calendar className="w-3.5 h-3.5 text-primary" />
                     {formatShortDate(m.actualEnd || m.plannedEnd)}
                   </span>
-                  <span className="group-hover:translate-x-1 transition-transform text-indigo-500 font-medium flex items-center gap-0.5">
+                  <span className="group-hover:translate-x-1 transition-transform text-primary font-medium flex items-center gap-0.5">
                     Details <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>

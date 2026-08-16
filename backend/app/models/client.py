@@ -34,9 +34,13 @@ class ClientContact(Base):
     phone = Column(String(50))
     role = Column(String(100))
     is_primary = Column(Integer, default=0)
+    # Links this contact to a real app login (role="client") so they can sign in and see
+    # their own project(s) — see app/modules/projects/access.py for the scoping this powers.
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     client = relationship("Client", back_populates="contacts")
+    linked_user = relationship("User", foreign_keys=[user_id])
 
 
 class ClientRequest(Base):

@@ -410,13 +410,15 @@ aside .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   --border: oklch(0.22 0.015 75 / 0.22);
   --input: oklch(0.22 0.015 75 / 0.28);
   --ring: oklch(0.82 0.19 340);
-  --sidebar: oklch(0.985 0.005 95);
-  --sidebar-foreground: oklch(0.13 0.01 75);
+  /* ponytail: Gumroad's sidebar is solid black in both themes, not a themed surface —
+     match that instead of following the light/dark split like the rest of the shell. */
+  --sidebar: oklch(0.145 0.012 75);
+  --sidebar-foreground: oklch(0.96 0.008 95);
   --sidebar-primary: oklch(0.82 0.19 340);
-  --sidebar-primary-foreground: oklch(0.14 0.01 75);
-  --sidebar-accent: oklch(0.93 0.035 340);
-  --sidebar-accent-foreground: oklch(0.14 0.01 75);
-  --sidebar-border: oklch(0.22 0.015 75 / 0.22);
+  --sidebar-primary-foreground: oklch(0.16 0.01 75);
+  --sidebar-accent: oklch(0.25 0.04 340);
+  --sidebar-accent-foreground: oklch(0.98 0.008 95);
+  --sidebar-border: oklch(0.9 0.01 95 / 0.12);
   --sidebar-ring: oklch(0.82 0.19 340);
   --radius: 0.55rem;
 }
@@ -456,8 +458,12 @@ button:active { transform: scale(0.975); }
 /* Replace generic SaaS sheen with quiet editorial surfaces. */
 .rounded-xl, .rounded-2xl { border-radius: 0.65rem; }
 .rounded-lg { border-radius: 0.5rem; }
-.shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: 0 1px 0 rgba(16, 14, 10, 0.05), 0 10px 30px rgba(16, 14, 10, 0.045); }
-.dark .shadow, .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl, .dark .shadow-2xl { box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 14px 34px rgba(0,0,0,0.22); }
+/* ponytail: Gumroad cards read flat — a crisp 1px border carries the shape, not an
+   ambient drop shadow. Keep shadow only for genuinely floating layers (menus/dialogs). */
+.shadow, .shadow-sm, .shadow-md { box-shadow: 0 1px 2px rgba(16, 14, 10, 0.06); }
+.shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: 0 1px 0 rgba(16, 14, 10, 0.05), 0 10px 30px rgba(16, 14, 10, 0.09); }
+.dark .shadow, .dark .shadow-sm, .dark .shadow-md { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.dark .shadow-lg, .dark .shadow-xl, .dark .shadow-2xl { box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 14px 34px rgba(0,0,0,0.35); }
 
 /* Shared surfaces used by the page library. */
 .bg-card { background-color: var(--card); }
@@ -469,7 +475,11 @@ aside[role="navigation"] { border-right-width: 1px; }
 aside[role="navigation"] .text-xs { letter-spacing: 0.11em; text-transform: uppercase; font-weight: 650; }
 aside[role="navigation"] a { border-radius: 0.35rem; }
 aside[role="navigation"] a[aria-current="page"] { box-shadow: inset 3px 0 0 var(--primary); }
-header { backdrop-filter: blur(12px); }
+/* The sidebar is always dark (see --sidebar tokens), so text-muted-foreground — tuned for
+   the light/dark *content* surfaces — reads too dim against it. Rescope it locally. */
+aside[role="navigation"] .text-muted-foreground { color: var(--sidebar-foreground); opacity: 0.62; }
+aside[role="navigation"] .text-foreground,
+aside[role="navigation"] .hover\:text-sidebar-foreground:hover { color: var(--sidebar-foreground); opacity: 1; }
 
 /* Table-first dashboard language. */
 table { border-collapse: separate; border-spacing: 0; }

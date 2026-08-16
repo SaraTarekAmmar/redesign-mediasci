@@ -45,6 +45,7 @@ import {
   ArrowRight,
   X,
   Shield,
+  Presentation,
 } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/Dialog";
@@ -92,6 +93,7 @@ export const allGroups: { headingKey: string; items: NavItem[] }[] = [
       { to: "/clients", labelKey: "nav.clients", icon: Building2, roles: ["super-admin", "admin", "project-manager", "team-leader", "account-manager"] },
       { to: "/requests", labelKey: "nav.requests", icon: Inbox, roles: ["super-admin", "admin", "project-manager", "team-leader", "account-manager"] },
       { to: "/proposals", labelKey: "nav.proposals", icon: BookOpen, roles: ["super-admin", "admin", "project-manager", "team-leader", "account-manager"] },
+      { to: "/presentations", labelKey: "nav.presentations", icon: Presentation, roles: ["super-admin", "admin", "project-manager", "team-leader", "account-manager"] },
     ],
   },
   {
@@ -119,7 +121,7 @@ export const allGroups: { headingKey: string; items: NavItem[] }[] = [
     headingKey: "Insights",
     items: [
       { to: "/reports", labelKey: "nav.reports", icon: BarChart3, permissions: ["view-reports"] },
-      { to: "/analytics", labelKey: "nav.analytics", icon: LineChart },
+      { to: "/analytics", labelKey: "nav.analytics", icon: LineChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "account-manager", "department-manager", "hr-manager", "reviewer", "executive"] },
       { to: "/budget", labelKey: "nav.budget", icon: Wallet, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-budget"] },
     ],
   },

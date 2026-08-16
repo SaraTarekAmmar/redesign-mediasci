@@ -12,6 +12,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import Select, select, union
 from sqlalchemy.orm import Session
 
+from app.models.client import Client, ClientContact
 from app.models.partner import (
     Partner,
     PartnerMember,
@@ -148,6 +149,17 @@ def accessible_project_ids_query(user_id: int) -> Select:
         )
         .where(active_project, active_partner, active_partner_member)
     )
+    # A client contact linked to a login (ClientContact.user_id) sees every project billed
+    # to their client record — the client-portal counterpart to the partner branches above.
+    client_project = (
+        select(Project.id.label("project_id"))
+        .select_from(
+            ClientContact.__table__
+            .join(Client, Client.id == ClientContact.client_id)
+            .join(Project, Project.client_id == Client.id)
+        )
+        .where(active_project, ClientContact.user_id == user_id)
+    )
 
     return union(
         owner,
@@ -160,6 +172,7 @@ def accessible_project_ids_query(user_id: int) -> Select:
         whole_partner,
         assigned_partner_team,
         direct_partner_member,
+        client_project,
     )
 
 

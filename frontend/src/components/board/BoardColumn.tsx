@@ -39,11 +39,11 @@ export const BoardColumn = React.memo(function BoardColumn({
   const activeColor = stageColor || status.color || "#6366F1";
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col rounded-xl border border-border/70 bg-card/95 p-4 shadow-lg shadow-black/5">
+    <div className="flex h-full w-80 shrink-0 flex-col rounded-xl border border-border bg-muted/40 p-3">
       <div className="mb-3 flex items-center justify-between px-1">
         <div className="flex items-center gap-2 min-w-0">
           <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: activeColor }} aria-hidden />
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground truncate">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-foreground truncate">
             {status.name}
           </h3>
           <span
@@ -103,9 +103,10 @@ export const BoardColumn = React.memo(function BoardColumn({
         {sorted.length === 0 && (
           <button
             onClick={() => onAdd(status.id)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-ring/40 hover:text-foreground"
+            className="group flex w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border py-7 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
           >
-            <Plus className="h-4 w-4" /> {t("app.addIssue")}
+            <Plus className="h-5 w-5 transition-transform group-hover:scale-110" />
+            <span className="text-xs font-medium">{t("app.addIssue")}</span>
           </button>
         )}
       </div>

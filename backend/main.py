@@ -8,6 +8,7 @@ Clean Architecture:
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -35,6 +36,7 @@ from app.modules.milestones.router import router as milestones_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.partners.router import router as partners_router
 from app.modules.planning.router import router as planning_router
+from app.modules.presentations.router import router as presentations_router
 from app.modules.projects.router import router as projects_router
 from app.modules.proposals.router import router as proposals_router
 from app.modules.quality.router import router as quality_router
@@ -69,6 +71,12 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# Uploaded documents/presentations were stored on disk but never actually served — every
+# download link in the app 404'd. Mount the upload dir (not the project root) so nothing
+# else on disk is exposed.
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+app.mount("/storage", StaticFiles(directory=settings.UPLOAD_DIR), name="storage")
 
 # ── Middleware Registration ──────────────────────────────────────────────────
 
@@ -128,6 +136,7 @@ routers = [
     quality_router,
     stakeholders_router,
     documents_router,
+    presentations_router,
     budget_router,
     workflows_router,
     analytics_router,

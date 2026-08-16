@@ -44,7 +44,7 @@ export const DeliverableAnalytics: React.FC<DeliverableAnalyticsProps> = ({
             strokeWidth={18}
             segments={[
               { value: summary.completed, colorClass: "stroke-emerald-500", label: "Completed" },
-              { value: summary.inProgress, colorClass: "stroke-blue-500", label: "In Progress" },
+              { value: summary.inProgress, colorClass: "stroke-primary", label: "In Progress" },
               { value: summary.blocked, colorClass: "stroke-rose-500", label: "Blocked" },
               { value: pending, colorClass: "stroke-muted-foreground/40", label: "Pending" },
             ]}
@@ -70,12 +70,12 @@ export const DeliverableAnalytics: React.FC<DeliverableAnalyticsProps> = ({
           </div>
 
           {/* 2. In Progress */}
-          <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 transition-transform hover:-translate-y-0.5">
+          <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 transition-transform hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-muted-foreground">In Progress</span>
-              <Clock className="w-4 h-4 text-blue-500" />
+              <Clock className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-2xl font-bold text-primary">
               {summary.inProgress}
             </span>
             <p className="text-[11px] text-muted-foreground mt-1">

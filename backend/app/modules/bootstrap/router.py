@@ -150,8 +150,13 @@ def spa_bootstrap(
     primary_project = selected_projects[0] if selected_projects else None
     selected_ids = [item.id for item in selected_projects]
 
+    # Clients get full visibility into *their* project's work (issues, sprints, risks,
+    # documents, proposals...) but never our internal team roster or org structure — that's
+    # the "corporate" boundary. Everyone else who isn't a system admin sees the internal
+    # workforce assigned to their accessible project(s), same as before.
+    is_client_role = "client" in {str(r).lower() for r in role_names}
     internal_user_ids: set[int] = set()
-    if not is_system_admin(role_names):
+    if not is_system_admin(role_names) and not is_client_role:
         for selected_project_id in selected_ids:
             internal_user_ids.update(
                 int(entry["user_id"])
@@ -236,7 +241,7 @@ def spa_bootstrap(
             Stakeholder.projects.any(Project.id.in_(selected_ids or [-1]))
         )
     stakeholders = db.execute(stakeholders_query).scalars().all()
-    departments = db.execute(select(Department).order_by(Department.id)).scalars().all()
+    departments = [] if is_client_role else db.execute(select(Department).order_by(Department.id)).scalars().all()
     documents = db.execute(select(ProjectDocument).where(ProjectDocument.project_id.in_(selected_ids or [-1]))).scalars().all()
     validation_rules = db.execute(
         select(ValidationRule).where(ValidationRule.project_id.in_(selected_ids or [-1]))

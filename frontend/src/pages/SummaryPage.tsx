@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -29,6 +29,10 @@ import { PriorityIcon } from "../components/common/PriorityIcon";
 import { IssueTypeIcon } from "../components/common/IssueTypeIcon";
 import { Progress } from "../components/ui/Progress";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { PageHeader } from "../components/common/PageHeader";
+import { StatTile } from "../components/common/StatTile";
+import { SectionCard } from "../components/common/SectionCard";
+import { GettingStartedChecklist } from "../components/common/GettingStartedChecklist";
 import { useAuth } from "../hooks/useAuth";
 import { useProjectCatalogStore } from "../store/useProjectCatalog";
 import { api } from "../lib/api";
@@ -40,28 +44,9 @@ function StatCard({
 }: {
   label: string; value: string | number; icon: React.ReactNode; color?: string; delay?: string;
 }) {
-  const colorMap: Record<string, { bg: string; text: string; border: string }> = {
-    blue:   { bg: "bg-blue-50 dark:bg-blue-900/20",   text: "text-blue-600 dark:text-blue-400",   border: "border-blue-200 dark:border-blue-800" },
-    green:  { bg: "bg-green-50 dark:bg-green-900/20", text: "text-green-600 dark:text-green-400", border: "border-green-200 dark:border-green-800" },
-    yellow: { bg: "bg-amber-50 dark:bg-amber-900/20", text: "text-amber-600 dark:text-amber-400", border: "border-amber-200 dark:border-amber-800" },
-    red:    { bg: "bg-red-50 dark:bg-red-900/20",     text: "text-red-600 dark:text-red-400",     border: "border-red-200 dark:border-red-800" },
-    purple: { bg: "bg-purple-50 dark:bg-purple-900/20", text: "text-purple-600 dark:text-purple-400", border: "border-purple-200 dark:border-purple-800" },
-  };
-  const c = colorMap[color] ?? colorMap.blue;
   return (
-    <div className={`card-hover animate-slide-up ${delay} group rounded-xl border border-border bg-card p-5 relative overflow-hidden`}>
-      {/* colored left accent */}
-      <span className={`absolute start-0 top-3 bottom-3 w-[3px] rounded-full ${c.text.replace("text-", "bg-")} opacity-70`} />
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
-          <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value}</p>
-        </div>
-        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.text}`}>
-          {icon}
-        </div>
-       
-      </div>
+    <div className={`card-hover animate-slide-up ${delay}`}>
+      <StatTile label={label} value={value} icon={icon} color={color as any} />
     </div>
   );
 }
@@ -92,7 +77,9 @@ function SummaryPage() {
 
 function AdminLayout({ isRTL }: { isRTL: boolean }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const users = Array.isArray(D.users) ? D.users : [];
+  const sprints = Array.isArray(D.sprints) ? D.sprints : [];
   const [teams, setTeams] = useState<any[]>([]);
   const [teamsLoading, setTeamsLoading] = useState(true);
   const departments = Array.isArray(D.departments) ? D.departments : [];
@@ -100,6 +87,13 @@ function AdminLayout({ isRTL }: { isRTL: boolean }) {
   const statuses = Array.isArray(D.statuses) ? D.statuses : [];
   const doneIds = statuses.filter((s: any) => s && s.category === "done").map((s: any) => s.id);
   const openIssues = issues.filter((i: any) => i && !doneIds.includes(i.statusId ?? i.issue_status_id));
+
+  const gettingStartedSteps = [
+    { key: "project", label: "Create a project", hint: "Holds issues & sprints", done: projects.length > 0, icon: <FolderOpen className="h-4 w-4" />, onClick: () => navigate("/projects/new") },
+    { key: "team", label: "Invite your team", hint: "Add teammates", done: users.length > 1, icon: <UserPlus className="h-4 w-4" />, onClick: () => navigate("/users") },
+    { key: "issue", label: "Create an issue", hint: "First unit of work", done: issues.length > 0, icon: <ClipboardList className="h-4 w-4" />, onClick: () => navigate("/issues") },
+    { key: "sprint", label: "Start a sprint", hint: "Plan the work", done: sprints.length > 0, icon: <Clock3 className="h-4 w-4" />, onClick: () => navigate("/sprints") },
+  ];
 
   useEffect(() => {
     let cancelled = false;
@@ -122,21 +116,13 @@ function AdminLayout({ isRTL }: { isRTL: boolean }) {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-6">
-        <header className="rounded-[28px] border border-border/70 bg-card/95 p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Shield className="h-6 w-6" />
-            </span>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                {t("dashboard.platformOverview")}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                {t("summary.adminSubtitle")}
-              </p>
-            </div>
-          </div>
-        </header>
+        <PageHeader
+          icon={<Shield className="h-4 w-4" />}
+          title={t("dashboard.platformOverview")}
+          subtitle={t("summary.adminSubtitle")}
+        />
+
+        <GettingStartedChecklist steps={gettingStartedSteps} />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard delay="anim-delay-50"  label={t("dashboard.totalProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} color="blue" />
@@ -146,7 +132,7 @@ function AdminLayout({ isRTL }: { isRTL: boolean }) {
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,1fr)]">
-          <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-5">
             <h2 className="mb-4 text-lg font-semibold text-foreground">{t("dashboard.systemHealth")}</h2>
             <div className="space-y-3">
               {[
@@ -157,15 +143,15 @@ function AdminLayout({ isRTL }: { isRTL: boolean }) {
                 <div key={item.label} className="flex items-center justify-between rounded-lg border border-border/50 px-4 py-3">
                   <span className="text-sm text-muted-foreground">{item.label}</span>
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    item.color === "green" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                    item.color === "green" ? "bg-emerald-600/10 text-emerald-700 dark:text-emerald-400"
+                    : "bg-primary/10 text-primary"
                   }`}>{item.status}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-foreground">{t("summary.teams")}</h2>
               <Link
@@ -190,7 +176,7 @@ function AdminLayout({ isRTL }: { isRTL: boolean }) {
                 >
                   <div
                     className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                    style={{ backgroundColor: tm.color || "#6366f1" }}
+                    style={{ backgroundColor: tm.color || "var(--primary)" }}
                   >
                     {tm.name?.charAt(0)}
                   </div>
@@ -245,21 +231,11 @@ function PMLayout({ isRTL }: { isRTL: boolean }) {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-6">
-        <header className="rounded-[28px] border border-border/70 bg-card/95 p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Target className="h-6 w-6" />
-            </span>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                {t("summary.projectOverview")}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                {t("summary.pmSubtitle")}
-              </p>
-            </div>
-          </div>
-        </header>
+        <PageHeader
+          icon={<Target className="h-4 w-4" />}
+          title={t("summary.projectOverview")}
+          subtitle={t("summary.pmSubtitle")}
+        />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard label={t("dashboard.activeProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} color="blue" />
@@ -269,7 +245,7 @@ function PMLayout({ isRTL }: { isRTL: boolean }) {
         </section>
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,1fr)]">
-          <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-5">
             <h2 className="mb-4 text-lg font-semibold text-foreground">{t("summary.sprintHealth")}</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -289,7 +265,7 @@ function PMLayout({ isRTL }: { isRTL: boolean }) {
           </div>
 
           {criticalIssues.length > 0 && (
-            <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+            <div className="rounded-xl border border-border bg-card p-5">
               <h2 className="mb-4 text-lg font-semibold text-foreground">{t("dashboard.criticalIssues")}</h2>
               <div className="space-y-2">
                 {criticalIssues.slice(0, 5).map((issue: any) => {
@@ -313,7 +289,7 @@ function PMLayout({ isRTL }: { isRTL: boolean }) {
           )}
         </section>
 
-        <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-5">
           <h2 className="mb-4 text-lg font-semibold text-foreground">{t("summary.pendingActions")}</h2>
           <div className="grid gap-4 md:grid-cols-3">
             <Link to="/board" className="flex items-center gap-3 rounded-xl border border-border/50 p-4 hover:bg-muted/50">
@@ -365,21 +341,11 @@ function DeveloperLayout({ isRTL }: { isRTL: boolean }) {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-6">
-        <header className="rounded-[28px] border border-border/70 bg-card/95 p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <User className="h-6 w-6" />
-            </span>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                {t("summary.myWork")}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                {t("summary.devSubtitle")}
-              </p>
-            </div>
-          </div>
-        </header>
+        <PageHeader
+          icon={<User className="h-4 w-4" />}
+          title={t("summary.myWork")}
+          subtitle={t("summary.devSubtitle")}
+        />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard label={t("summary.assignedToMe")} value={myIssues.length} icon={<ClipboardList className="h-5 w-5" />} color="blue" />
@@ -389,7 +355,7 @@ function DeveloperLayout({ isRTL }: { isRTL: boolean }) {
         </section>
 
         {inProgress.length > 0 && (
-          <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-5">
             <h2 className="mb-4 text-lg font-semibold text-foreground">{t("dashboard.inProgress")}</h2>
             <div className="space-y-2">
               {inProgress.map((issue: any) => (
@@ -429,6 +395,7 @@ function DeveloperLayout({ isRTL }: { isRTL: boolean }) {
 
 function ViewerLayout({ isRTL }: { isRTL: boolean }) {
   const { t } = useTranslation();
+  const { isClient } = useAuth();
   const issues = D.issues ?? [];
   const statuses = D.statuses ?? [];
   const doneIds = statuses.filter((s: any) => s.category === "done").map((s: any) => s.id);
@@ -436,21 +403,11 @@ function ViewerLayout({ isRTL }: { isRTL: boolean }) {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-6">
-        <header className="rounded-[28px] border border-border/70 bg-card/95 p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Eye className="h-6 w-6" />
-            </span>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                {t("summary.overview")}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                {t("summary.viewerSubtitle")}
-              </p>
-            </div>
-          </div>
-        </header>
+        <PageHeader
+          icon={<Eye className="h-4 w-4" />}
+          title={isClient ? t("summary.clientOverview", { defaultValue: "Project Overview" }) : t("summary.overview")}
+          subtitle={isClient ? t("summary.clientSubtitle", { defaultValue: "Live status for your project." }) : t("summary.viewerSubtitle")}
+        />
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard label={t("dashboard.totalProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} color="blue" />
@@ -459,11 +416,11 @@ function ViewerLayout({ isRTL }: { isRTL: boolean }) {
           <StatCard label={t("summary.remaining")} value={issues.filter((i: any) => !doneIds.includes(i.issue_status_id)).length} icon={<Hourglass className="h-5 w-5" />} color="purple" />
         </section>
 
-        <div className="rounded-2xl border border-border/70 bg-card/95 p-5 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-5">
           <h2 className="mb-4 text-lg font-semibold text-foreground">{t("summary.projects")}</h2>
           <div className="space-y-2">
             {projects.map((p: any) => {
-              const projectIssues = issues.filter((i: any) => String(i.project_id) === String(p.id));
+              const projectIssues = issues.filter((i: any) => String(i.projectId ?? i.project_id) === String(p.id));
               const done = projectIssues.filter((i: any) => doneIds.includes(i.issue_status_id)).length;
               const pct = projectIssues.length > 0 ? Math.round((done / projectIssues.length) * 100) : 0;
               return (
@@ -485,11 +442,13 @@ function ViewerLayout({ isRTL }: { isRTL: boolean }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-dashed border-border/70 p-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            {t("summary.viewerFullAccess")}
-          </p>
-        </div>
+        {!isClient && (
+          <div className="rounded-2xl border border-dashed border-border/70 p-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {t("summary.viewerFullAccess")}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
