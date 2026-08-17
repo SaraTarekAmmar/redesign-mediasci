@@ -41,6 +41,8 @@ ROLE_DISPLAY_LABELS = {
     "hr-manager": "HR Manager",
     "reviewer": "Reviewer",
     "executive": "Executive",
+    "partner": "Partner",
+    "client": "Client",
 }
 
 
