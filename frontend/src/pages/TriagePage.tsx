@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Inbox, XCircle, MessageSquare, Filter, Eye, MoveRight, RotateCcw } from "lucide-react";
 import { api } from "../lib/api";
 import { useStore } from "../store/useStore";
@@ -175,7 +176,7 @@ function TriagePage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("triage.title")}
-          subtitle={t("triage.awaitingTriage", { count: issues.length })}
+          subtitle={`Review new work, add context, assign ownership, and move ready items into delivery. · ${t("triage.awaitingTriage", { count: issues.length })}`}
           actions={
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -277,7 +278,8 @@ function TriagePage() {
                         </svg>
                       </div>
                       <p className="text-base font-semibold text-foreground">{t("triage.noIssues", { defaultValue: "All caught up!" })}</p>
-                      <p className="text-sm text-muted-foreground">{t("triage.allCaughtUpHint")}</p>
+                      <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{t("triage.allCaughtUpHint")}</p>
+                      <div className="mt-2 flex flex-wrap justify-center gap-2"><Link to="/issues" className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">Review all issues</Link><Link to="/requests" className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted">Open requests</Link></div>
                     </div>
                   </td>
                 </tr>
