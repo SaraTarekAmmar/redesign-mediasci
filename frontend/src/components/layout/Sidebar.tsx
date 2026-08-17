@@ -15,7 +15,6 @@ import {
   UsersRound,
   Clock,
   FileText,
-  Wallet,
   Building2,
   Repeat,
   Contact,
@@ -128,7 +127,6 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
     items: [
       { to: "/reports", labelKey: "nav.reports", icon: BarChart3, permissions: ["view-reports"] },
       { to: "/analytics", labelKey: "nav.analytics", icon: LineChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "account-manager", "department-manager", "hr-manager", "reviewer", "executive"] },
-      { to: "/budget", labelKey: "nav.budget", icon: Wallet, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-budget"] },
     ],
   },
   {

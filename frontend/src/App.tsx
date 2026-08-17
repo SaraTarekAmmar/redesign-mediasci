@@ -40,7 +40,6 @@ const ResourcesPage = lazy(() => import("./pages/ResourcesPage"));
 const TimeLogsPage = lazy(() => import("./pages/TimeLogsPage"));
 const StakeholdersPage = lazy(() => import("./pages/StakeholdersPage"));
 const DocumentsPage = lazy(() => import("./pages/DocumentsPage"));
-const BudgetPage = lazy(() => import("./pages/BudgetPage"));
 const DepartmentsPage = lazy(() => import("./pages/DepartmentsPage"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
 const TeamTasksPage = lazy(() => import("./pages/TeamTasksPage"));
@@ -228,7 +227,6 @@ export function App() {
                     <Route path="/stakeholders/:id" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderDetailPage /></ProtectedRoute>} />
                     <Route path="/documents" element={<ProtectedRoute permissions={["view-documents"]}><DocumentsPage /></ProtectedRoute>} />
                     <Route path="/reports" element={<ProtectedRoute permissions={["view-reports"]}><ReportsPage /></ProtectedRoute>} />
-                    <Route path="/budget" element={<ProtectedRoute permissions={["manage-budget"]}><BudgetPage /></ProtectedRoute>} />
                     <Route path="/team" element={<ProtectedRoute permissions={["view-teams"]}><TeamPage /></ProtectedRoute>} />
                     <Route path="/teams" element={<ProtectedRoute permissions={["view-teams"]}><TeamsPage /></ProtectedRoute>} />
                     <Route path="/team-tasks" element={<ProtectedRoute permissions={["view-resources"]}><TeamTasksPage /></ProtectedRoute>} />

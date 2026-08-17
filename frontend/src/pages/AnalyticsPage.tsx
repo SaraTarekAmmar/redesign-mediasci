@@ -136,7 +136,6 @@ function AnalyticsPage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("analytics.title")}
-          subtitle={t("analytics.subtitle")}
           actions={
             <div className="flex flex-wrap items-center gap-2">
               <Select value={mode} onValueChange={(v) => setMode(v as "user" | "project")}>
@@ -203,8 +202,13 @@ function AnalyticsPage() {
                     <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
                       <BarChart3 className="h-4 w-4" /> {t("analytics.dailyProductivity")}
                     </h2>
-                    <p className="mb-4 text-xs text-muted-foreground">{t("analytics.dailyProductivityHint")}</p>
-                    <MiniBars data={stats.chart_data.map((d) => ({ label: d.date.slice(5), value: d.count }))} max={chartMax} />
+                    {stats.chart_data.length > 0 ? (
+                      <MiniBars data={stats.chart_data.map((d) => ({ label: d.date.slice(5), value: d.count }))} max={chartMax} />
+                    ) : (
+                      <div className="flex min-h-32 items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 px-4">
+                        <span className="text-xs text-muted-foreground">No completed work in this period</span>
+                      </div>
+                    )}
                   </div>
                   <div className="rounded-xl border border-border bg-card p-5">
                     <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -233,9 +237,15 @@ function AnalyticsPage() {
                     <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-foreground">
                       <Activity className="h-4 w-4" /> {t("analytics.velocity")}
                     </h2>
-                    <p className="mb-4 text-xs text-muted-foreground">{t("analytics.velocityHint")}</p>
-                    <div className="text-sm text-muted-foreground">
-                      {t("analytics.avgResolution", { days: stats.speed_avg_days })} · {t("analytics.efficiencyRate", { rate: stats.efficiency_rate })}
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div className="rounded-lg border border-border bg-muted/20 px-3 py-2.5">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Resolution</p>
+                        <p className="mt-1 text-lg font-semibold text-foreground">{stats.speed_avg_days}d</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-muted/20 px-3 py-2.5">
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">On time</p>
+                        <p className="mt-1 text-lg font-semibold text-foreground">{stats.efficiency_rate}%</p>
+                      </div>
                     </div>
                   </div>
                   <div className="rounded-xl border border-border bg-card p-5">
@@ -276,7 +286,7 @@ function AnalyticsPage() {
                     <span className="shrink-0 text-xs text-muted-foreground">{log.time_ago}</span>
                   </div>
                 ))}
-                {feed.length === 0 && <p className="py-6 text-center text-xs text-muted-foreground">{t("analytics.noActivity")}</p>}
+                {feed.length === 0 && <p className="rounded-lg border border-dashed border-border bg-muted/20 py-4 text-center text-xs text-muted-foreground">{t("analytics.noActivity")}</p>}
               </div>
             </div>
           </div>

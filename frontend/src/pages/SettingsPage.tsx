@@ -92,18 +92,6 @@ const defaultCalendarDraft: CalendarDraft = {
   default_task_duration: 1
 };
 
-type BudgetSettingsDraft = {
-  budget: number;
-  currency: string;
-  enable_time_tracking: boolean;
-};
-
-const defaultBudgetSettingsDraft: BudgetSettingsDraft = {
-  budget: 0,
-  currency: "USD",
-  enable_time_tracking: false
-};
-
 interface IntegrationStatus {
   connected: boolean;
   [key: string]: any;
@@ -144,7 +132,7 @@ function SettingsPage() {
   const storeActiveProject = useProjectCatalogStore((s) => s.activeProject);
   const activeProjectId = String(storeActiveProject?.id ?? getActiveProjectId() ?? "");
   const [activeTab, setActiveTab] = useState<
-    "general" | "board" | "calendar" | "team" | "budget" | "integrations" | "danger"
+    "general" | "board" | "calendar" | "team" | "integrations" | "danger"
   >("general");
 
   const [project, setProject] = useState<ProjectContext>({
@@ -194,9 +182,6 @@ function SettingsPage() {
   const [calendarDraft, setCalendarDraft] = useState<CalendarDraft>(defaultCalendarDraft);
   const [savingCalendar, setSavingCalendar] = useState(false);
 
-  // Budget tab (baseline settings — the full ledger lives on the Budget page)
-  const [budgetSettingsDraft, setBudgetSettingsDraft] = useState<BudgetSettingsDraft>(defaultBudgetSettingsDraft);
-  const [savingBudgetSettings, setSavingBudgetSettings] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
 
   // Integrations tab
@@ -293,11 +278,6 @@ function SettingsPage() {
           auto_schedule: Boolean(data.auto_schedule),
           default_task_duration: data.default_task_duration ?? 1
         });
-        setBudgetSettingsDraft({
-          budget: Number(data.budget ?? 0),
-          currency: data.currency ?? "USD",
-          enable_time_tracking: Boolean(data.enable_time_tracking)
-        });
         if (data.integrations) {
           setIntegrations((current) => ({ ...current, ...data.integrations }));
           if (data.integrations.slack?.webhook_url) {
@@ -314,7 +294,7 @@ function SettingsPage() {
           }
         }
       })
-      .catch((error: any) => { if (live) toast.error(error?.message ?? "Could not load calendar and budget settings."); });
+      .catch((error: any) => { if (live) toast.error(error?.message ?? "Could not load calendar settings."); });
     return () => { live = false; };
   }, [activeProjectId]);
 
@@ -559,18 +539,6 @@ function SettingsPage() {
     }));
   }
 
-  async function handleSaveBudgetSettings() {
-    setSavingBudgetSettings(true);
-    try {
-      await api.put(`/projects/${project.id}/settings`, { section: "budget", ...budgetSettingsDraft });
-      toast.success(t("settings.saveBudget"));
-    } catch (error: any) {
-      toast.error(error?.message ?? t("settings.couldNotSaveBudget"));
-    } finally {
-      setSavingBudgetSettings(false);
-    }
-  }
-
   async function handleArchive() {
     setArchiving(true);
     try {
@@ -779,7 +747,6 @@ function SettingsPage() {
             <TabsTrigger value="board">{t("settings.tabBoard")}</TabsTrigger>
             <TabsTrigger value="calendar">{t("settings.tabCalendar")}</TabsTrigger>
             <TabsTrigger value="team">{t("settings.tabTeam")}</TabsTrigger>
-            <TabsTrigger value="budget">{t("settings.tabBudget")}</TabsTrigger>
             <TabsTrigger value="integrations">{t("settings.tabIntegrations")}</TabsTrigger>
             <TabsTrigger value="danger" className="text-destructive">{t("settings.tabDanger")}</TabsTrigger>
           </TabsList>
@@ -1323,68 +1290,6 @@ function SettingsPage() {
                     </Button>
                   </div>
                 ))}
-              </div>
-            </section>
-          </TabsContent>
-
-          {/* ───────── Budget ───────── */}
-          <TabsContent value="budget">
-            <section className="rounded-xl border border-border bg-card p-5">
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-sm font-semibold text-foreground">{t("settings.budgetBaseline")}</h2>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{t("settings.budgetBaselineDesc")}</p>
-                </div>
-                <Link
-                  to="/budget"
-                  className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground hover:bg-accent/40"
-                >
-                  {t("settings.openLedger")} →
-                </Link>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <LabelUI htmlFor="baseline-budget">{t("settings.baselineBudget")}</LabelUI>
-                  <Input
-                    id="baseline-budget"
-                    type="number"
-                    min={0}
-                    value={budgetSettingsDraft.budget}
-                    onChange={(e) => setBudgetSettingsDraft((cur) => ({ ...cur, budget: Number(e.target.value) || 0 }))}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <LabelUI htmlFor="baseline-currency">{t("settings.currency")}</LabelUI>
-                  <Select
-                    value={budgetSettingsDraft.currency}
-                    onValueChange={(v) => setBudgetSettingsDraft((cur) => ({ ...cur, currency: v }))}
-                  >
-                    <SelectTrigger id="baseline-currency" className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["USD", "EUR", "GBP", "JPY", "CAD", "AUD"].map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <label className="mt-4 flex items-center gap-3 rounded-lg border border-border px-3 py-2">
-                <input
-                  type="checkbox"
-                  checked={budgetSettingsDraft.enable_time_tracking}
-                  onChange={(e) => setBudgetSettingsDraft((cur) => ({ ...cur, enable_time_tracking: e.target.checked }))}
-                />
-                <span>
-                  <span className="block text-sm font-medium text-foreground">{t("settings.timeTracking")}</span>
-                  <span className="block text-xs text-muted-foreground">{t("settings.timeTrackingDesc")}</span>
-                </span>
-              </label>
-              <div className="mt-4 flex justify-end">
-                <Button onClick={handleSaveBudgetSettings} disabled={savingBudgetSettings}>
-                  {savingBudgetSettings ? "Saving..." : t("settings.saveBudget")}
-                </Button>
               </div>
             </section>
           </TabsContent>

@@ -83,7 +83,7 @@ export function CreateIssueDialog({
 
   const isProjectContext = (pathname: string) => {
     if (pathname.startsWith("/projects/") && pathname !== "/projects/new") return true;
-    const projectPaths = ["/issues", "/board", "/backlog", "/sprints", "/roadmap", "/gantt", "/scope", "/validation", "/custom-fields", "/budget"];
+    const projectPaths = ["/issues", "/board", "/backlog", "/sprints", "/roadmap", "/gantt", "/scope", "/validation", "/custom-fields"];
     return projectPaths.includes(pathname);
   };
 
