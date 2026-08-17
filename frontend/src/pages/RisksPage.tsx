@@ -227,8 +227,6 @@ function RisksPage() {
                       </div>
                       <p className="text-sm font-semibold text-foreground">{t("risks.noRisks", { defaultValue: "No risks logged" })}</p>
                       <p className="max-w-md text-xs leading-relaxed text-muted-foreground">{t("risks.emptyHint")}</p>
-                      <div className="mt-2 grid max-w-lg gap-2 text-left sm:grid-cols-3"><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Log it</p><p className="mt-1 text-[11px] text-muted-foreground">Describe the uncertainty and category.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Score it</p><p className="mt-1 text-[11px] text-muted-foreground">Rate probability and impact from 1 to 5.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Own it</p><p className="mt-1 text-[11px] text-muted-foreground">Assign a response plan and review date.</p></div></div>
-                      <Button size="sm" className="mt-2" onClick={openCreate}><Plus className="mr-1.5 h-4 w-4" />{t("risks.logRisk")}</Button>
                     </div>
                   </td></tr>}
                 </tbody>
