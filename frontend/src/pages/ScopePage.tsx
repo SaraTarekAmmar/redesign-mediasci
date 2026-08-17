@@ -122,6 +122,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
   const [deliverableDraft, setDeliverableDraft] = useState<Deliverable>(blankDeliverable());
 
   const [saving, setSaving] = useState(false);
+  const [scopeDirty, setScopeDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ type: string; item: any } | null>(null);
 
   // Fetch all scope data
@@ -138,6 +139,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
           setScopeId(scopeRes.scope?.id ?? "");
           setScopeDescription(scopeRes.scope?.description ?? "");
           setScopeStatus(scopeRes.scope?.status === "active" ? "active" : "draft");
+          setScopeDirty(false);
           setObjectives(scopeRes.objectives ?? []);
           setDeliverables(scopeRes.deliverables ?? []);
         }
@@ -286,11 +288,15 @@ function ScopePage({ projectId: projectIdProp }: Props) {
 
   // ── Scope save ──
   const saveScope = async () => {
+    setSaving(true);
     try {
       await api.put(`/projects/${projectId}/scope`, { description: scopeDescription, status: scopeStatus });
+      setScopeDirty(false);
       toast.success(t("scope.scopeSaved"));
     } catch {
       toast.error(t("scope.scopeSaveFailed"));
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -332,7 +338,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("scope.title")}
-          subtitle={`${activeProject?.name ?? ""} · ${objectives.length} ${t("scope.objectives").toLowerCase()} · ${deliverables.length} ${t("scope.deliverables").toLowerCase()}`}
+          subtitle={`${activeProject?.name ?? ""} · Define the boundary, then turn it into outcomes and delivery work.`}
           actions={
             <button
               onClick={toggleScopeStatus}
@@ -348,49 +354,53 @@ function ScopePage({ projectId: projectIdProp }: Props) {
           }
         />
 
-        <div className={`mb-5 flex flex-col gap-3 rounded-xl border p-4 md:flex-row md:items-center md:justify-between ${scopeNeedsSetup ? "border-primary/40 bg-primary/10" : "border-border bg-muted/20"}`}>
-          <div className="flex items-start gap-3">
-            <ListChecks className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+        <div className="mb-5 rounded-xl border border-border bg-card p-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm font-semibold text-foreground">
-                {scopeNeedsSetup
-                  ? t("scope.guidanceTitle", { defaultValue: "Start with the boundary everyone can agree on" })
-                  : t("scope.guidanceReadyTitle", { defaultValue: "Your scope has a starting point" })}
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {scopeNeedsSetup
-                  ? t("scope.guidanceHint", { defaultValue: "Describe what is included and excluded, then add one to three outcomes below." })
-                  : t("scope.guidanceReadyHint", { defaultValue: "Add objectives and deliverables when the team is ready to turn the brief into work." })}
-              </p>
+              <p className="text-sm font-semibold text-foreground">Make the project understandable in two steps</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">A useful scope tells the team what success includes, what it does not include, and how the work will be recognized as complete.</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">{scopeNeedsSetup ? "Step 1 of 2" : "Step 2 of 2"}</span>
+          </div>
+          <div className="mt-4 grid gap-2 md:grid-cols-2">
+            <div className={`rounded-lg border p-3 ${scopeNeedsSetup ? "border-primary/50 bg-primary/10" : "border-emerald-500/30 bg-emerald-500/5"}`}>
+              <div className="flex items-center gap-2"><span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${scopeNeedsSetup ? "bg-primary text-primary-foreground" : "bg-emerald-500 text-white"}`}>{scopeNeedsSetup ? "1" : "✓"}</span><span className="text-xs font-semibold text-foreground">Define the boundary</span></div>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Write what is included, excluded, and why this project exists.</p>
+            </div>
+            <div className={`rounded-lg border p-3 ${scopeNeedsSetup ? "border-border bg-background" : "border-primary/50 bg-primary/10"}`}>
+              <div className="flex items-center gap-2"><span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${scopeNeedsSetup ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground"}`}>2</span><span className="text-xs font-semibold text-foreground">Turn it into outcomes</span></div>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Add objectives, deliverables, milestones, and dependencies the team can act on.</p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
-            {scopeNeedsSetup
-              ? t("scope.guidanceStep", { defaultValue: "Step 1 of 2" })
-              : t("scope.guidanceNext", { defaultValue: "Next: add objectives" })}
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
         </div>
 
         {/* Scope Description */}
         <div className={`mb-4 rounded-xl border bg-card p-5 ${scopeNeedsSetup ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-foreground">{t("scope.projectScope")}</h2>
-            <Button size="sm" onClick={saveScope}>{t("scope.save")}</Button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">1. Define the project boundary</h2>
+              <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">Capture the promise of this project in plain language. Include the intended outcome, what is in scope, what is out of scope, and any non-negotiable constraints.</p>
+            </div>
+            <Button size="sm" onClick={saveScope} disabled={!scopeDirty || saving}>{saving ? "Saving…" : scopeDirty ? "Save changes" : "Saved"}</Button>
           </div>
           <textarea
             value={scopeDescription}
-            onChange={(e) => setScopeDescription(e.target.value)}
-            placeholder={t("scope.scopePlaceholder")}
-            className="w-full min-h-[100px] rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-y"
+            onChange={(e) => { setScopeDescription(e.target.value); setScopeDirty(true); }}
+            placeholder="Example: We will deliver a secure patient intake flow for clinic staff. In scope: intake form, validation, and audit trail. Out of scope: billing and scheduling."
+            aria-label="Project scope boundary"
+            className="mt-4 min-h-[150px] w-full resize-y rounded-lg border border-border bg-background px-3 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground"><span>Keep it short enough for a team member to understand in one minute.</span><span>{scopeDescription.length} characters</span></div>
         </div>
 
         <div className="grid gap-4">
           {/* Objectives */}
           <div className="rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-foreground">{t("scope.objectives")} ({objectives.length})</h2>
+            <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-foreground">2. Turn the boundary into outcomes</h2>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Objectives describe the result. Deliverables, milestones, and dependencies below describe how the team will make it real.</p>
+              </div>
               <Button size="sm" className="gap-1.5" onClick={openCreateObjective}>
                 <Plus className="h-4 w-4" /> {t("scope.add")}
               </Button>
@@ -446,8 +456,13 @@ function ScopePage({ projectId: projectIdProp }: Props) {
       {projectId && (
         <div className="mt-6 rounded-xl border border-border bg-card p-5">
           <div className="mb-4">
-            <h2 className="text-sm font-semibold text-foreground">Planning</h2>
-            <p className="text-xs text-muted-foreground">Project baseline, deliverables, dependencies, resources, and timeline.</p>
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-foreground">Execution plan</h2>
+                <p className="mt-1 text-xs text-muted-foreground">Turn agreed outcomes into milestones, deliverables, dependencies, resources, and a timeline.</p>
+              </div>
+              <span className="text-xs font-semibold text-muted-foreground">{milestones.length} milestones · {deliverables.length} deliverables</span>
+            </div>
           </div>
           <PlanPage projectId={projectId} embedded />
         </div>

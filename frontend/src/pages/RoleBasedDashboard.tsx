@@ -74,11 +74,6 @@ function DashboardFrame({
           icon={icon}
           title={title}
           subtitle={subtitle}
-          badge={
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
-              {t("dashboard.roleScoped", { defaultValue: "Role-based view" })}
-            </span>
-          }
         />
         {children}
       </div>
