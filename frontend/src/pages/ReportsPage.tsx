@@ -51,6 +51,12 @@ import { getProjectScope } from "../lib/api";
 import { useProjectCatalogStore } from "../store/useProjectCatalog";
 
 
+const formatReportDate = (value?: string | null) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
 function ReportsPage() {
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -990,8 +996,12 @@ function ReportsPage() {
                       return (
                         <tr
                           key={t.id}
+                          tabIndex={0}
+                          role="button"
+                          aria-label={`${t.key}: ${t.title}`}
                           onClick={() => setSelectedIssue(t.id)}
-                          className="hover:bg-accent/40 cursor-pointer transition-colors"
+                          onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedIssue(t.id); } }}
+                          className="cursor-pointer transition-colors hover:bg-accent/40 focus-visible:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
                         >
                           <td className="py-3 pr-3">
                             <div className="flex items-center gap-2">
@@ -1025,11 +1035,11 @@ function ReportsPage() {
                               className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
                               style={{ backgroundColor: `${st?.color}1f`, color: st?.color }}
                             >
-                              {st?.name}
+                              {st?.name || (isRTL ? "مفتوحة" : "Open")}
                             </span>
                           </td>
                           <td className="py-3 font-medium text-amber-600 dark:text-amber-400">
-                            {t.dueDate ? t.dueDate : "Overdue"}
+                            {formatReportDate(t.dueDate) ?? (isRTL ? "متأخرة" : "Overdue")}
                           </td>
                         </tr>
                       );
