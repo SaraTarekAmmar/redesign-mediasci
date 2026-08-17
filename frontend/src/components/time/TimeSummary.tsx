@@ -19,8 +19,17 @@ export function TimeSummaryCards({ summary }: TimeSummaryProps) {
   if (!summary) {
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-24 animate-pulse rounded-xl border border-border bg-muted/30" />
+        {[
+          { value: "0m", label: isRTL ? "إجمالي الوقت" : "Total logged" },
+          { value: "0h", label: isRTL ? "هذا الأسبوع" : "This week" },
+          { value: "0", label: isRTL ? "المشاريع" : "Projects" },
+          { value: "0", label: isRTL ? "أعضاء الفريق" : "Team members" },
+        ].map((item) => (
+          <div key={item.label} className="rounded-xl border border-dashed border-border bg-muted/20 p-4">
+            <p className="text-2xl font-semibold text-foreground">{item.value}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{item.label}</p>
+            <p className="mt-2 text-[11px] text-muted-foreground">{isRTL ? "سيظهر هنا بعد التسجيل" : "Appears after your first log"}</p>
+          </div>
         ))}
       </div>
     );

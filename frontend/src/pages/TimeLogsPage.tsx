@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { Trash2, PencilLine } from "lucide-react";
+import { Trash2, PencilLine, Timer, ClipboardPenLine, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTimeTracking, type TimeEntry } from "../hooks/useTimeTracking";
 import { useApi } from "../hooks/useApi";
@@ -126,6 +126,20 @@ function TimeLogsPage() {
           }
         />
 
+        <div className="mb-6 flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3">
+            <Timer className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">{isRTL ? "اختر الطريقة الأنسب لتسجيل وقتك" : "Choose the easiest way to log your work"}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{isRTL ? "استخدم المؤقت للعمل المباشر أو الإدخال اليدوي لتسجيل وقت سابق." : "Use the timer for work happening now, or Manual Entry for time you already spent."}</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5"><Timer className="h-3.5 w-3.5 text-primary" aria-hidden="true" /> {isRTL ? "مباشر" : "Live work"}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5"><ClipboardPenLine className="h-3.5 w-3.5" aria-hidden="true" /> {isRTL ? "سابق" : "Past work"}</span>
+          </div>
+        </div>
+
         <div className="mb-6 space-y-6">
           {/* Summary */}
           <TimeSummaryCards summary={summary} />
@@ -173,8 +187,13 @@ function TimeLogsPage() {
               <tbody>
                 {timeEntries.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                      {isRTL ? "لا توجد سجلات وقت بعد" : "No time entries yet"}
+                    <td colSpan={7} className="px-4 py-10 text-center">
+                      <div className="mx-auto flex max-w-md flex-col items-center">
+                        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-foreground"><ClipboardPenLine className="h-5 w-5" aria-hidden="true" /></span>
+                        <p className="text-sm font-semibold text-foreground">{isRTL ? "لا توجد سجلات وقت بعد" : "Your first time log will appear here"}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{isRTL ? "سجّل وقتًا مباشرًا أو أضف إدخالًا يدويًا لبدء ملخص الساعات." : "Start a timer or submit a manual entry to build your hours summary."}</p>
+                        <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">{isRTL ? "ابدأ من النموذج أعلاه" : "Start with the form above"} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" /></span>
+                      </div>
                     </td>
                   </tr>
                 )}

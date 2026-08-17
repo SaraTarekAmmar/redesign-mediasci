@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, ClipboardList } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ClipboardList, Clock3 } from "lucide-react";
 import { api } from "../lib/api";
 import { seedIssues } from "../data/seed";
 import { lookups } from "../store/useStore";
@@ -228,6 +228,13 @@ function AdminTasksPage() {
   };
 
   const statusOptions: AdminTaskStatus[] = ["todo", "in_progress", "hold", "done", "canceled"];
+  const openTaskCount = tasks.filter((task) => !["done", "canceled"].includes(task.status)).length;
+  const dueSoonCount = tasks.filter((task) => {
+    if (!task.end_date || ["done", "canceled"].includes(task.status)) return false;
+    const due = new Date(task.end_date).getTime();
+    const now = Date.now();
+    return due >= now && due <= now + 7 * 24 * 60 * 60 * 1000;
+  }).length;
 
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
@@ -243,7 +250,23 @@ function AdminTasksPage() {
           }
         />
 
-        <SectionCard title={t("adminTasks.filters", { defaultValue: "Filter task queue" })} className="mb-5" bodyClassName="flex flex-wrap gap-2">
+        <div className="mb-5 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-2xl font-semibold text-foreground">{tasks.length}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("adminTasks.visibleTasks", { defaultValue: "Visible tasks" })}</p>
+          </div>
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+            <p className="text-2xl font-semibold text-foreground">{openTaskCount}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("adminTasks.openTasks", { defaultValue: "Open work" })}</p>
+          </div>
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+            <p className="text-2xl font-semibold text-foreground">{dueSoonCount}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t("adminTasks.dueSoon", { defaultValue: "Due in 7 days" })}</p>
+          </div>
+        </div>
+
+        <SectionCard title={t("adminTasks.filters", { defaultValue: "Filter task queue" })} className="mb-5" bodyClassName="flex flex-wrap items-center gap-2">
+          <span className="me-1 text-xs text-muted-foreground">{t("adminTasks.filterHint", { defaultValue: "Find work by subject, status, or project." })}</span>
           <Input
             placeholder={t("adminTasks.searchPlaceholder")}
             value={search}
@@ -279,7 +302,14 @@ function AdminTasksPage() {
         )}
 
         {!loading && !error && tasks.length === 0 && (
-          <EmptyState icon={<ClipboardList className="h-8 w-8" />} title={t("adminTasks.empty")} subtitle={t("adminTasks.emptySubtitle", { defaultValue: "No administrative tasks match the current filters." })} />
+          <EmptyState
+            icon={<ClipboardList className="h-8 w-8" />}
+            title={t("adminTasks.empty")}
+            subtitle={search || statusFilter !== "all" || projectFilter !== "all"
+              ? t("adminTasks.emptyFiltered", { defaultValue: "Try clearing a filter or create a new task for this queue." })
+              : t("adminTasks.emptySubtitle", { defaultValue: "Create the first task to give this queue a clear owner and next action." })}
+            action={<Button size="sm" className="gap-1.5" onClick={openCreate}><Plus className="h-4 w-4" /> {t("adminTasks.newTask")}</Button>}
+          />
         )}
 
         {!loading && !error && tasks.length > 0 && (
@@ -303,7 +333,12 @@ function AdminTasksPage() {
                     <td className="px-4 py-2.5 text-xs text-muted-foreground">{task.project?.name || "-"}</td>
                     <td className="px-4 py-2.5">
                       <p className="font-medium text-foreground">{task.subject}</p>
-                      {task.comment && <p className="text-xs text-muted-foreground">{task.comment}</p>}
+                      {task.comment && <p className="mt-0.5 text-xs text-muted-foreground">{task.comment}</p>}
+                      {task.end_date && !["done", "canceled"].includes(task.status) && (
+                        <span className="mt-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                          <Clock3 className="h-3 w-3" aria-hidden="true" /> {task.end_date}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-2.5">
                       <p>{task.person_name}</p>
