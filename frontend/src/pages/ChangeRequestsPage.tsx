@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Plus, Check, X, Eye, FileQuestion } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -73,6 +74,7 @@ type View = "all" | "my" | "approvals";
 
 function ChangeRequestsPage({ view = "all" }: { view?: View }) {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const isRTL = i18n.dir() === "rtl";
   const { user } = useAuth();
   const isApprover = user?.role === "super-admin" || user?.role === "admin" || user?.role === "project-manager" || user?.role === "team-leader";
@@ -182,6 +184,9 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
     : view === "approvals"
       ? t("changes.approvalsSubtitle", { count: requests.length })
       : t("changes.subtitle", { pending: requests.filter((r) => r.status === "pending").length, total: requests.length });
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
+  const approvedCount = requests.filter((r) => r.status === "approved" || r.status === "implemented").length;
+  const closedCount = requests.filter((r) => r.status === "rejected" || r.status === "implemented").length;
 
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={i18n.dir()}>
@@ -198,6 +203,8 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
           }
         />
 
+        <div className="mb-5 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-foreground">{view === "approvals" ? "Review changes with confidence" : "Make change decisions easier"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{view === "approvals" ? "Check the reason, impact, rollback plan, and owner before approving work that changes delivery." : "A clear request explains what should change, why it matters, how urgent it is, and how the team can safely reverse it."}</p></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">{view === "approvals" ? "Decision queue" : "Change lifecycle"}</span></div><div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Awaiting review</p><p className="mt-1 text-xl font-semibold text-amber-600 dark:text-amber-400">{pendingCount}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Approved / active</p><p className="mt-1 text-xl font-semibold text-emerald-600 dark:text-emerald-400">{approvedCount}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Closed decisions</p><p className="mt-1 text-xl font-semibold text-foreground">{closedCount}</p></div></div></div>
+
         {loading ? (
           <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">{t("app.loading")}</div>
         ) : requests.length === 0 ? (
@@ -205,14 +212,14 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
             icon={<FileQuestion className="h-8 w-8" />}
             title={view === "my" ? t("changes.noMyRequests") : view === "approvals" ? t("changes.noApprovals") : t("changes.noRequests")}
             subtitle={t("changes.subtitle", { pending: 0, total: 0 })}
-            action={view !== "approvals" ? <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> {t("changes.newRequest")}</Button> : undefined}
+            action={view !== "approvals" ? <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> {t("changes.newRequest")}</Button> : <Button size="sm" variant="outline" onClick={() => navigate("/requests")}>Review all requests</Button>}
           />
         ) : (
           <div className="space-y-2">
             {requests.map((r) => {
               const st = STATUS_MAP[r.status] ?? STATUS_MAP.pending;
               return (
-                <div key={r.id} className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-border/80">
+                <div key={r.id} tabIndex={0} role="button" aria-label={`CR-${String(r.id).padStart(3, "0")}: ${r.title}`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedRequest(r); } }} className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-border/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 cursor-pointer flex-1" onClick={() => setSelectedRequest(r)}>
                       <div className="flex flex-wrap items-center gap-2">

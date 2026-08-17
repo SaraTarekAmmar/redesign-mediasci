@@ -177,6 +177,8 @@ export default function PriorityImpactPage() {
     loadRequests();
   }, []);
 
+  const selectedRequest = requests.find((request) => request.id === selectedRequestId) ?? null;
+
   const handleSimulate = async () => {
     if (!selectedRequestId) return;
     setSimulating(true);
@@ -220,8 +222,10 @@ export default function PriorityImpactPage() {
               </div>
             )}
 
+            <div className="mb-1 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-foreground">Answer one decision before you commit</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">This simulation tests whether the incoming request fits current capacity and what it may move on the delivery timeline.</p></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">Capacity + timeline</span></div><div className="mt-3 grid gap-2 text-left sm:grid-cols-3"><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Select</p><p className="mt-1 text-[11px] text-muted-foreground">Choose the request being considered.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Simulate</p><p className="mt-1 text-[11px] text-muted-foreground">Model resource and milestone pressure.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Decide</p><p className="mt-1 text-[11px] text-muted-foreground">Accept, split, defer, or review the plan.</p></div></div></div>
+
             {/* Control Panel */}
-            <div className="rounded-xl border bg-card p-5 flex flex-col sm:flex-row items-end gap-4 max-w-xl">
+            <div className="rounded-xl border bg-card p-5 flex flex-col sm:flex-row items-end gap-4 max-w-3xl">
               <div className="space-y-1 flex-1">
                 <label className="text-xs font-semibold text-foreground">Select Incoming Client Request</label>
                 <select
@@ -235,6 +239,7 @@ export default function PriorityImpactPage() {
                   ))}
                 </select>
               </div>
+              {selectedRequest && <div className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs sm:w-auto sm:min-w-[190px]"><p className="font-semibold text-foreground">{selectedRequest.estimated_hours ?? "—"} estimated hours</p><p className="mt-0.5 text-muted-foreground">Due {selectedRequest.due_date ? new Date(selectedRequest.due_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "not set"}</p></div>}
               <Button onClick={handleSimulate} disabled={simulating || !selectedRequestId} className="h-10 shrink-0 gap-1.5">
                 {simulating ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitPullRequestArrow className="h-4 w-4" />}
                 Run Impact Simulator

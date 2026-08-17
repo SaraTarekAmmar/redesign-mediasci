@@ -546,9 +546,9 @@ function SidebarBody({
             ? t("nav.activeProject", { defaultValue: "Active project" })
             : t(`${group.headingKey.toLocaleLowerCase()}.heading`, { ns: "nav", defaultValue: group.headingKey });
           return (
-            <section key={group.headingKey} aria-labelledby={headingId} className={group.headingKey === "Active Project" ? "mb-0" : "mb-1"}>
+            <section key={group.headingKey} aria-labelledby={headingId} aria-label={headingLabel} className={group.headingKey === "Active Project" ? "mb-0" : "mb-1.5"}>
               {!collapsed && !group.hideHeading && (
-                <h2 id={headingId} className="px-2.5 pb-0.5 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                <h2 id={headingId} className="px-2.5 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   {headingLabel}
                 </h2>
               )}

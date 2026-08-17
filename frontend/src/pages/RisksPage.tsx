@@ -122,6 +122,9 @@ function RisksPage() {
   }, [risks]);
 
   const open = risks.filter((r) => r.status !== "closed");
+  const criticalOpen = open.filter((r) => r.probability * r.impact >= 15).length;
+  const ownedOpen = open.filter((r) => Boolean(r.owner)).length;
+  const plannedOpen = open.filter((r) => Boolean(r.responsePlan)).length;
 
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
@@ -130,6 +133,8 @@ function RisksPage() {
           title={t("risks.title")}
           subtitle={loading ? t("recovery.loading") : t("risks.openCount", { open: open.length, plural: open.length !== 1 ? "s" : "", total: risks.length })}
           actions={<Button size="sm" className="gap-1.5" onClick={openCreate}><Plus className="h-4 w-4" /> {t("risks.logRisk")}</Button>} />
+
+        <div className="mb-5 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm font-semibold text-foreground">Risk pulse</p><p className="text-xs text-muted-foreground">Keep risk visible, owned, and paired with a response plan before it becomes a delivery issue.</p></div><div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4"><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Open risks</p><p className="mt-1 text-xl font-semibold text-foreground">{open.length}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Critical / high</p><p className="mt-1 text-xl font-semibold text-rose-600 dark:text-rose-400">{criticalOpen}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">With an owner</p><p className="mt-1 text-xl font-semibold text-foreground">{ownedOpen}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">With response plan</p><p className="mt-1 text-xl font-semibold text-primary">{plannedOpen}</p></div></div></div>
 
         {loading && (
           <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -220,8 +225,10 @@ function RisksPage() {
                           <circle cx="24" cy="24" r="8"/>
                         </svg>
                       </div>
-                      <p className="text-sm font-medium text-foreground">{t("risks.noRisks", { defaultValue: "No risks logged" })}</p>
-                      <p className="text-xs text-muted-foreground">{t("risks.emptyHint")}</p>
+                      <p className="text-sm font-semibold text-foreground">{t("risks.noRisks", { defaultValue: "No risks logged" })}</p>
+                      <p className="max-w-md text-xs leading-relaxed text-muted-foreground">{t("risks.emptyHint")}</p>
+                      <div className="mt-2 grid max-w-lg gap-2 text-left sm:grid-cols-3"><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Log it</p><p className="mt-1 text-[11px] text-muted-foreground">Describe the uncertainty and category.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Score it</p><p className="mt-1 text-[11px] text-muted-foreground">Rate probability and impact from 1 to 5.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Own it</p><p className="mt-1 text-[11px] text-muted-foreground">Assign a response plan and review date.</p></div></div>
+                      <Button size="sm" className="mt-2" onClick={openCreate}><Plus className="mr-1.5 h-4 w-4" />{t("risks.logRisk")}</Button>
                     </div>
                   </td></tr>}
                 </tbody>
