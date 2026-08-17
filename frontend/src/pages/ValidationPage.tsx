@@ -125,27 +125,38 @@ export default function ValidationPage() {
     );
   }
 
+  const passedCount = results.filter((r) => r.status === "passed").length;
   const failedCount = results.filter((r) => r.status === "failed").length;
   const warningCount = results.filter((r) => r.status === "warning").length;
+  const verificationState = results.length === 0 ? "Not run" : failedCount > 0 ? "Action required" : warningCount > 0 ? "Review warnings" : "Ready for sign-off";
 
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title="Delivery Validation Gates"
-          subtitle={`Enforce quality policies and requirement checks on project handoffs for: ${project?.name || "Active Project"}`}
+          subtitle={project?.name || "Active Project"}
           actions={
             <div className="flex gap-2.5">
               <Button onClick={handleRunVerification} disabled={running} className="flex items-center gap-1.5">
                 {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
                 Run Verification Gates
               </Button>
-              <Button onClick={handleGenerateReleaseNotes} variant="outline" className="flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/5">
-                Generate AI Release Notes
+              <Button onClick={handleGenerateReleaseNotes} variant="outline" className="flex items-center gap-1.5">
+                Release notes
               </Button>
             </div>
           }
         />
+
+        {!loading && (
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Verification</p><p className={`mt-1 text-sm font-semibold ${verificationState === "Action required" ? "text-destructive" : verificationState === "Ready for sign-off" ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"}`}>{verificationState}</p></div>
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Gates checked</p><p className="mt-1 text-sm font-semibold text-foreground">{results.length}/{gates.length}</p></div>
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Passed</p><p className="mt-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">{passedCount}</p></div>
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Needs attention</p><p className="mt-1 text-sm font-semibold text-foreground">{failedCount + warningCount}</p></div>
+          </div>
+        )}
 
         {loading ? (
           <div className="grid gap-6 lg:grid-cols-3">
@@ -248,7 +259,9 @@ export default function ValidationPage() {
               <div className="rounded-xl border bg-card p-6 space-y-4">
                 <h3 className="text-sm font-bold text-foreground">Handoff Sign-off</h3>
                 
-                {results.length > 0 && (
+                {results.length === 0 ? (
+                  <div className="rounded-lg border border-dashed border-border bg-muted/20 p-3.5 text-xs text-muted-foreground">Run verification gates before submitting a handoff decision.</div>
+                ) : (
                   <div className="p-3.5 border rounded-lg text-xs space-y-2">
                     <span className="font-semibold text-foreground block">Verification Result:</span>
                     <div className="flex gap-4">
@@ -266,8 +279,8 @@ export default function ValidationPage() {
 
                 <form onSubmit={handleHandoffAction} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-foreground">Review Action</label>
-                    <select
+                    <label htmlFor="validation-action" className="text-xs font-semibold text-foreground">Review Action</label>
+                    <select id="validation-action"
                       required
                       className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       value={action}
@@ -285,8 +298,8 @@ export default function ValidationPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-foreground">Review Comments / Justification</label>
-                    <Textarea
+                    <label htmlFor="validation-comments" className="text-xs font-semibold text-foreground">Review Comments / Justification</label>
+                    <Textarea id="validation-comments"
                       required
                       rows={4}
                       placeholder="Provide validation comments or specific issues to be resolved..."
@@ -295,7 +308,7 @@ export default function ValidationPage() {
                     />
                   </div>
 
-                  <Button type="submit" disabled={submitting || !action} className="w-full">
+                  <Button type="submit" disabled={submitting || !action || results.length === 0} className="w-full">
                     {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
                     Submit Sign-off Audit
                   </Button>
