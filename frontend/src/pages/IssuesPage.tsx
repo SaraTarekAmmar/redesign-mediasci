@@ -91,18 +91,24 @@ export function IssuesPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5">
-        <div className="overflow-hidden rounded-xl border border-border bg-card">
-          <table className="w-full text-left text-sm border-collapse">
+      <div className="flex-1 overflow-y-auto p-4 md:p-5">
+        <div className="overflow-x-auto rounded-xl border border-border bg-card">
+          <table className="min-w-[760px] w-full border-collapse text-left text-sm">
+            <caption className="sr-only">
+              {t("issuesPage.subtitle", {
+                count: projectIssues.length,
+                noun: projectIssues.length === 1 ? "issue" : "issues",
+              })}
+            </caption>
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colKey")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colSummary")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colType")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colStatus")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colPriority")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colAssignee")}</th>
-                <th className="px-4 py-3 font-medium">{t("issuesPage.colDueDate")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colKey")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colSummary")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colType")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colStatus")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colPriority")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colAssignee")}</th>
+                <th scope="col" className="px-4 py-3 font-medium">{t("issuesPage.colDueDate")}</th>
               </tr>
             </thead>
             <tbody>
@@ -127,8 +133,17 @@ export function IssuesPage() {
                   return (
                     <tr
                       key={issue.id}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`${issue.key}: ${issue.title}`}
                       onClick={() => setSelected(issue.id)}
-                      className="border-b border-border last:border-0 hover:bg-accent/40 cursor-pointer transition-colors"
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSelected(issue.id);
+                        }
+                      }}
+                      className="cursor-pointer border-b border-border transition-colors hover:bg-accent/40 focus-visible:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary last:border-0"
                     >
                       <td className="px-4 py-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
                         {issue.key}
