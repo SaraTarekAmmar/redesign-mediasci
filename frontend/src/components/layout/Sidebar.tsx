@@ -117,6 +117,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
       { to: "/workforce", labelKey: "nav.workforce", icon: Handshake, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
       { to: "/partners", labelKey: "nav.partners", icon: Handshake, roles: ["super-admin", "admin"] },
       { to: "/time-logs", labelKey: "nav.timeLogs", icon: Clock },
+      { to: "/team-tasks", labelKey: "nav.teamTasks", icon: ClipboardCheck, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-resources"] },
     ],
   },
   {
@@ -133,6 +134,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
     headingKey: "Assets",
     items: [
       { to: "/documents", labelKey: "nav.documents", icon: FileText },
+      { to: "/workflow-templates", labelKey: "nav.workflowTemplates", icon: Repeat, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },
       { to: "/automation", labelKey: "nav.automation", icon: Zap, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },
     ],
   },
@@ -145,13 +147,18 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
     ],
   },
   {
-    headingKey: "Workspace",
+    headingKey: "Team",
     items: [
       { to: "/administration", labelKey: "nav.administration", icon: Shield, roles: ["super-admin", "admin"] },
       { to: "/teams", labelKey: "nav.teams", icon: Layers, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-teams"] },
       { to: "/skills", labelKey: "nav.skills", icon: BookOpen, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["manage-skills"] },
       { to: "/departments", labelKey: "nav.departments", icon: Building2, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-departments"] },
       { to: "/users", labelKey: "nav.users", icon: UsersRound, roles: ["super-admin", "admin"], permissions: ["manage-users"] },
+    ],
+  },
+  {
+    headingKey: "System",
+    items: [
       { to: "/admin-tasks", labelKey: "nav.adminTasks", icon: ClipboardCheck, roles: ["super-admin", "admin", "team-leader"] },
       { to: "/recovery", labelKey: "nav.recovery", icon: Archive, roles: ["super-admin", "admin"] },
       { to: "/custom-fields", labelKey: "nav.customFields", icon: SlidersHorizontal, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },

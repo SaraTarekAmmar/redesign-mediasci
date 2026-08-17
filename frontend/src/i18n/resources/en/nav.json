@@ -7,6 +7,8 @@
   "stakeholders.heading": "Stakeholders",
   "assets.heading": "Assets & Automation",
   "insights.heading": "Measure & Learn",
+  "team.heading": "Team & Organization",
+  "system.heading": "System & Settings",
   "workspace.heading": "Team & Settings",
   "administration.heading": "Administration",
   "administration": "Administration",
@@ -27,6 +29,7 @@
   "milestones": "Milestones",
   "plan": "Plan",
   "planComparison": "Plan vs Actual",
-  "workflowTemplates": "Workflow",
+  "workflowTemplates": "Workflow Templates",
+  "teamTasks": "Team Tasks",
   "projectSettings": "Project Settings"
 }

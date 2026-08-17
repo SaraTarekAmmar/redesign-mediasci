@@ -7,6 +7,8 @@
   "stakeholders.heading": "أصحاب المصلحة",
   "assets.heading": "الأصول والأتمتة",
   "insights.heading": "القياس والتعلّم",
+  "team.heading": "الفريق والتنظيم",
+  "system.heading": "النظام والإعدادات",
   "workspace.heading": "الفريق والإعدادات",
   "administration.heading": "الإدارة",
   "administration": "الإدارة",
@@ -27,6 +29,7 @@
   "milestones": "المراحل",
   "plan": "الخطة",
   "planComparison": "الخطة مقابل الفعلي",
-  "workflowTemplates": "سير العمل",
+  "workflowTemplates": "قوالب سير العمل",
+  "teamTasks": "مهام الفريق",
   "projectSettings": "إعدادات المشروع"
 }
