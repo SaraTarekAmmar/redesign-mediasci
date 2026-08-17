@@ -78,6 +78,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
       { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },
       { to: "/backlog", labelKey: "nav.backlog", icon: ListTodo },
       { to: "/sprints", labelKey: "nav.sprints", icon: Repeat, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer"], permissions: ["view-sprints"] },
+      { to: "/triage", labelKey: "nav.triage", icon: Inbox, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-issues"] },
     ],
   },
   {
@@ -87,9 +88,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
       { to: "/roadmap", labelKey: "nav.roadmap", icon: RoadmapIcon, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
       { to: "/sprints/global", labelKey: "nav.globalSprints", icon: Layers },
       { to: "/enterprise-gantt", labelKey: "nav.enterpriseGantt", icon: Network, roles: ["super-admin", "admin", "project-manager"] },
-      { to: "/plan-comparison", labelKey: "nav.planComparison", icon: TrendingUp, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-analytics"] },
       { to: "/gantt", labelKey: "nav.gantt", icon: GanttChart, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-projects"] },
-      { to: "/triage", labelKey: "nav.triage", icon: Inbox, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-issues"] },
     ],
   },
   {
@@ -109,15 +108,30 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
       { to: "/changes/approvals", labelKey: "nav.approvals", icon: ShieldCheck, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["approve-change-requests"] },
       { to: "/validation", labelKey: "nav.validation", icon: CheckSquare2, roles: ["super-admin", "admin", "project-manager", "team-leader"] },
       { to: "/priority-impact", labelKey: "nav.priorityImpact", icon: GitPullRequestArrow, roles: ["super-admin", "admin", "project-manager", "team-leader"] },
+    ],
+  },
+  {
+    headingKey: "People",
+    items: [
       { to: "/resources", labelKey: "nav.resources", icon: UsersRound, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-resources"] },
       { to: "/workforce", labelKey: "nav.workforce", icon: Handshake, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
       { to: "/partners", labelKey: "nav.partners", icon: Handshake, roles: ["super-admin", "admin"] },
       { to: "/time-logs", labelKey: "nav.timeLogs", icon: Clock },
+    ],
+  },
+  {
+    headingKey: "Stakeholders",
+    items: [
       { to: "/stakeholders", labelKey: "nav.stakeholders", icon: Contact, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
       { to: "/stakeholders/analytics", labelKey: "nav.stakeholderAnalytics", icon: PieChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
       { to: "/stakeholders/registration", labelKey: "nav.stakeholderRegistration", icon: UserPlus, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
       { to: "/stakeholders/engagement", labelKey: "nav.stakeholderEngagement", icon: Activity, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
       { to: "/stakeholders/impact", labelKey: "nav.stakeholderImpact", icon: AlertTriangle, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
+    ],
+  },
+  {
+    headingKey: "Assets",
+    items: [
       { to: "/documents", labelKey: "nav.documents", icon: FileText },
       { to: "/automation", labelKey: "nav.automation", icon: Zap, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },
     ],
@@ -125,6 +139,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
   {
     headingKey: "Insights",
     items: [
+      { to: "/plan-comparison", labelKey: "nav.planComparison", icon: TrendingUp, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-analytics"] },
       { to: "/reports", labelKey: "nav.reports", icon: BarChart3, permissions: ["view-reports"] },
       { to: "/analytics", labelKey: "nav.analytics", icon: LineChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "account-manager", "department-manager", "hr-manager", "reviewer", "executive"] },
     ],
