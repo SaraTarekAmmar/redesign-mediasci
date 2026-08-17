@@ -444,12 +444,6 @@ function ProjectOverviewPage({ projectId }: Props) {
             tone={performanceSummary && performanceSummary.schedule_variance_days > 0 ? "danger" : "success"}
           />
           <PerformanceChip
-            label={t("projectOverview.budgetVariance", { defaultValue: "Budget Variance" })}
-            value={formatCurrencyDelta(performanceSummary?.budget_variance ?? 0)}
-            note={performanceSummary ? `${formatCurrency(performanceSummary.actual_cost)} / ${formatCurrency(performanceSummary.planned_budget)}` : t("projectOverview.budgetPending", { defaultValue: "Budget data pending" })}
-            tone={performanceSummary && performanceSummary.budget_variance > 0 ? "danger" : "success"}
-          />
-          <PerformanceChip
             label={t("projectOverview.blockedMilestones", { defaultValue: "Blocked Milestones" })}
             value={performanceSummary?.blocked_milestones ?? 0}
             note={t("projectOverview.dependencies", { defaultValue: "Dependency chain" })}
@@ -467,18 +461,6 @@ function ProjectOverviewPage({ projectId }: Props) {
             note={performanceSummary?.days_late ? `${t("projectOverview.daysLate", { defaultValue: "Late" })}: +${performanceSummary.days_late}` : performanceSummary?.days_ahead ? `${t("projectOverview.daysAhead", { defaultValue: "Ahead" })}: ${performanceSummary.days_ahead}` : t("projectOverview.onTrack", { defaultValue: "On track" })}
             tone={performanceSummary?.days_late ? "danger" : "success"}
           />
-          <PerformanceChip
-            label={t("projectOverview.actualHours", { defaultValue: "Actual Hours" })}
-            value={formatHours(performanceSummary?.actual_hours ?? 0)}
-            note={performanceSummary ? `${t("projectOverview.remaining", { defaultValue: "Remaining" })}: ${formatHours(performanceSummary.remaining_hours)}` : t("projectOverview.executionPending", { defaultValue: "Execution pending" })}
-            tone="warning"
-          />
-          <PerformanceChip
-            label={t("projectOverview.plannedHours", { defaultValue: "Planned Hours" })}
-            value={formatHours(performanceSummary?.planned_hours ?? 0)}
-            note={performanceComparison ? `${t("projectOverview.hoursVariance", { defaultValue: "Variance" })}: ${formatHours(performanceComparison.planning.variance)}` : t("projectOverview.baselinePending", { defaultValue: "Baseline pending" })}
-            tone="success"
-          />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
@@ -490,15 +472,6 @@ function ProjectOverviewPage({ projectId }: Props) {
             secondaryValue={formatHours(performanceComparison?.planning.actual_hours ?? 0)}
             tertiaryLabel={t("projectOverview.hoursVariance", { defaultValue: "Variance" })}
             tertiaryValue={formatHours(performanceComparison?.planning.variance ?? 0)}
-          />
-          <ComparisonCard
-            label={t("projectOverview.budgetComparison", { defaultValue: "Budget" })}
-            primaryLabel={t("projectOverview.planned", { defaultValue: "Planned" })}
-            primaryValue={formatCurrency(performanceComparison?.budget.planned ?? 0)}
-            secondaryLabel={t("projectOverview.actual", { defaultValue: "Actual" })}
-            secondaryValue={formatCurrency(performanceComparison?.budget.actual ?? 0)}
-            tertiaryLabel={t("projectOverview.variance", { defaultValue: "Variance" })}
-            tertiaryValue={formatCurrencyDelta(performanceComparison?.budget.variance ?? 0)}
           />
           <ComparisonCard
             label={t("projectOverview.datesComparison", { defaultValue: "Dates" })}
@@ -879,16 +852,6 @@ function formatVarianceDays(value: number) {
 function formatHours(value: number) {
   const rounded = Number(value ?? 0);
   return `${rounded.toFixed(1)}h`;
-}
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value ?? 0));
-}
-
-function formatCurrencyDelta(value: number) {
-  const amount = Number(value ?? 0);
-  const formatted = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Math.abs(amount));
-  return amount > 0 ? `+${formatted}` : amount < 0 ? `-${formatted}` : formatted;
 }
 
 export default ProjectOverviewPage;

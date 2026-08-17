@@ -414,22 +414,12 @@ export function IssueDetailSheet() {
   const completedSubtasks = subtasks.filter((st) => st.statusCategory === "done").length;
   const subtaskProgress = subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
 
-  // Time Budget Calculation & Indicators
+    // Time tracking indicators
   const totalEst = executionData?.estimated_hours || estHours || 0;
   const totalLogged = executionData?.actual_hours || 0;
   const remHours = executionData?.remaining_hours || 0;
-  const isOverBudget = totalEst > 0 && totalLogged > totalEst;
-  const budgetPct = totalEst > 0 ? Math.round((totalLogged / totalEst) * 100) : 0;
+  const isOverEstimate = totalEst > 0 && totalLogged > totalEst;
 
-  let budgetColorClass = "bg-emerald-500 text-emerald-700 border-emerald-500/30";
-  let budgetGaugeColor = "bg-emerald-500";
-  if (budgetPct >= 80 && budgetPct <= 100) {
-    budgetColorClass = "bg-amber-500/10 text-amber-600 border-amber-500/30";
-    budgetGaugeColor = "bg-amber-500";
-  } else if (budgetPct > 100) {
-    budgetColorClass = "bg-rose-500/10 text-rose-600 border-rose-500/30";
-    budgetGaugeColor = "bg-rose-500";
-  }
 
   return (
     <Sheet open={open} onOpenChange={(o) => !o && setSelected(null)}>
@@ -479,7 +469,11 @@ export function IssueDetailSheet() {
         <div className="flex border-b border-border px-5 gap-3 mt-4 text-xs font-semibold overflow-x-auto scrollbar-none">
           <button onClick={() => setActiveTab("overview")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "overview" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
             <FileText className="h-3.5 w-3.5" />
-            <span>{isRTL ? "العام والجاهزية" : "Overview & DoD"}</span>
+            <span>{isRTL ? "العام والجاهزية" : "Overview"}</span>
+          </button>
+          <button onClick={() => setActiveTab("discussion")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "discussion" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
+            <MessageSquare className="h-3.5 w-3.5" />
+            <span>{isRTL ? "المناقشة" : "Discussion"} ({comments.length})</span>
           </button>
           <button onClick={() => setActiveTab("subtasks")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "subtasks" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
             <Layers className="h-3.5 w-3.5" />
@@ -495,15 +489,11 @@ export function IssueDetailSheet() {
           </button>
           <button onClick={() => setActiveTab("time")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "time" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
             <Clock className="h-3.5 w-3.5" />
-            <span>{isRTL ? "الوقت والميزانية" : "Time Dashboard"}</span>
+            <span>{isRTL ? "الوقت والعمل" : "Time & Work"}</span>
           </button>
           <button onClick={() => setActiveTab("dependencies")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "dependencies" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
             <GitCommit className="h-3.5 w-3.5" />
             <span>{isRTL ? "الارتباطات" : "Dependencies"}</span>
-          </button>
-          <button onClick={() => setActiveTab("discussion")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "discussion" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <MessageSquare className="h-3.5 w-3.5" />
-            <span>{isRTL ? "المناقشة" : "Discussion"} ({comments.length})</span>
           </button>
           <button onClick={() => setActiveTab("history")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "history" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
             <History className="h-3.5 w-3.5" />
@@ -783,11 +773,10 @@ export function IssueDetailSheet() {
           {/* TAB 5: ENTERPRISE TIME DASHBOARD */}
           {activeTab === "time" && (
             <div className="space-y-6">
-              {/* Over Budget Alert Banner */}
-              {isOverBudget && (
-                <div className="flex items-center gap-2 p-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-xs font-semibold text-rose-700 dark:text-rose-400">
+              {isOverEstimate && (
+                <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs font-semibold text-rose-700 dark:text-rose-400">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
-                  <span>{isRTL ? `تنبيه: تجاوز الوقت المقدر للمهمة (${totalLogged}h / ${totalEst}h)` : `Over Budget Warning: Logged hours exceed estimate (${totalLogged}h / ${totalEst}h)`}</span>
+                  <span>{isRTL ? `تنبيه: تجاوز الوقت المقدر للمهمة (${totalLogged}h / ${totalEst}h)` : `Estimate exceeded: logged hours are ${totalLogged}h against ${totalEst}h estimated`}</span>
                 </div>
               )}
 
@@ -804,21 +793,6 @@ export function IssueDetailSheet() {
                 <div className="p-3 rounded-lg border border-border bg-card">
                   <span className="text-muted-foreground font-medium">{isRTL ? "المتبقي" : "Remaining"}</span>
                   <p className="text-base font-bold text-amber-600 mt-0.5">{remHours} hrs</p>
-                </div>
-                <div className={cn("p-3 rounded-lg border font-bold text-xs flex flex-col justify-center items-center", budgetColorClass)}>
-                  <span className="text-[10px] uppercase">{isRTL ? "استهلاك الميزانية" : "Budget Consumed"}</span>
-                  <p className="text-base mt-0.5">{budgetPct}%</p>
-                </div>
-              </div>
-
-              {/* Color Coded Budget Gauge */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs font-semibold">
-                  <span>Budget Consumption Gauge</span>
-                  <span>{budgetPct}%</span>
-                </div>
-                <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden">
-                  <div className={cn("h-full transition-all duration-300", budgetGaugeColor)} style={{ width: `${Math.min(100, budgetPct)}%` }} />
                 </div>
               </div>
 
