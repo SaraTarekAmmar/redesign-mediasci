@@ -96,6 +96,86 @@ function StatCard({
   return <StatTile label={label} value={value} icon={icon} color={color} />;
 }
 
+function ProjectsSection({
+  projects,
+  issues,
+  doneIds,
+  title = "Projects",
+  subtitle = "The projects you can access, with progress and next context in one place.",
+}: {
+  projects: any[];
+  issues: any[];
+  doneIds: Array<string | number>;
+  title?: string;
+  subtitle?: string;
+}) {
+  return (
+    <SectionCard title={title} description={subtitle}>
+      {projects.length > 0 ? (
+        <div className="grid gap-3 md:grid-cols-2">
+          {projects.map((project) => {
+            const projectIssues = issues.filter((issue) => String(projectId(issue)) === String(project.id));
+            const done = projectIssues.filter((issue) => isDone(issue, doneIds)).length;
+            const pct = projectIssues.length ? Math.round((done / projectIssues.length) * 100) : 0;
+            return (
+              <Link
+                key={project.id}
+                to={`/projects/${project.id}`}
+                className="group rounded-xl border border-border bg-background p-4 transition-colors hover:border-primary/50 hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+                    {(project.key || project.name || "PR").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="truncate text-sm font-semibold text-foreground group-hover:text-primary">{project.name}</p>
+                      <span className="shrink-0 text-xs font-semibold text-foreground">{pct}%</span>
+                    </div>
+                    <p className="mt-1 truncate text-xs text-muted-foreground">{project.key || "Project"} · {projectIssues.length} issue{projectIssues.length === 1 ? "" : "s"}</p>
+                    <Progress value={pct} className="mt-3 h-1.5" />
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyState icon={<FolderOpen className="h-8 w-8" />} title="No projects in your scope" subtitle="Projects assigned to your account will appear here." />
+      )}
+    </SectionCard>
+  );
+}
+
+function ExternalProjectDashboard({ kind }: { kind: "partner" | "client" }) {
+  const projects = rows("projects");
+  const issues = rows("issues");
+  const statuses = rows("statuses");
+  const doneIds = statuses.filter((s) => s.category === "done").map((s) => s.id);
+  const openIssues = issues.filter((issue) => !isDone(issue, doneIds));
+  const label = kind === "client" ? "Client project workspace" : "Partner project workspace";
+  const subtitle = kind === "client"
+    ? "Review the delivery, decisions, and work connected to your projects."
+    : "Work on the projects and tasks your organization has been assigned."
+  return (
+    <DashboardFrame icon={<FolderOpen className="h-4 w-4" />} title={label} subtitle={subtitle}>
+      <section className="grid gap-4 md:grid-cols-3">
+        <StatCard label="Projects" value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
+        <StatCard label="Open work" value={openIssues.length} icon={<ClipboardList className="h-5 w-5" />} color={openIssues.length > 0 ? "yellow" : "green"} />
+        <StatCard label="Completed" value={issues.length - openIssues.length} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
+      </section>
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title="Your projects" subtitle="Everything visible to your account is scoped to these projects." />
+      <SectionCard title="Work needing attention" description="Open tasks and project decisions that may need your response.">
+        {openIssues.length > 0 ? (
+          <div className="space-y-2">
+            {openIssues.slice(0, 6).map((issue) => <Link key={issue.id} to="/issues" className="flex items-center gap-3 rounded-lg border border-border px-3 py-2.5 hover:bg-muted"><span className="h-2 w-2 shrink-0 rounded-full bg-primary" /><span className="min-w-0 flex-1 truncate text-sm font-medium">{issue.title}</span><span className="font-mono text-xs text-muted-foreground">{issue.key}</span></Link>)}
+          </div>
+        ) : <EmptyState icon={<CheckCircle2 className="h-8 w-8 text-emerald-600" />} title="Nothing needs attention" subtitle="Your project work is clear for now." />}
+      </SectionCard>
+    </DashboardFrame>
+  );
+}
+
 function SuperAdminDashboard() {
   const { t } = useTranslation();
   const projects = rows("projects");
@@ -118,6 +198,8 @@ function SuperAdminDashboard() {
         <StatCard label={t("dashboard.teamMembers")} value={users.length} icon={<UsersRound className="h-5 w-5" />} />
         <StatCard label={t("dashboard.openIssues")} value={openIssues.length} icon={<AlertCircle className="h-5 w-5" />} color="red" />
       </section>
+
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
 
       <SectionCard title={t("dashboard.systemHealth")}>
         <div className="space-y-3">
@@ -170,6 +252,8 @@ function PMDashboard() {
         <StatCard label={t("dashboard.criticalIssues")} value={criticalIssues.length} icon={<AlertCircle className="h-5 w-5" />} color="red" />
         <StatCard label={t("dashboard.completion")} value={`${completionRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
       </section>
+
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <SectionCard title={t("summary.sprintHealth")}>
@@ -274,26 +358,7 @@ function ViewerDashboard() {
         <StatCard label={t("summary.remaining")} value={issues.length - completed} icon={<Hourglass className="h-5 w-5" />} />
       </section>
 
-      <SectionCard title={t("summary.projects")}>
-        {projects.length > 0 ? (
-          <div className="space-y-2">
-            {projects.map((project) => {
-              const projectIssues = issues.filter((issue) => String(projectId(issue)) === String(project.id));
-              const done = projectIssues.filter((issue) => isDone(issue, doneIds)).length;
-              const pct = projectIssues.length ? Math.round((done / projectIssues.length) * 100) : 0;
-              return (
-                <div key={project.id} className="flex items-center gap-3 rounded-lg border border-border/60 px-4 py-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded bg-primary text-xs font-bold text-primary-foreground">{project.key?.slice(0, 2)}</div>
-                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-foreground">{project.name}</p><p className="text-xs text-muted-foreground">{project.key} · {projectIssues.length} {t("summary.issues")}</p></div>
-                  <div className="w-20 text-right"><p className="text-sm font-semibold text-foreground">{pct}%</p><Progress value={pct} className="mt-1 h-1.5" /></div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <EmptyState icon={<FolderOpen className="h-8 w-8" />} title={t("dashboard.noProjectsInScope")} />
-        )}
-      </SectionCard>
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Open a project to review progress, work, and delivery context." />
     </DashboardFrame>
   );
 }
@@ -365,7 +430,9 @@ export function RoleBasedDashboard() {
   if (isSuperAdmin || isAdmin) return <SuperAdminDashboard />;
   if (isPM || isTeamLeader) return <PMDashboard />;
   if (isDeveloper || isMember) return <DeveloperDashboard />;
-  if (isViewer || isPartner || isClient || isAccountManager || isDepartmentManager || isHrManager || isReviewer) return <ViewerDashboard />;
+  if (isPartner) return <ExternalProjectDashboard kind="partner" />;
+  if (isClient) return <ExternalProjectDashboard kind="client" />;
+  if (isViewer || isAccountManager || isDepartmentManager || isHrManager || isReviewer) return <ViewerDashboard />;
   return <EmptyState icon={<AlertCircle className="h-8 w-8" />} title={t("dashboard.unableToLoadUser")} />;
 }
 
