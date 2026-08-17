@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Zap, Plus, Pencil, Trash2, Play, ToggleLeft, ToggleRight,
-  Clock, CheckCircle2, XCircle, SkipForward,
+  Clock, CheckCircle2, XCircle, SkipForward, ArrowRight, Bell, CircleCheck, UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../lib/api";
@@ -62,6 +62,16 @@ interface PaginatedLogs {
 
 interface PaginatedRules {
   data: AutomationRule[];
+}
+
+interface AutomationRecipe {
+  name: string;
+  description: string;
+  trigger_type: string;
+  trigger_config: Record<string, any>;
+  action_type: string;
+  action_config: Record<string, any>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -347,6 +357,50 @@ function AutomationPage() {
     }));
   };
 
+  const starterRecipes: AutomationRecipe[] = [
+    {
+      name: isRTL ? "تنبيه عند حظر المهمة" : "Alert when work is blocked",
+      description: isRTL ? "أرسل تنبيهًا عندما تنتقل المهمة إلى حالة محظورة." : "Notify the assignee when an issue becomes blocked.",
+      trigger_type: "status_changed",
+      trigger_config: { to: "blocked" },
+      action_type: "notify",
+      action_config: {},
+      icon: Bell,
+    },
+    {
+      name: isRTL ? "أضف علامة الإنجاز" : "Mark completed work",
+      description: isRTL ? "أضف علامة عند اكتمال المهمة لتسهيل المراجعة." : "Add a completion label when an issue reaches Done.",
+      trigger_type: "status_changed",
+      trigger_config: { to: "done" },
+      action_type: "add_label",
+      action_config: { label_ids: [] },
+      icon: CircleCheck,
+    },
+    {
+      name: isRTL ? "تعيين المهام الجديدة" : "Route new work",
+      description: isRTL ? "ابدأ بتعيين المهام الجديدة إلى عضو الفريق المناسب." : "Start with a simple assignment rule for new issues.",
+      trigger_type: "created",
+      trigger_config: {},
+      action_type: "assign",
+      action_config: {},
+      icon: UserRound,
+    },
+  ];
+
+  const openStarterRecipe = (recipe: AutomationRecipe) => {
+    setDraft({
+      ...blankRule(),
+      project_id: projectId,
+      name: recipe.name,
+      description: recipe.description,
+      trigger_type: recipe.trigger_type,
+      trigger_config: recipe.trigger_config,
+      action_type: recipe.action_type,
+      action_config: recipe.action_config,
+    });
+    setDialogOpen(true);
+  };
+
   /* ── Status badge ── */
   const statusBadge = (status: string) => {
     const cfg = {
@@ -402,9 +456,50 @@ function AutomationPage() {
           {isRTL ? "جارٍ التحميل..." : "Loading..."}
         </div>
       ) : rules.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-muted-foreground">
-          <Zap className="mb-3 h-10 w-10 opacity-40" />
-          <p className="text-sm">{t("automation.noRules")}</p>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {isRTL ? "ابدأ بوصفة جاهزة" : "Start with a starter recipe"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {isRTL ? "اختر مثالًا قريبًا من عملك ثم عدّل التفاصيل قبل الحفظ." : "Choose a familiar workflow, then adjust the details before saving."}
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setDraft(blankRule()); setDialogOpen(true); }}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              {t("automation.createRule")}
+            </Button>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {starterRecipes.map((recipe) => {
+              const Icon = recipe.icon;
+              return (
+                <button
+                  key={recipe.name}
+                  type="button"
+                  onClick={() => openStarterRecipe(recipe)}
+                  className="group rounded-xl border border-border bg-card p-4 text-start transition-colors hover:border-primary/60 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <div className="mb-4 flex items-start justify-between gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-foreground">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">{recipe.name}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{recipe.description}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-10 text-center text-muted-foreground">
+            <Zap className="mb-3 h-9 w-9 opacity-40" aria-hidden="true" />
+            <p className="text-sm">{t("automation.noRules")}</p>
+            <p className="mt-1 max-w-md text-xs">{isRTL ? "ستظهر القواعد المحفوظة هنا مع آخر تشغيل وحالتها." : "Saved rules will appear here with their latest run and current status."}</p>
+          </div>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border">
