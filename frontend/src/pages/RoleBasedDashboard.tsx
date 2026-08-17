@@ -199,7 +199,7 @@ function SuperAdminDashboard() {
         <StatCard label={t("dashboard.openIssues")} value={openIssues.length} icon={<AlertCircle className="h-5 w-5" />} color="red" />
       </section>
 
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
 
       <SectionCard title={t("dashboard.systemHealth")}>
         <div className="space-y-3">
@@ -253,7 +253,7 @@ function PMDashboard() {
         <StatCard label={t("dashboard.completion")} value={`${completionRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
       </section>
 
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <SectionCard title={t("summary.sprintHealth")}>
