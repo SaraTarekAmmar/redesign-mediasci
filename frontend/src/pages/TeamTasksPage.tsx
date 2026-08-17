@@ -40,7 +40,7 @@ function TeamTasksPage() {
 
   if (loading) {
     return (
-      <div className="h-full overflow-y-auto p-5">
+      <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
         <div className="mx-auto max-w-screen-2xl">
           <div className="mb-5">
             <div className="h-7 w-40 animate-pulse rounded-md bg-muted" />
@@ -89,7 +89,7 @@ function TeamTasksPage() {
   const totalLoad = members.reduce((s, m) => s + (m.load_pct ?? 0), 0);
 
   return (
-    <div className="h-full overflow-y-auto p-5" dir={i18n.dir()}>
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={i18n.dir()}>
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           icon={<Users className="h-4 w-4" />}

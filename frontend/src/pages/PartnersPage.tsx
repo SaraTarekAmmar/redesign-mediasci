@@ -284,7 +284,7 @@ function PartnersPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <PageHeader
         icon={<Handshake className="h-5 w-5" />}
         title={t("partners.title", { defaultValue: "External Partners" })}

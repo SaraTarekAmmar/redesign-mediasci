@@ -91,7 +91,7 @@ function GanttPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("gantt.title")}

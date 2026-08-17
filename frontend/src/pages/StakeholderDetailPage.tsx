@@ -194,7 +194,7 @@ function StakeholderDetailPage() {
     : [];
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-xl">
         <Button variant="ghost" size="sm" className="mb-3 gap-1.5" onClick={() => navigate("/stakeholders")}>
           <ArrowLeft className="h-4 w-4" /> {t("stakeholders.detail.back")}

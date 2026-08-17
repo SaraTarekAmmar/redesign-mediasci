@@ -232,7 +232,7 @@ function ProjectWorkforcePage() {
   const selectedCandidates = pickerOpen ? candidates[pickerOpen] : [];
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <PageHeader icon={<UsersRound className="h-5 w-5" />} title={t("workforce.title", { defaultValue: "Project Workforce" })}
         subtitle={activeProject?.name ? `Internal and external assignment paths for ${activeProject.name}` : "Internal and external assignment paths for this project"} />
 

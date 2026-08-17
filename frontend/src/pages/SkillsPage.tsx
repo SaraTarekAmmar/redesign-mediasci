@@ -167,7 +167,7 @@ function SkillsPage() {
 
   if (loading) {
     return (
-      <div className="h-full overflow-y-auto p-5" role="status" aria-label={t("skills.loadingLabel")}>
+      <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" role="status" aria-label={t("skills.loadingLabel")}>
         <div className="mx-auto max-w-screen-2xl">
           <div className="mb-5">
             <div className="h-7 w-44 animate-pulse rounded-md bg-muted" />
@@ -211,7 +211,7 @@ function SkillsPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-5" dir={i18n.dir()}>
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={i18n.dir()}>
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           icon={<Sparkles className="h-4 w-4" />}

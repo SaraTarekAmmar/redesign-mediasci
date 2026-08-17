@@ -111,7 +111,7 @@ function ProfilePage() {
   ];
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-lg">
         <PageHeader title={t("profile.title")} subtitle={t("profile.subtitle")} />
 

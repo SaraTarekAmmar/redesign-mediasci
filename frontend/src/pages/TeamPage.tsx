@@ -82,7 +82,7 @@ export default function TeamPage() {
   const currentTeam = teams.find((t) => t.id === selectedTeamId);
 
   return (
-    <div className="h-full overflow-y-auto p-5" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-screen-2xl space-y-5">
       <PageHeader
         icon={<FolderKanban className="h-4 w-4" />}
