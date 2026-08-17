@@ -10,7 +10,8 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: [
       "5173-i04qt2bh6yec0orfhrnya-6e12f491.sg1.manus.computer",
-      "5174-i04qt2bh6yec0orfhrnya-6e12f491.sg1.manus.computer"
+      "5174-i04qt2bh6yec0orfhrnya-6e12f491.sg1.manus.computer",
+      "5174-i235xfmoitmtojuwoaent-66470ead.us4.manus.computer"
     ],
     proxy: {
       "/api": "http://127.0.0.1:8001",
