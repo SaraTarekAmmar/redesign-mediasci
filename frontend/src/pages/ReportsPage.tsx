@@ -603,7 +603,6 @@ function ReportsPage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={isRTL ? "التقارير والتحليلات" : "Reports & Analytics"}
-          subtitle={isRTL ? "استعراض تفاعلي للرسوم وتحليل الانحراف ومصفوفة عبء الفريق" : "Interactive chart inspection, variance analysis, and team workload matrix"}
           actions={
             <div className="flex items-center gap-2 no-print">
               <DropdownMenu>
@@ -711,24 +710,17 @@ function ReportsPage() {
           </div>
         </div>
 
-        <div className={`mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${pointVariance < 0 ? "border-amber-500/30 bg-amber-500/5" : "border-emerald-500/30 bg-emerald-500/5"}`} role="status" aria-live="polite">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className={`mt-0.5 h-5 w-5 shrink-0 ${pointVariance < 0 ? "text-amber-600" : "text-emerald-600"}`} aria-hidden="true" />
-            <div>
-              <p className="text-sm font-semibold text-foreground">
-                {pointVariance < 0
-                  ? (isRTL ? `${shouldHaveBeenDoneTasks.length} مهمة تحتاج إلى مراجعة` : `${shouldHaveBeenDoneTasks.length} tasks need a review`)
-                  : (isRTL ? "الخطة تسير بشكل جيد" : "The plan is tracking well")}
-              </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {pointVariance < 0
-                  ? (isRTL ? `الفعلي أقل من الهدف بمقدار ${Math.abs(pointVariance)} نقطة. ابدأ بتحليل الخطة مقابل الفعلي.` : `Actual delivery is ${Math.abs(pointVariance)} points behind target. Start with Planned vs Actual Analysis.`)
-                  : (isRTL ? "قارن التقدم الفعلي بالخطة أو راجع عبء الفريق لمواصلة التحسين." : "Compare actual progress with the plan or review team workload to keep momentum.")}
-              </p>
-            </div>
+        <div className={`mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${pointVariance < 0 ? "border-amber-500/30 bg-amber-500/5" : "border-emerald-500/30 bg-emerald-500/5"}`} role="status" aria-live="polite">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className={`h-4 w-4 shrink-0 ${pointVariance < 0 ? "text-amber-600" : "text-emerald-600"}`} aria-hidden="true" />
+            <p className="text-sm font-semibold text-foreground">
+              {pointVariance < 0
+                ? (isRTL ? `${shouldHaveBeenDoneTasks.length} مهمة تحتاج إلى مراجعة · ${Math.abs(pointVariance)} نقطة خلف الخطة` : `${shouldHaveBeenDoneTasks.length} tasks to review · ${Math.abs(pointVariance)} pts behind plan`)
+                : (isRTL ? "الخطة تسير بشكل جيد" : "Plan is tracking well")}
+            </p>
           </div>
           <Button size="sm" variant="outline" onClick={() => setActiveTab("plan_vs_actual")} className="gap-1.5">
-            {isRTL ? "مراجعة الخطة" : "Review the plan"}
+            {isRTL ? "مراجعة الخطة" : "Review plan"}
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
@@ -774,7 +766,6 @@ function ReportsPage() {
             {/* Visual Variance Comparison Timeline */}
             <Panel
               title={isRTL ? "الجدول الزمني للخطة مقابل الإكمال الفعلي" : "Expected Plan vs Actual Completion Timeline"}
-              subtitle={isRTL ? "قارن تواريخ الاستحقاق المخططة مع الإكمال الفعلي. مرّر للاطلاع وانقر للتفاصيل." : "Compare planned task due dates with actual completions. Hover to inspect, click for detailed actions."}
               action={
                 <div className="flex items-center gap-4 text-xs">
                   <div className="flex items-center gap-1.5">
