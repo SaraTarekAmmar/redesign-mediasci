@@ -15,6 +15,7 @@ interface GanttTask {
   startDate: Date;
   endDate: Date;
   assigneeId?: string;
+  externalAssigneeId?: string;
   typeKey: string;
   priorityId: string;
   statusId: string;
@@ -54,11 +55,11 @@ function getStatusColor(statusId: string): string {
   const colors: Record<string, string> = {
     s1: "#94a3b8",
     s2: "#64748b",
-    s3: "#3b82f6",
+    s3: "var(--primary)",
     s4: "#f59e0b",
     s5: "#22c55e",
   };
-  return colors[statusId] ?? "#3b82f6";
+  return colors[statusId] ?? "var(--primary)";
 }
 
 export function GanttChart({
@@ -228,7 +229,7 @@ export function GanttChart({
                   <span className="truncate">{task.title}</span>
                 </span>
                 {task.assigneeId && (
-                  <UserAvatar userId={task.assigneeId} size="xs" />
+                  <UserAvatar userId={task.assigneeId} externalId={task.externalAssigneeId} size="xs" />
                 )}
               </div>
             );

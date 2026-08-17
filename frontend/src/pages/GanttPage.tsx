@@ -53,6 +53,7 @@ function GanttPage() {
           startDate: start,
           endDate: end,
           assigneeId: issue.assigneeId,
+          externalAssigneeId: issue.externalAssigneeId,
           typeKey: issue.typeKey,
           priorityId: issue.priorityId,
           statusId: issue.statusId,

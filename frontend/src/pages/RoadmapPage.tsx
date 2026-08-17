@@ -528,7 +528,7 @@ function RoadmapPage() {
                     <p className="mt-0.5 text-sm font-medium text-foreground line-clamp-1">{i.title}</p>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       {projName && <span>{projName}</span>}
-                      {i.assigneeId && <UserAvatar userId={i.assigneeId} size="xs" />}
+                      {(i.assigneeId || i.externalAssigneeId) && <UserAvatar userId={i.assigneeId} externalId={i.externalAssigneeId} size="xs" />}
                       {i.storyPoints && <span>{i.storyPoints}sp</span>}
                     </div>
                   </div>
@@ -617,7 +617,7 @@ function RoadmapPage() {
                             </span>
                           )}
                           <PriorityIcon priorityId={i.priorityId} className="h-3.5 w-3.5 shrink-0" />
-                          <UserAvatar userId={i.assigneeId} size="xs" />
+                          <UserAvatar userId={i.assigneeId} externalId={i.externalAssigneeId} size="xs" />
                         </button>
                       );
                     })}

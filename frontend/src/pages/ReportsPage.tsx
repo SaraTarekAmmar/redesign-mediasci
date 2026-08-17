@@ -789,6 +789,7 @@ function ReportsPage() {
                       {/* Task nodes */}
                       <div className="absolute inset-0 mx-4">
                         {expectedTimelineTasks.map((t) => {
+                          const task = t.task;
                           const priority = lookups.priorityById[t.task.priorityId];
                           return (
                             <div
@@ -813,7 +814,7 @@ function ReportsPage() {
                                 className="relative flex h-8 w-8 items-center justify-center rounded-full border bg-background hover:scale-110 active:scale-95 cursor-pointer shadow-md hover:shadow-lg transition-all duration-150"
                                 style={{ borderColor: priority?.color || "#3b82f6", borderWidth: "2px" }}
                               >
-                                <UserAvatar userId={t.task.assigneeId} size="sm" className="pointer-events-none" />
+                                <UserAvatar userId={t.task.assigneeId} externalId={t.task.externalAssigneeId} size="sm" className="pointer-events-none" />
                                 
                                 {/* Small Badge for Status Category */}
                                 <div 
@@ -855,6 +856,7 @@ function ReportsPage() {
                       {/* Task nodes */}
                       <div className="absolute inset-0 mx-4">
                         {actualTimelineTasks.map((t) => {
+                          const task = t.task;
                           const priority = lookups.priorityById[t.task.priorityId];
                           return (
                             <div
@@ -879,7 +881,7 @@ function ReportsPage() {
                                 className="relative flex h-8 w-8 items-center justify-center rounded-full border bg-background hover:scale-110 active:scale-95 cursor-pointer shadow-md hover:shadow-lg transition-all duration-150"
                                 style={{ borderColor: priority?.color || "#10b981", borderWidth: "2px" }}
                               >
-                                <UserAvatar userId={t.task.assigneeId} size="sm" className="pointer-events-none" />
+                                <UserAvatar userId={t.task.assigneeId} externalId={t.task.externalAssigneeId} size="sm" className="pointer-events-none" />
 
                                 {/* Small Badge for Done Status */}
                                 <div 
@@ -941,6 +943,7 @@ function ReportsPage() {
                   </thead>
                   <tbody className="divide-y divide-border/60">
                     {shouldHaveBeenDoneTasks.map((t) => {
+                      const task = t;
                       const assignee = lookups.userById[t.assigneeId || ""];
                       const sprint = lookups.sprintById[t.sprintId || ""];
                       const st = lookups.statusById[t.statusId];
@@ -962,10 +965,12 @@ function ReportsPage() {
                             </div>
                           </td>
                           <td className="py-3 pr-3">
-                            {assignee ? (
+                            {assignee || task.externalAssigneeId ? (
                               <div className="flex items-center gap-1.5">
-                                <UserAvatar userId={assignee.id} size="sm" />
-                                <span className="text-foreground">{assignee.name}</span>
+                                <UserAvatar userId={assignee?.id} externalId={task.externalAssigneeId} size="sm" />
+                                <span className="text-foreground">
+                                  {assignee?.name || lookups.partnerMemberById[task.externalAssigneeId || ""]?.name || (isRTL ? "مسند خارجي" : "Partner assignee")}
+                                </span>
                               </div>
                             ) : (
                               <span className="text-muted-foreground">{isRTL ? "غير مسند" : "Unassigned"}</span>
@@ -1263,10 +1268,12 @@ function ReportsPage() {
                             </div>
                           </td>
                           <td className="py-3 pr-3">
-                            {assignee ? (
+                            {assignee || task.externalAssigneeId ? (
                               <div className="flex items-center gap-1.5">
-                                <UserAvatar userId={assignee.id} size="sm" />
-                                <span className="text-foreground">{assignee.name}</span>
+                                <UserAvatar userId={assignee?.id} externalId={task.externalAssigneeId} size="sm" />
+                                <span className="text-foreground">
+                                  {assignee?.name || lookups.partnerMemberById[task.externalAssigneeId || ""]?.name || (isRTL ? "مسند خارجي" : "Partner assignee")}
+                                </span>
                               </div>
                             ) : (
                               <span className="text-muted-foreground">{isRTL ? "غير مسند" : "Unassigned"}</span>
@@ -1373,13 +1380,13 @@ function ReportsPage() {
               {/* Assignee Card */}
               <div className="rounded-xl border border-border bg-card p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <UserAvatar userId={clickedTask.assigneeId} size="default" />
+                  <UserAvatar userId={clickedTask.assigneeId} externalId={clickedTask.externalAssigneeId} size="default" />
                   <div>
                     <p className="text-xs font-semibold text-foreground">
-                      {clickedTask.assigneeId ? lookups.userById[clickedTask.assigneeId]?.name : (isRTL ? "غير مسند" : "Unassigned")}
+                      {clickedTask.assigneeId ? lookups.userById[clickedTask.assigneeId]?.name : clickedTask.externalAssigneeId ? lookups.partnerMemberById[clickedTask.externalAssigneeId]?.name || (isRTL ? "مسند خارجي" : "Partner assignee") : (isRTL ? "غير مسند" : "Unassigned")}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      {clickedTask.assigneeId ? lookups.userById[clickedTask.assigneeId]?.role : (isRTL ? "لا يوجد مسند إليه" : "No assignee")}
+                      {clickedTask.assigneeId ? lookups.userById[clickedTask.assigneeId]?.role : clickedTask.externalAssigneeId ? (isRTL ? "عضو شريك" : "Partner member") : (isRTL ? "لا يوجد مسند إليه" : "No assignee")}
                     </p>
                   </div>
                 </div>
