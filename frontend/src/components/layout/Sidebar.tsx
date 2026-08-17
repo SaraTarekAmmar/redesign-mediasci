@@ -74,7 +74,6 @@ export const allGroups: { headingKey: string; items: NavItem[] }[] = [
     headingKey: "Planning",
     items: [
       { to: "/", labelKey: "nav.summary", icon: LayoutDashboard, end: true },
-      { to: "/dashboard", labelKey: "nav.roleDashboard", icon: Shield, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "executive", "partner", "client", "account-manager", "department-manager", "hr-manager", "reviewer"] },
       { to: "/scope", labelKey: "nav.scope", icon: Target, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-scope"] },
       { to: "/board", labelKey: "nav.board", icon: KanbanSquare },
       { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },

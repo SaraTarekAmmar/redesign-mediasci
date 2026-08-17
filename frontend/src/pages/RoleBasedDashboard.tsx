@@ -18,12 +18,12 @@ import {
   Target,
   UsersRound,
 } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
-import { EmptyState } from "../common/EmptyState";
-import { PageHeader } from "../common/PageHeader";
-import { SectionCard } from "../common/SectionCard";
-import { StatTile } from "../common/StatTile";
-import { Progress } from "../ui/Progress";
+import { useAuth } from "../hooks/useAuth";
+import { EmptyState } from "../components/common/EmptyState";
+import { PageHeader } from "../components/common/PageHeader";
+import { SectionCard } from "../components/common/SectionCard";
+import { StatTile } from "../components/common/StatTile";
+import { Progress } from "../components/ui/Progress";
 
 const D: Record<string, any> = (typeof window !== "undefined" && (window as any).__DATA__) || {};
 
