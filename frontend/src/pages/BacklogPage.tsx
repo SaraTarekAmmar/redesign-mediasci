@@ -132,6 +132,7 @@ function Section({
   const { t } = useTranslation();
   const [open, setOpen] = useState(defaultOpen);
   const points = issues.reduce((sum, i) => sum + (i.storyPoints ?? 0), 0);
+  const showContent = issues.length > 0 || subtitle === t("sprints.active") || title === t("backlog.title");
 
   return (
     <div className="mb-4 rounded-xl border border-border bg-card overflow-hidden animate-slide-up">
@@ -151,7 +152,7 @@ function Section({
           <Plus className="h-4 w-4" /> {t("backlog.addToSprint")}
         </Button>
       </div>
-      {open && (
+      {open && showContent && (
         <div>
           {issues.length > 0 ?
             issues.map((i) => <IssueRow key={i.id} issue={i} onOpen={onOpen} />) :
@@ -235,6 +236,8 @@ function BacklogPage() {
   const backlog = filtered.
   filter((i) => !i.sprintId).
   sort((a, b) => a.position - b.position);
+  const activeSprintCount = lookups.sprints.filter((sprint) => sprint.status === "active").length;
+  const plannedPoints = filtered.reduce((sum, issue) => sum + (issue.storyPoints ?? 0), 0);
 
   const openCreate = (sprintId?: string) => {
     setCreateSprintId(sprintId);
@@ -255,17 +258,25 @@ function BacklogPage() {
         <PageHeader
           icon={<ListChecks className="h-4 w-4" />}
           title={t("backlog.title")}
-          subtitle={t("backlog.description")}
           actions={
-            <SavedViewsDropdown
-              pageKey="backlog"
-              currentConfig={currentConfig}
-              onLoad={handleLoadView}
-              hasUnsavedChanges={hasUnsavedChanges}
-            />
+            <div className="flex items-center gap-2">
+              <SavedViewsDropdown
+                pageKey="backlog"
+                currentConfig={currentConfig}
+                onLoad={handleLoadView}
+                hasUnsavedChanges={hasUnsavedChanges}
+              />
+              <Button onClick={() => openCreate()} className="gap-1.5"><Plus className="h-4 w-4" />Add work</Button>
+            </div>
           }
         />
         <FilterBar />
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4" aria-label="Backlog snapshot">
+          <div className="rounded-lg border border-border/70 bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Visible work</p><p className="mt-1 text-xl font-semibold text-foreground">{filtered.length}</p></div>
+          <div className="rounded-lg border border-border/70 bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Backlog</p><p className="mt-1 text-xl font-semibold text-foreground">{backlog.length}</p></div>
+          <div className="rounded-lg border border-border/70 bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Active sprints</p><p className="mt-1 text-xl font-semibold text-primary">{activeSprintCount}</p></div>
+          <div className="rounded-lg border border-border/70 bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Planned points</p><p className="mt-1 text-xl font-semibold text-foreground">{plannedPoints}</p></div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5">
@@ -276,7 +287,8 @@ function BacklogPage() {
           subtitle={sp.status === "active" ? t("sprints.active") : sp.status === "planning" ? t("sprints.planning") : t("sprints.completed")}
           issues={bySprint(sp.id)}
           onOpen={setSelected}
-          onAdd={() => openCreate(sp.id)} />
+          onAdd={() => openCreate(sp.id)}
+          defaultOpen={sp.status === "active" || bySprint(sp.id).length > 0} />
 
         )}
         <Section
