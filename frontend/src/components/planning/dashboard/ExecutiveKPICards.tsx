@@ -32,7 +32,9 @@ interface ExecutiveKPICardsProps {
 }
 
 export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) => {
-  const isAhead = data.scheduleVarianceDays <= 0;
+  const isAhead = data.scheduleVarianceDays < 0;
+  const isDelayed = data.scheduleVarianceDays > 0;
+  const hasProgress = data.plannedProgressPct > 0 || data.actualProgressPct > 0;
   const isUnderBudget = data.budgetVariance <= 0;
 
   const healthBadgeVariant =
@@ -98,7 +100,11 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <span className="w-2 h-2 rounded-full bg-foreground/30 inline-block shrink-0" /> Planned {data.plannedProgressPct}%
             </div>
-            {data.actualProgressPct >= data.plannedProgressPct ? (
+            {!hasProgress ? (
+              <span className="text-muted-foreground flex items-center font-medium text-xs mt-1">
+                Not started
+              </span>
+            ) : data.actualProgressPct >= data.plannedProgressPct ? (
               <span className="text-emerald-600 dark:text-emerald-400 flex items-center font-medium text-xs mt-1">
                 <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
                 On Target
@@ -125,16 +131,18 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
         </div>
         <div className="flex items-baseline justify-between">
           <span className="text-2xl font-bold text-foreground">
-            {formatDays(Math.abs(data.scheduleVarianceDays))}
+            {data.scheduleVarianceDays === 0 ? "0d" : formatDays(isAhead ? -Math.abs(data.scheduleVarianceDays) : Math.abs(data.scheduleVarianceDays))}
           </span>
-          <Badge variant={isAhead ? "success" : "danger"} className="text-xs">
-            {isAhead ? "Ahead" : "Delayed"}
+          <Badge variant={isAhead ? "success" : isDelayed ? "danger" : "outline"} className="text-xs">
+            {isAhead ? "Ahead" : isDelayed ? "Delayed" : "On time"}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
           {isAhead
-            ? "Ahead of baseline schedule"
-            : `${data.scheduleVarianceDays} days behind schedule`}
+            ? `Ahead of baseline by ${Math.abs(data.scheduleVarianceDays)} days`
+            : isDelayed
+            ? `${Math.abs(data.scheduleVarianceDays)} days behind baseline`
+            : "On baseline schedule"}
         </p>
       </div>
 

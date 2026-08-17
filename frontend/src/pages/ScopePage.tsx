@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, Circle, Clock, Flag, AlertTriangle, Plus, Pencil, Trash2, X } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Flag, AlertTriangle, Plus, Pencil, Trash2, X, ArrowRight, ListChecks } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { Milestone, Objective, Deliverable } from "../data/opsTypes";
@@ -310,6 +310,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
     (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
   );
   const MILESTONE_STATUS = milestoneStatusMeta(t);
+  const scopeNeedsSetup = scopeDescription.trim().length === 0;
 
   if (loading) {
     return (
@@ -347,8 +348,32 @@ function ScopePage({ projectId: projectIdProp }: Props) {
           }
         />
 
+        <div className={`mb-5 flex flex-col gap-3 rounded-xl border p-4 md:flex-row md:items-center md:justify-between ${scopeNeedsSetup ? "border-primary/40 bg-primary/10" : "border-border bg-muted/20"}`}>
+          <div className="flex items-start gap-3">
+            <ListChecks className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {scopeNeedsSetup
+                  ? t("scope.guidanceTitle", { defaultValue: "Start with the boundary everyone can agree on" })
+                  : t("scope.guidanceReadyTitle", { defaultValue: "Your scope has a starting point" })}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {scopeNeedsSetup
+                  ? t("scope.guidanceHint", { defaultValue: "Describe what is included and excluded, then add one to three outcomes below." })
+                  : t("scope.guidanceReadyHint", { defaultValue: "Add objectives and deliverables when the team is ready to turn the brief into work." })}
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+            {scopeNeedsSetup
+              ? t("scope.guidanceStep", { defaultValue: "Step 1 of 2" })
+              : t("scope.guidanceNext", { defaultValue: "Next: add objectives" })}
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </div>
+
         {/* Scope Description */}
-        <div className="mb-4 rounded-xl border border-border bg-card p-5">
+        <div className={`mb-4 rounded-xl border bg-card p-5 ${scopeNeedsSetup ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-foreground">{t("scope.projectScope")}</h2>
             <Button size="sm" onClick={saveScope}>{t("scope.save")}</Button>
@@ -393,7 +418,26 @@ function ScopePage({ projectId: projectIdProp }: Props) {
                 </div>
               ))}
               {objectives.length === 0 && (
-                <p className="text-xs text-muted-foreground py-4 text-center">{t("scope.noObjectives")}</p>
+                <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
+                  <p className="text-sm font-medium text-foreground">
+                    {t("scope.noObjectives", { defaultValue: "No objectives yet." })}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {t("scope.objectivesHint", { defaultValue: "Objectives turn a broad scope into outcomes the team can review together." })}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {["Reduce onboarding drop-off", "Ship a usable first release", "Improve reporting confidence"].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => { setObjectiveDraft({ ...blankObjective(), title: suggestion }); setObjectiveDialogOpen(true); }}
+                        className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      >
+                        + {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
