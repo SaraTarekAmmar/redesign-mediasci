@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import type { Expense, CloudService, SoftwareLicense } from "../data/opsTypes";
 import { PageHeader } from "../components/common/PageHeader";
+import { StatTile } from "../components/common/StatTile";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Label } from "../components/ui/Label";
@@ -40,10 +41,10 @@ import { getActiveProjectId } from "../lib/api";
 const money = (n: number) => `$${n.toLocaleString()}`;
 
 const expenseCategories = [
-  { name: "Development", color: "#3b82f6" },
+  { name: "Development", color: "var(--primary)" },
   { name: "Design", color: "#ec4899" },
-  { name: "Hosting", color: "#8b5cf6" },
-  { name: "Cloud Services", color: "#06b6d4" },
+  { name: "Hosting", color: "#6b7280" },
+  { name: "Cloud Services", color: "#0f766e" },
   { name: "Licenses", color: "#f59e0b" },
   { name: "Marketing", color: "#f97316" },
 ];
@@ -342,7 +343,7 @@ function BudgetPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("budget.title")}
@@ -385,27 +386,11 @@ function BudgetPage() {
 
         {!dataLoading && (
           <>
-            <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-              {[
-                [t("budget.oneOffExpenses"), money(totalExpenses), Receipt, "#3b82f6"],
-                [t("budget.monthlyCloud"), money(monthlyCloud), CloudCog, "#06b6d4"],
-                [t("budget.monthlyLicenses"), money(monthlyLicenses), KeyRound, "#f59e0b"],
-                [t("budget.recurringMo"), money(monthlyRecurring), Receipt, "#8b5cf6"]
-              ].map(([label, value, Icon, color]) => {
-                const I = Icon as React.ComponentType<{ className?: string }>;
-                return (
-                  <div key={label as string} className="rounded-xl border border-border bg-card p-4">
-                    <span
-                      className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: `${color as string}1f`, color: color as string }}
-                    >
-                      <I className="h-4 w-4" />
-                    </span>
-                    <p className="text-xl font-semibold text-foreground">{value as string}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{label as string}</p>
-                  </div>
-                );
-              })}
+            <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <StatTile label={t("budget.oneOffExpenses")} value={money(totalExpenses)} icon={<Receipt className="h-5 w-5" />} />
+              <StatTile label={t("budget.monthlyCloud")} value={money(monthlyCloud)} icon={<CloudCog className="h-5 w-5" />} />
+              <StatTile label={t("budget.monthlyLicenses")} value={money(monthlyLicenses)} icon={<KeyRound className="h-5 w-5" />} />
+              <StatTile label={t("budget.recurringMo")} value={money(monthlyRecurring)} icon={<Receipt className="h-5 w-5" />} />
             </div>
 
             {byCategory.length > 0 && (

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Building2, Plus, Mail, Phone, ExternalLink, ShieldCheck, Loader2, X, Send, PencilLine, Trash2 } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/Dialog";
@@ -150,7 +151,7 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("clients.title")}
@@ -224,7 +225,7 @@ export default function ClientsPage() {
                     </button>
                   ))}
                   {clients.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">{t("clients.noClients")}</p>
+                    <EmptyState icon={<Building2 className="h-8 w-8" />} title={t("clients.noClients")} subtitle={t("clients.noClientsSubtitle", { defaultValue: "Add a client organization to start building the relationship workspace." })} />
                   )}
                 </div>
               </div>
@@ -311,9 +312,7 @@ export default function ClientsPage() {
                         </div>
                       ))}
                       {(!selectedClient.contacts || selectedClient.contacts.length === 0) && (
-                        <p className="text-sm text-muted-foreground col-span-2 py-4 text-center">
-                          {t("clients.noContactInfo")}
-                        </p>
+                        <EmptyState className="col-span-2" icon={<Building2 className="h-7 w-7" />} title={t("clients.noContactInfo")} subtitle={t("clients.addContact")} />
                       )}
                     </div>
                   </div>

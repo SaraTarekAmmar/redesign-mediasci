@@ -6,6 +6,8 @@ import { api } from "../lib/api";
 import { seedIssues } from "../data/seed";
 import { lookups } from "../store/useStore";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
+import { SectionCard } from "../components/common/SectionCard";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
@@ -39,7 +41,7 @@ interface AdminTask {
 interface UserOption { id: number | string; name: string; }
 
 const STATUS_COLORS: Record<AdminTaskStatus, string> = {
-  todo: "#6B7280", in_progress: "#3B82F6", hold: "#F59E0B", done: "#10B981", canceled: "#EF4444",
+  todo: "#6B7280", in_progress: "var(--primary)", hold: "#F59E0B", done: "#10B981", canceled: "#EF4444",
 };
 
 const STATUS_LABEL_PREFIX = /^admintasks\.status\.|^adminTasks\.status\./i;
@@ -241,7 +243,7 @@ function AdminTasksPage() {
           }
         />
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <SectionCard title={t("adminTasks.filters", { defaultValue: "Filter task queue" })} className="mb-5" bodyClassName="flex flex-wrap gap-2">
           <Input
             placeholder={t("adminTasks.searchPlaceholder")}
             value={search}
@@ -262,7 +264,7 @@ function AdminTasksPage() {
               {bootstrapProjects.map((p) => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
             </SelectContent>
           </Select>
-        </div>
+        </SectionCard>
 
         {loading && (
           <div className="flex items-center justify-center py-16">
@@ -276,7 +278,11 @@ function AdminTasksPage() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && tasks.length === 0 && (
+          <EmptyState icon={<ClipboardList className="h-8 w-8" />} title={t("adminTasks.empty")} subtitle={t("adminTasks.emptySubtitle", { defaultValue: "No administrative tasks match the current filters." })} />
+        )}
+
+        {!loading && !error && tasks.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-border bg-card">
             <table className="w-full text-sm">
               <thead>
@@ -319,9 +325,6 @@ function AdminTasksPage() {
                     </td>
                   </tr>
                 ))}
-                {tasks.length === 0 && (
-                  <tr><td colSpan={8} className="py-10 text-center text-sm text-muted-foreground">{t("adminTasks.empty")}</td></tr>
-                )}
               </tbody>
             </table>
           </div>

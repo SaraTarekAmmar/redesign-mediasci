@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Loader2, BarChart3, Target, Activity, FolderKanban, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
+import { StatTile } from "../components/common/StatTile";
 import { Button } from "../components/ui/Button";
 import { Textarea } from "../components/ui/Textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../components/ui/SelectEnhanced";
@@ -130,7 +132,7 @@ function AnalyticsPage() {
   );
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("analytics.title")}
@@ -186,9 +188,7 @@ function AnalyticsPage() {
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : !stats ? (
-              <div className="mb-5 rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-                {t("analytics.loadError", { defaultValue: "Unable to load analytics for this user." })}
-              </div>
+              <EmptyState className="mb-5" icon={<BarChart3 className="h-8 w-8" />} title={t("analytics.loadError", { defaultValue: "Unable to load analytics for this user." })} />
             ) : (
               <>
                 <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -285,10 +285,8 @@ function AnalyticsPage() {
         {mode === "project" && (
           <div>
             {!selectedProjectId && (
-              <div className="flex flex-col items-center justify-center gap-2 py-20 text-center text-muted-foreground">
-                <FolderKanban className="h-10 w-10" />
-                <p>{t("analytics.selectProjectHint")}</p>
-              </div>
+                              <EmptyState icon={<FolderKanban className="h-8 w-8" />} title={t("analytics.selectProject", { defaultValue: "Select a project" })} subtitle={t("analytics.selectProjectHint")} />
+
             )}
             {selectedProjectId && loadingProj && (
               <div className="flex items-center justify-center py-16">
@@ -299,7 +297,7 @@ function AnalyticsPage() {
               <div className="space-y-4">
                 <div className="rounded-xl border border-border bg-card p-5">
                   <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-lg font-bold text-primary-foreground">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted text-lg font-bold text-foreground">
                       {proj.key}
                     </div>
                     <div className="flex-1">
@@ -353,12 +351,8 @@ function AnalyticsPage() {
 }
 
 function StatCard({ label, value, tone }: { label: string; value: React.ReactNode; tone: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <div className={cn("text-2xl font-bold", tone)}>{value}</div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-    </div>
-  );
+  const color = tone.includes("emerald") ? "green" : tone.includes("destructive") ? "red" : tone.includes("amber") ? "yellow" : "neutral";
+  return <StatTile label={label} value={value} icon={<BarChart3 className="h-5 w-5" />} color={color as "neutral" | "green" | "yellow" | "red"} />;
 }
 
 export default AnalyticsPage;

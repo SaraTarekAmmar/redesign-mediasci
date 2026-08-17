@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckSquare2, ShieldCheck, ShieldAlert, AlertTriangle, Play, Loader2, ArrowRight, XCircle } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
 import { Button } from "../components/ui/Button";
 import { Textarea } from "../components/ui/Textarea";
 import { api, getActiveProjectId, getProjectScope } from "../lib/api";
@@ -128,7 +129,7 @@ export default function ValidationPage() {
   const warningCount = results.filter((r) => r.status === "warning").length;
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title="Delivery Validation Gates"
@@ -236,7 +237,7 @@ export default function ValidationPage() {
                     );
                   })}
                   {gates.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">No validation gates configured.</p>
+                    <EmptyState icon={<CheckSquare2 className="h-8 w-8" />} title="No validation gates configured" subtitle="Add quality rules to make this handoff screen actionable." />
                   )}
                 </div>
               </div>

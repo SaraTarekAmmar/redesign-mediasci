@@ -20,6 +20,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
+import { SectionCard } from "../components/common/SectionCard";
 
 const sections = [
   {
@@ -70,26 +71,29 @@ const sections = [
 
 function AdministrationPage() {
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
+      <div className="mx-auto max-w-screen-2xl">
       <PageHeader
         icon={<ShieldCheck className="h-5 w-5" />}
         title="Administration"
         subtitle="The control plane for identity, projects, workforce, delivery configuration, and governance"
       />
 
-      <div className="mx-auto mt-5 max-w-7xl space-y-6">
+      <div className="mt-6 space-y-5">
         {sections.map((section) => (
-          <section key={section.title}>
-            <h2 className="text-base font-semibold text-foreground">{section.title}</h2>
-            <p className="mt-0.5 text-sm text-muted-foreground">{section.description}</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <SectionCard
+            key={section.title}
+            title={<div><p className="text-sm font-bold text-foreground">{section.title}</p><p className="mt-0.5 text-xs font-normal text-muted-foreground">{section.description}</p></div>}
+            bodyClassName="pt-4"
+          >
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {section.items.map((item) => (
                 <Link
                   key={`${item.to}-${item.label}`}
                   to={item.to}
                   className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/30"
                 >
-                  <span className="rounded-lg bg-primary/10 p-2 text-primary">
+                  <span className="rounded-lg bg-muted p-2 text-foreground">
                     <item.icon className="h-4 w-4" />
                   </span>
                   <span className="min-w-0">
@@ -99,8 +103,9 @@ function AdministrationPage() {
                 </Link>
               ))}
             </div>
-          </section>
+          </SectionCard>
         ))}
+      </div>
       </div>
     </div>
   );
