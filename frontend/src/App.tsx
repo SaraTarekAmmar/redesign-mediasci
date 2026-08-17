@@ -240,6 +240,7 @@ export function App() {
                     <Route path="/enterprise-gantt" element={<ProtectedRoute permissions={["view-projects"]}><EnterpriseGanttPage /></ProtectedRoute>} />
                     <Route path="/departments" element={<ProtectedRoute permissions={["view-departments"]}><DepartmentsPage /></ProtectedRoute>} />
                     <Route path="/users" element={<ProtectedRoute permissions={["manage-users"]}><UsersPage /></ProtectedRoute>} />
+                    <Route path="/users/:id" element={<ProtectedRoute permissions={["manage-users"]}><UserProfilePage /></ProtectedRoute>} />
                     <Route path="/admin-tasks" element={<ProtectedRoute permissions={["view-teams"]}><AdminTasksPage /></ProtectedRoute>} />
                     <Route path="/recovery" element={<ProtectedRoute permissions={["manage-settings"]}><RecoveryPage /></ProtectedRoute>} />
                     <Route path="/triage" element={<ProtectedRoute permissions={["view-issues"]}><TriagePage /></ProtectedRoute>} />

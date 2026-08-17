@@ -14,6 +14,7 @@ from app.models.client import Client, ClientRequest, Proposal
 from app.models.epic import Epic
 from app.models.issue import Issue, IssueLabel, IssuePriority, IssueStatus, IssueType, TaskDependency, sprint_issues
 from app.models.misc import ProjectDocument, ValidationRule
+from app.models.partner import PartnerMember, Partner
 from app.models.project import Project
 from app.models.risk import Risk
 from app.models.resource import Resource
@@ -214,6 +215,21 @@ def spa_bootstrap(
                 "type": dependency.type,
             }
         )
+
+    # Partner (external) members referenced as an issue's externalAssigneeId — scoped to
+    # just the ones actually assigned on visible issues, not every partner org-wide, so
+    # this stays consistent with the same access boundary as everything else here.
+    external_assignee_ids = {item.external_assignee_id for item in issues if item.external_assignee_id}
+    partner_members = (
+        db.execute(
+            select(PartnerMember)
+            .options(joinedload(PartnerMember.partner))
+            .where(PartnerMember.id.in_(external_assignee_ids or {-1}))
+        )
+        .unique()
+        .scalars()
+        .all()
+    )
 
     visible_client_ids = {
         int(item.client_id) for item in visible_projects if item.client_id is not None
@@ -443,6 +459,15 @@ def spa_bootstrap(
                 "path": item.path,
             }
             for item in documents
+        ],
+        "partnerMembers": [
+            {
+                "id": str(item.id),
+                "name": item.name,
+                "partnerName": item.partner.name if item.partner else None,
+                "role": item.role,
+            }
+            for item in partner_members
         ],
         "clients": [
             {

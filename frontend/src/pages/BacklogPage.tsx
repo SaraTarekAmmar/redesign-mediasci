@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, ChevronDown, MoveRight, MoveLeft, ListTodo, Loader2 } from "lucide-react";
+import { ListChecks } from "lucide-react";
 import { useStore, lookups, matchesFilters } from "../store/useStore";
 import type { Issue } from "../data/types";
 import { FilterBar } from "../components/common/FilterBar";
@@ -72,7 +73,7 @@ function IssueRow({ issue, onOpen }: {issue: Issue;onOpen: (id: string) => void;
         </span>
       }
 
-      <UserAvatar userId={issue.assigneeId} size="sm" />
+      <UserAvatar userId={issue.assigneeId} externalId={issue.externalAssigneeId} size="sm" />
 
       <div onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
@@ -250,12 +251,17 @@ function BacklogPage() {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-border px-5 py-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">{t("backlog.title")}</h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {t("backlog.description")}
-            </p>
+        <div className="flex items-end justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-primary text-primary-foreground">
+              <ListChecks className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-[1.4rem] font-bold tracking-tight text-foreground leading-tight">{t("backlog.title")}</h1>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {t("backlog.description")}
+              </p>
+            </div>
           </div>
           <SavedViewsDropdown
             pageKey="backlog"

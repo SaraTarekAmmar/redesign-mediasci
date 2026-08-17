@@ -95,7 +95,7 @@ export const BoardListView = React.memo(function BoardListView({ issues, onOpen 
                           {issue.storyPoints}
                         </span>
                       )}
-                      <UserAvatar userId={issue.assigneeId} size="sm" />
+                      <UserAvatar userId={issue.assigneeId} externalId={issue.externalAssigneeId} size="sm" />
                       {issue.dueDate && (
                         <span className="shrink-0 text-xs text-muted-foreground">
                           {format(new Date(issue.dueDate), "MMM d")}

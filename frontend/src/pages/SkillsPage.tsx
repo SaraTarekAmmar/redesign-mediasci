@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from "../components/ui/Dialog";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { PageHeader } from "../components/common/PageHeader";
 
 interface Skill {
   id: string; name: string; category: string; proficiency: string;
@@ -212,14 +213,12 @@ function SkillsPage() {
   return (
     <div className="h-full overflow-y-auto p-5" dir={i18n.dir()}>
       <div className="mx-auto max-w-screen-2xl">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">{t("skills.title")}</h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {t("skills.subtitle", { users: data?.users.length ?? 0, skills: data?.skills.length ?? 0 })}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+        <PageHeader
+          icon={<Sparkles className="h-4 w-4" />}
+          title={t("skills.title")}
+          subtitle={t("skills.subtitle", { users: data?.users.length ?? 0, skills: data?.skills.length ?? 0 })}
+          actions={
+          <>
             <Button size="sm" onClick={() => setManageOpen(true)}>
               {isRTL ? "إدارة المهارات" : "Manage Skills"}
             </Button>
@@ -249,8 +248,9 @@ function SkillsPage() {
               {t("skills.viewTable")}
             </button>
           </div>
-        </div>
-      </div>
+          </>
+          }
+        />
 
         <div className="mb-5 rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-center gap-2">

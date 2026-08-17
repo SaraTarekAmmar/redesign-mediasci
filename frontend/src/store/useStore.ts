@@ -15,6 +15,7 @@ import { api, getActiveProjectId, setActiveProject } from "../lib/api";
 
 const bootstrapData = typeof window !== "undefined" ? (window as any).__DATA__ || {} : {};
 const bootstrapUsers = Array.isArray(bootstrapData.users) ? bootstrapData.users : [];
+const bootstrapPartnerMembers = Array.isArray(bootstrapData.partnerMembers) ? bootstrapData.partnerMembers : [];
 const currentUserId = String(bootstrapData.user?.id ?? "");
 
 const mapNameToKey = (name: string): string => {
@@ -489,6 +490,7 @@ export const lookups = {
   statusById: Object.fromEntries(statuses.map((s) => [s.id, s])),
   priorityById: Object.fromEntries(priorities.map((p) => [p.id, p])),
   userById: Object.fromEntries(bootstrapUsers.map((u) => [u.id, u])),
+  partnerMemberById: Object.fromEntries(bootstrapPartnerMembers.map((m: any) => [m.id, m])),
   labelById: Object.fromEntries(labels.map((l) => [l.id, l])),
   epicById: Object.fromEntries(epics.map((e) => [e.id, e])),
   sprintById: Object.fromEntries(sprints.map((s) => [s.id, s])),

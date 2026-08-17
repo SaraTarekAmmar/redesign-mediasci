@@ -37,6 +37,7 @@ from app.modules.notifications.router import router as notifications_router
 from app.modules.partners.router import router as partners_router
 from app.modules.planning.router import router as planning_router
 from app.modules.presentations.router import router as presentations_router
+from app.modules.team_tasks.router import router as team_tasks_router
 from app.modules.projects.router import router as projects_router
 from app.modules.proposals.router import router as proposals_router
 from app.modules.quality.router import router as quality_router
@@ -137,6 +138,7 @@ routers = [
     stakeholders_router,
     documents_router,
     presentations_router,
+    team_tasks_router,
     budget_router,
     workflows_router,
     analytics_router,

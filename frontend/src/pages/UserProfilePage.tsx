@@ -313,7 +313,7 @@ export default function UserProfilePage() {
         </button>
 
         {/* Profile Card Header */}
-        <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-6">
+        <div className="rounded-xl border border-border bg-card p-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
             <div className="flex items-center gap-4">
               <UserAvatar name={profile.name} avatarUrl={profile.avatar_url} className="h-16 w-16" />

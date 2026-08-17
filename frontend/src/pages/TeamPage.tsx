@@ -83,19 +83,23 @@ export default function TeamPage() {
     <div className="h-full overflow-y-auto p-5" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-screen-2xl space-y-5">
       {/* Team Header & Switcher */}
-      <div className="bg-card p-6 rounded-xl border border-border shadow-sm space-y-4">
+      <div className="bg-card p-6 rounded-xl border border-border space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-primary text-primary-foreground">
               <FolderKanban className="h-4 w-4" />
-              {isRTL ? "فريق العمل المباشر" : "Team Execution View"}
             </div>
-            <h1 className="text-2xl font-bold text-foreground mt-1">
-              {currentTeam?.name || (isRTL ? "تفاصيل الفريق" : "Team Details")}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {currentTeam?.description || (isRTL ? "عرض أعضاء الفريق والموارد المخصصة لهذا الفريق" : "Resources assigned strictly to this team.")}
-            </p>
+            <div className="min-w-0">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {isRTL ? "فريق العمل المباشر" : "Team Execution View"}
+              </div>
+              <h1 className="text-[1.4rem] font-bold tracking-tight text-foreground leading-tight">
+                {currentTeam?.name || (isRTL ? "تفاصيل الفريق" : "Team Details")}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {currentTeam?.description || (isRTL ? "عرض أعضاء الفريق والموارد المخصصة لهذا الفريق" : "Resources assigned strictly to this team.")}
+              </p>
+            </div>
           </div>
 
           {/* Team Switcher Tabs */}
@@ -126,18 +130,18 @@ export default function TeamPage() {
         </div>
 
         {/* Team Overview Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-border">
-          <div>
+        <div className="grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
+          <div className="rounded-lg border border-border/60 px-3 py-2">
             <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي أعضاء الفريق" : "Team Members"}</span>
             <span className="text-xl font-bold text-foreground">{teamResources.length}</span>
           </div>
-          <div>
+          <div className="rounded-lg border border-border/60 px-3 py-2">
             <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي السعة الأسبوعية" : "Total Capacity"}</span>
             <span className="text-xl font-bold text-primary">
               {teamResources.reduce((acc, r) => acc + (r.weekly_capacity || 40), 0)} hrs
             </span>
           </div>
-          <div>
+          <div className="rounded-lg border border-border/60 px-3 py-2">
             <span className="text-xs text-muted-foreground block">{isRTL ? "متوسط الاستغلال" : "Avg Utilization"}</span>
             <span className="text-xl font-bold text-emerald-600">
               {teamResources.length

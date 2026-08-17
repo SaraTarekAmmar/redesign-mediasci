@@ -171,7 +171,7 @@ export const BoardTableView = React.memo(function BoardTableView({ issues, onOpe
                     {issue.typeKey}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
-                    <UserAvatar userId={issue.assigneeId} size="sm" />
+                    <UserAvatar userId={issue.assigneeId} externalId={issue.externalAssigneeId} size="sm" />
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
                     {typeof issue.storyPoints === "number" ? (

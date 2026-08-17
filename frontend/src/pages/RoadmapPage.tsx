@@ -16,6 +16,8 @@ import { Label as LabelUI } from "../components/ui/Label";
 import { Textarea } from "../components/ui/Textarea";
 import { DatePicker } from "../components/ui/DatePicker";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { PageHeader } from "../components/common/PageHeader";
+import { Route as RoadmapIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -286,12 +288,12 @@ function RoadmapPage() {
     <div className="h-full overflow-y-auto p-5">
       <div className="mx-auto max-w-screen-2xl">
         {/* Header */}
-        <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">{t("roadmap.title")}</h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">{t("roadmap.description")}</p>
-          </div>
-          <div className="flex items-center gap-2">
+        <PageHeader
+          icon={<RoadmapIcon className="h-4 w-4" />}
+          title={t("roadmap.title")}
+          subtitle={t("roadmap.description")}
+          actions={
+          <>
             {/* Workstream filter */}
             <div className="flex rounded-lg border border-border bg-muted/50 p-0.5">
               {(["all", "presale", "postsale"] as const).map((ws) => (
@@ -330,8 +332,9 @@ function RoadmapPage() {
                 </button>
               ))}
             </div>
-          </div>
-        </div>
+          </>
+          }
+        />
 
         {/* Summary stats */}
         <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">

@@ -22,6 +22,8 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/Tabs";
 import { useProjectCatalogStore } from "../store/useProjectCatalog";
 import type { Client } from "../data/types";
+import { PageHeader } from "../components/common/PageHeader";
+import { Settings as SettingsIcon } from "lucide-react";
 
 function syncStatuses(nextStatuses: IssueStatus[]) {
   lookups.statuses.splice(0, lookups.statuses.length, ...nextStatuses);
@@ -766,10 +768,11 @@ function SettingsPage() {
   return (
     <div className="h-full overflow-y-auto p-5">
       <div className="mx-auto max-w-screen-2xl">
-        <h1 className="text-xl font-semibold text-foreground">{t("settings.title")}</h1>
-        <p className="mb-5 mt-0.5 text-sm text-muted-foreground">
-          {t("settings.description", { name: project.name })}
-        </p>
+        <PageHeader
+          icon={<SettingsIcon className="h-4 w-4" />}
+          title={t("settings.title")}
+          subtitle={t("settings.description", { name: project.name })}
+        />
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
           <TabsList className="mb-4 flex-wrap">

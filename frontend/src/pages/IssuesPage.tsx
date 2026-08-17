@@ -172,10 +172,12 @@ export function IssuesPage() {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <UserAvatar userId={issue.assigneeId} size="sm" />
+                          <UserAvatar userId={issue.assigneeId} externalId={issue.externalAssigneeId} size="sm" />
                           <span className="text-xs">
                             {issue.assigneeId
                               ? lookups.userById[issue.assigneeId]?.name
+                              : issue.externalAssigneeId
+                              ? lookups.partnerMemberById[issue.externalAssigneeId]?.name ?? t("issuesPage.unassigned")
                               : t("issuesPage.unassigned")}
                           </span>
                         </div>

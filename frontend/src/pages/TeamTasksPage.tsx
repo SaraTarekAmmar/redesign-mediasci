@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { CircleDot, CheckCircle2, Timer, AlertTriangle, Clock, Users, Flame } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { PageHeader } from "../components/common/PageHeader";
+import { cn } from "../lib/utils";
 
 interface TaskItem {
   id: string; key: string; title: string; project: string; type: string;
@@ -89,18 +91,17 @@ function TeamTasksPage() {
   return (
     <div className="h-full overflow-y-auto p-5" dir={i18n.dir()}>
       <div className="mx-auto max-w-screen-2xl">
-        <div className="mb-5">
-          <h1 className="text-xl font-semibold text-foreground">{isRTL ? "مهام الفريق" : "Team Tasks"}</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            {isRTL ? `${members.length} أعضاء · ${totalTasks} مهمة إجمالاً` : `${members.length} members · ${totalTasks} total tasks`}
-          </p>
-        </div>
+        <PageHeader
+          icon={<Users className="h-4 w-4" />}
+          title={isRTL ? "مهام الفريق" : "Team Tasks"}
+          subtitle={isRTL ? `${members.length} أعضاء · ${totalTasks} مهمة إجمالاً` : `${members.length} members · ${totalTasks} total tasks`}
+        />
 
         {/* Summary cards */}
         <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: "#64748b1f", color: "#64748b" }}><CircleDot className="h-5 w-5" /></span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-foreground/15 bg-muted text-foreground"><CircleDot className="h-5 w-5" /></span>
               <div><p className="text-2xl font-semibold leading-none text-foreground">{totalTasks}</p><p className="mt-1 text-xs text-muted-foreground">{isRTL ? "إجمالي المهام" : "Total tasks"}</p></div>
             </div>
           </div>
@@ -112,7 +113,7 @@ function TeamTasksPage() {
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: "#3b82f61f", color: "#3b82f6" }}><Timer className="h-5 w-5" /></span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><Timer className="h-5 w-5" /></span>
               <div><p className="text-2xl font-semibold leading-none text-foreground">{totalInProgress}</p><p className="mt-1 text-xs text-muted-foreground">{isRTL ? "قيد التنفيذ" : "In progress"}</p></div>
             </div>
           </div>
@@ -204,14 +205,13 @@ function TeamTasksPage() {
                           </span>
                         )}
                         <span
-                          className="shrink-0 rounded-md px-2 py-0.5 text-xs font-medium"
-                          style={{
-                        backgroundColor: t.overdue ? "#ef44441f" : "#64748b1f",
-                        color: t.overdue ? "#ef4444" : "#64748b",
-                      }}
-                    >
-                      {t.status}
-                    </span>
+                          className={cn(
+                            "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
+                            t.overdue ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {t.status}
+                        </span>
                     {t.due_date && (
                       <span className="shrink-0 text-xs text-muted-foreground">{t.due_date}</span>
                     )}

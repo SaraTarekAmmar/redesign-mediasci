@@ -101,7 +101,7 @@ export const IssueCard = React.memo(function IssueCard({ issue, onOpen, onDragSt
               {issue.storyPoints}
             </span>
           }
-          <UserAvatar userId={issue.assigneeId} size="sm" />
+          <UserAvatar userId={issue.assigneeId} externalId={issue.externalAssigneeId} size="sm" />
         </div>
       </div>
     </div>);
