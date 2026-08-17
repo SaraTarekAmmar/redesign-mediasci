@@ -307,6 +307,9 @@ function ProjectOverviewPage({ projectId }: Props) {
   const healthTone = performanceSummary?.health.tone ?? "warning";
   const healthState = performanceSummary?.health.state ?? "Yellow";
   const blockedMilestone = performanceSummary?.blocking_milestone ?? null;
+  const canonicalHealthScore = performanceSummary?.health.score ?? briefing?.briefing.health.score ?? 0;
+  const canonicalHealthTone = performanceSummary ? healthTone : briefing?.briefing.health.tone ?? "warning";
+  const canonicalHealthLabel = performanceSummary ? healthState : briefing?.briefing.health.label ?? "Needs attention";
 
   const hasPlanning = Boolean(
     performance &&
@@ -404,12 +407,19 @@ function ProjectOverviewPage({ projectId }: Props) {
           <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 text-destructive" />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-destructive">🚨 {t("projectOverview.projectBlocked", { defaultValue: "Project Blocked" })}</p>
                 <p className="text-sm text-muted-foreground">
                   {blockedMilestone?.name || t("projectOverview.blockingMilestone", { defaultValue: "Blocking milestone" })}: {performanceSummary?.blocking_reason || t("projectOverview.blockingReason", { defaultValue: "Blocking dependencies remain incomplete." })}
                 </p>
               </div>
+              <Link
+                to="/plan-comparison"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/30 px-3 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {t("projectOverview.reviewDependencies", { defaultValue: "Review dependencies" })}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         )}
@@ -563,11 +573,11 @@ function ProjectOverviewPage({ projectId }: Props) {
                 <h2 className="text-base font-semibold text-foreground">{briefing.briefing.headline}</h2>
               </div>
               <div className="shrink-0 text-right">
-                <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", toneClasses[briefing.briefing.health.tone])}>
-                  {briefing.briefing.health.label}
+                <span className={cn("rounded-full px-2.5 py-1 text-xs font-semibold", toneClasses[canonicalHealthTone])}>
+                  {canonicalHealthLabel}
                 </span>
                 <div className="mt-1 text-xl font-extrabold text-foreground">
-                  {briefing.briefing.health.score}<span className="text-sm font-normal text-muted-foreground">/100</span>
+                  {canonicalHealthScore}<span className="text-sm font-normal text-muted-foreground">/100</span>
                 </div>
               </div>
             </div>
