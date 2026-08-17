@@ -296,8 +296,9 @@ function RoadmapPage() {
           actions={
           <>
             {/* Workstream filter */}
-            <div className="flex rounded-lg border border-border bg-muted/50 p-0.5">
-              {(["all", "presale", "postsale"] as const).map((ws) => (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex rounded-lg border border-border bg-muted/50 p-0.5">
+                {["all", "presale", "postsale"].map((ws) => (
                 <button
                   key={ws}
                   onClick={() => setWorkstreamFilter(ws)}
@@ -309,8 +310,8 @@ function RoadmapPage() {
                   )}>
                   {ws === "all" ? t("roadmap.allWorkstreams") : ws === "presale" ? t("roadmap.presale") : t("roadmap.postsale")}
                 </button>
-              ))}
-            </div>
+                ))}
+              </div>
             {/* View mode */}
             <div className="flex rounded-lg border border-border bg-muted/50 p-0.5">
               {([
@@ -333,19 +334,20 @@ function RoadmapPage() {
                 </button>
               ))}
             </div>
+            <Button size="sm" className="gap-1.5" onClick={openCreatePhase}><Plus className="h-4 w-4" />{t("roadmap.addPhase", { defaultValue: "Add phase" })}</Button>
+            </div>
           </>
           }
         />
 
         {/* Summary stats */}
-        <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
           {[
             { label: t("roadmap.issues"), value: stats.total, color: "text-foreground" },
             { label: t("roadmap.done"), value: stats.done, color: "text-green-600 dark:text-green-400" },
             { label: t("roadmap.inProgress"), value: stats.inProgress, color: "text-primary" },
             { label: t("roadmap.overdue"), value: stats.overdue, color: "text-rose-600 dark:text-rose-400" },
             { label: t("roadmap.storyPoints"), value: `${stats.donePoints}/${stats.totalPoints}`, color: "text-foreground" },
-            { label: t("roadmap.totalProgress"), value: `${stats.total ? Math.round(stats.done / stats.total * 100) : 0}%`, color: "text-foreground" },
           ].map((s, idx) => (
             <div key={idx} className="rounded-lg border border-border bg-card p-3">
               <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -368,20 +370,6 @@ function RoadmapPage() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-3 rounded-xl border border-border bg-card p-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><RoadmapIcon className="h-4 w-4" aria-hidden="true" /></div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">Next best action</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{stats.total === 0 ? "Create the first issue to give this roadmap a starting point." : epics.length === 0 ? "Your work has momentum but no organizing theme yet. Use Timeline for dates or add a phase for delivery structure." : "Use the view that matches the question you are answering: themes, dates, workstreams, or phases."}</p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            {stats.total > 0 && <Button variant="outline" size="sm" onClick={() => setViewMode("timeline")}>{t("roadmap.viewTimeline", { defaultValue: "Open timeline" })}</Button>}
-            <Button size="sm" onClick={openCreatePhase}><Plus className="mr-1.5 h-4 w-4" />{t("roadmap.addPhase", { defaultValue: "Add phase" })}</Button>
-          </div>
-        </div>
-
         {/* View: By Epic */}
         {viewMode === "epic" && (
           <div className="space-y-4">
@@ -390,14 +378,9 @@ function RoadmapPage() {
                 icon={<Layers className="h-8 w-8" />}
                 title={t("roadmap.noEpics", { defaultValue: "No epics are organizing this work yet" })}
                 subtitle={stats.total > 0
-                  ? t("roadmap.noEpicsWithWork", { defaultValue: "Your project has issues and progress, but no epic groups yet. Use Timeline to review due dates or add an epic when the work has a clear theme." })
-                  : t("roadmap.noEpicsNoWork", { defaultValue: "Add an epic or create the first issue to give this roadmap a starting point." })}
-                action={
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setViewMode("timeline")}>{t("roadmap.viewTimeline", { defaultValue: "Timeline" })}</Button>
-                    <Button size="sm" onClick={openCreatePhase}>{t("roadmap.addPhase", { defaultValue: "Add phase" })}</Button>
-                  </div>
-                }
+                  ? "Issues are not grouped by epic yet. Use Timeline to review dates or create a phase."
+                  : "Create an issue or phase to give this roadmap a starting point."}
+                action={<Button variant="outline" size="sm" onClick={() => setViewMode("timeline")}>{t("roadmap.viewTimeline", { defaultValue: "Timeline" })}</Button>}
               />
             )}
             {epicGroups.map(({ epic, issues: epicIssues, done, inProgress, overdue, points, donePoints, pct }) => (
