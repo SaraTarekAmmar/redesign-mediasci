@@ -75,37 +75,18 @@ function SprintTimer({ startDate, endDate }: { startDate?: string; endDate?: str
 
   const isExpired = timeLeft.totalMs <= 0;
 
+  const remaining = isExpired
+    ? t("sprints.timeExpired")
+    : `${timeLeft.days}d ${String(timeLeft.hours).padStart(2, "0")}h ${String(timeLeft.minutes).padStart(2, "0")}m`;
+
   return (
-    <div className="mt-3 rounded-lg border border-primary/20 bg-primary/5 p-3.5">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 animate-pulse text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary">{t("sprints.liveTimer")}</span>
-        </div>
-        <span className="text-xs font-medium text-muted-foreground">
-          {isExpired ? t("sprints.timeExpired") : t("sprints.elapsed", { pct: timeLeft.elapsedPct })}
-        </span>
+    <div className="mt-3 rounded-lg border border-primary/20 bg-primary/5 px-3.5 py-3">
+      <div className="flex items-center gap-3">
+        <Clock className="h-4 w-4 shrink-0 text-primary" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary">{t("sprints.liveTimer")}</span>
+        <span className="text-sm font-semibold tabular-nums text-foreground">{remaining}</span>
+        <span className="ms-auto text-xs text-muted-foreground">{timeLeft.elapsedPct}% elapsed</span>
       </div>
-
-      <div className="my-2 grid grid-cols-4 gap-2 text-center">
-        <div className="rounded border border-border bg-card p-2">
-          <span className="block text-lg font-bold tabular-nums text-foreground">{timeLeft.days}</span>
-          <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("sprints.days")}</span>
-        </div>
-        <div className="rounded border border-border bg-card p-2">
-          <span className="block text-lg font-bold tabular-nums text-foreground">{String(timeLeft.hours).padStart(2, "0")}</span>
-          <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("sprints.hours")}</span>
-        </div>
-        <div className="rounded border border-border bg-card p-2">
-          <span className="block text-lg font-bold tabular-nums text-foreground">{String(timeLeft.minutes).padStart(2, "0")}</span>
-          <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("sprints.mins")}</span>
-        </div>
-        <div className="rounded border border-border bg-card p-2">
-          <span className="block text-lg font-bold tabular-nums text-foreground">{String(timeLeft.seconds).padStart(2, "0")}</span>
-          <span className="text-[10px] font-medium uppercase text-muted-foreground">{t("sprints.secs")}</span>
-        </div>
-      </div>
-
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
         <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${timeLeft.elapsedPct}%` }} />
       </div>
@@ -169,6 +150,9 @@ function SprintsPage() {
   const [completeAction, setCompleteAction] = useState<"backlog" | "sprint">("backlog");
 
   const backlogCount = issues.filter((i) => !i.sprintId).length;
+  const activeSprintCount = sprints.filter((sprint) => sprint.status === "active").length;
+  const planningSprintCount = sprints.filter((sprint) => sprint.status === "planning").length;
+  const completedSprintCount = sprints.filter((sprint) => sprint.status === "completed").length;
 
   const setStatus = (id: string, status: Sprint["status"], dates?: { startDate?: string; endDate?: string }) =>
     setSprints((prev) =>
@@ -275,18 +259,20 @@ function SprintsPage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("sprints.title")}
-          subtitle={t("sprints.subtitle", {
-            sprintCount: sprints.length,
-            sprintPlural: sprints.length !== 1 ? "s" : "",
-            backlogCount,
-            issuePlural: backlogCount !== 1 ? "s" : "",
-          })}
           actions={
             <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}>
               <Plus className="h-4 w-4" /> {t("sprints.createSprint")}
             </Button>
           }
         />
+
+        <div className="mb-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-5" aria-label="Sprint pulse">
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Sprints</p><p className="mt-1 text-xl font-semibold text-foreground">{sprints.length}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Active</p><p className="mt-1 text-xl font-semibold text-emerald-700 dark:text-emerald-300">{activeSprintCount}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Planning</p><p className="mt-1 text-xl font-semibold text-amber-700 dark:text-amber-300">{planningSprintCount}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Completed</p><p className="mt-1 text-xl font-semibold text-foreground">{completedSprintCount}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Backlog issues</p><p className="mt-1 text-xl font-semibold text-foreground">{backlogCount}</p></div>
+        </div>
 
         <div className="space-y-4">
           {sprints.map((sp) => {
