@@ -171,6 +171,9 @@ export default function RequestsPage() {
   };
 
   const hasEstimate = !!(selectedRequest?.estimated_hours || selectedRequest?.estimated_cost);
+  const isTerminalRequest = (request?: ClientRequest | null) => ["accepted", "approved", "rejected", "converted"].includes((request?.status ?? "pending").toLowerCase());
+  const needsTriageCount = requests.filter((request) => !isTerminalRequest(request)).length;
+  const estimatedCount = requests.filter((request) => Boolean(request.estimated_hours || request.estimated_cost)).length;
   const visibleRequests = requests.filter((request) => {
     const query = requestSearch.trim().toLowerCase();
     if (!query) return true;
@@ -207,6 +210,23 @@ export default function RequestsPage() {
             ) : null
           }
         />
+
+        {!loading && (
+          <div className="mb-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-2xl font-semibold text-foreground">{requests.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("requests.totalRequests", { defaultValue: "Total requests" })}</p>
+            </div>
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+              <p className="text-2xl font-semibold text-foreground">{needsTriageCount}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("requests.needsTriage", { defaultValue: "Needs triage" })}</p>
+            </div>
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+              <p className="text-2xl font-semibold text-foreground">{estimatedCount}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("requests.estimatedRequests", { defaultValue: "Estimated" })}</p>
+            </div>
+          </div>
+        )}
 
         {loading && requests.length === 0 ? (
           <div className="flex items-center justify-center py-16">
@@ -308,6 +328,17 @@ export default function RequestsPage() {
                     </p>
                   </div>
 
+                  <div className="rounded-lg border border-border bg-muted/20 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("requests.nextStepLabel", { defaultValue: "Next step" })}</p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {isTerminalRequest(selectedRequest) && ["accepted", "approved", "converted"].includes((selectedRequest.status ?? "").toLowerCase())
+                        ? t("requests.approvedNextStep", { defaultValue: "This request is approved. Keep the estimate as the handoff record." })
+                        : hasEstimate
+                        ? t("requests.reviewEstimateNextStep", { defaultValue: "Review the estimate, then convert this request into a project when ready." })
+                        : t("requests.estimateNextStep", { defaultValue: "Run Estimate Scope first to make the conversion decision with numbers." })}
+                    </p>
+                  </div>
+
                   <div className="border border-primary/20 rounded-xl bg-primary/5 p-4 space-y-4">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-1.5">
@@ -352,7 +383,7 @@ export default function RequestsPage() {
                   <div className="flex flex-col items-end gap-1.5 border-t border-border pt-4">
                     <Button
                       onClick={handleConvertToProject}
-                      disabled={converting || selectedRequest.status === "accepted" || !hasEstimate}
+                      disabled={converting || isTerminalRequest(selectedRequest) || !hasEstimate}
                       className="flex items-center gap-1.5"
                     >
                       {converting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderKanban className="h-4 w-4" />}
