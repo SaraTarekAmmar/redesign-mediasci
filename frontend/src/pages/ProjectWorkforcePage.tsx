@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, CheckCircle2, Handshake, Layers, Loader2, Plus, ShieldCheck, UserRound, UsersRound, X } from "lucide-react";
+import { ArrowRight, Handshake, Layers, Loader2, Plus, ShieldCheck, UserRound, UsersRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "../components/common/PageHeader";
 import { Button } from "../components/ui/Button";
@@ -234,42 +234,22 @@ function ProjectWorkforcePage() {
   const externalAssignmentCount = partners.length + partnerTeams.length + partnerMembers.length;
   const totalEligible = internal.length + external.length;
   const externalShare = totalEligible ? Math.round((external.length / totalEligible) * 100) : 0;
-  const nextAction = externalAssignmentCount === 0
-    ? "Add a partner, partner team, or person when this project needs outside capacity."
-    : totalEligible === 0
-      ? "Resolve the assigned sources into task-eligible people before work is planned."
-      : "Your workforce is resolved. Assign eligible people to tasks from Issues or the project board.";
-
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
-      <PageHeader icon={<UsersRound className="h-5 w-5" />} title={t("workforce.title", { defaultValue: "Project Workforce" })}
-        subtitle={activeProject?.name ? `Internal and external assignment paths for ${activeProject.name}` : "Internal and external assignment paths for this project"} />
+      <PageHeader icon={<UsersRound className="h-5 w-5" />} title={t("workforce.title", { defaultValue: "Project Workforce" })} />
 
       {loading ? <div className="flex items-center justify-center py-16 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
         <div className="space-y-5">
-          <section className="rounded-xl border border-border bg-card p-4 md:p-5" aria-labelledby="workforce-control-room-heading">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-primary" />
-                  <h2 id="workforce-control-room-heading" className="text-sm font-semibold text-foreground">Staff this project with confidence</h2>
-                </div>
-                <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">Start with assignment sources, resolve them into task-eligible people, then send work to the right internal or external owner without losing the project boundary.</p>
-              </div>
-              <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" /><span>{nextAction}</span></div>
+          <section className="rounded-xl border border-border bg-card p-4 md:p-5" aria-labelledby="workforce-summary-heading">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><h2 id="workforce-summary-heading" className="text-sm font-semibold text-foreground">Workforce at a glance</h2></div>
+              <span className="text-xs text-muted-foreground">{externalAssignmentCount === 0 ? "No external capacity" : `${externalAssignmentCount} external source${externalAssignmentCount === 1 ? "" : "s"}`}</span>
             </div>
-
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Task-eligible people</p><p className="mt-1 text-2xl font-semibold text-foreground">{totalEligible}</p><p className="mt-0.5 text-xs text-muted-foreground">deduplicated workforce</p></div>
+              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Task-eligible people</p><p className="mt-1 text-2xl font-semibold text-foreground">{totalEligible}</p></div>
               <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Assignment sources</p><p className="mt-1 text-2xl font-semibold text-foreground">{internalAssignmentCount + externalAssignmentCount}</p><p className="mt-0.5 text-xs text-muted-foreground">{internalAssignmentCount} internal · {externalAssignmentCount} external</p></div>
-              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">External share</p><p className="mt-1 text-2xl font-semibold text-foreground">{externalShare}%</p><p className="mt-0.5 text-xs text-muted-foreground">of task-eligible people</p></div>
-              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Next operating move</p><p className="mt-1 text-sm font-semibold text-foreground">{externalAssignmentCount === 0 ? "Bring in capacity" : totalEligible === 0 ? "Resolve people" : "Assign work"}</p><p className="mt-0.5 text-xs text-muted-foreground">follow the path below</p></div>
-            </div>
-
-            <div className="mt-4 grid gap-2 md:grid-cols-3">
-              <div className="flex items-start gap-2 rounded-lg border border-border/70 bg-background p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span><div><p className="text-xs font-semibold text-foreground">Assign a source</p><p className="mt-0.5 text-[11px] text-muted-foreground">Choose an internal team, direct resource, partner, or partner member.</p></div></div>
-              <div className="flex items-start gap-2 rounded-lg border border-border/70 bg-background p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground">2</span><div><p className="text-xs font-semibold text-foreground">Resolve people</p><p className="mt-0.5 text-[11px] text-muted-foreground">The resolved list removes duplicates and keeps future task assignment clean.</p></div></div>
-              <div className="flex items-start gap-2 rounded-lg border border-border/70 bg-background p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground">3</span><div><p className="text-xs font-semibold text-foreground">Send work forward</p><p className="mt-0.5 text-[11px] text-muted-foreground">Use the eligible workforce in Issues, the board, and task comments.</p></div></div>
+              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">External share</p><p className="mt-1 text-2xl font-semibold text-foreground">{externalShare}%</p></div>
+              <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Ready for work</p><p className="mt-1 text-sm font-semibold text-foreground">{totalEligible > 0 ? "Yes" : "Not yet"}</p><p className="mt-0.5 text-xs text-muted-foreground">{totalEligible > 0 ? "Visible in task assignment" : "Assign a source"}</p></div>
             </div>
           </section>
 

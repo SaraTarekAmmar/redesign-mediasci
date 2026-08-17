@@ -63,17 +63,15 @@ function DashboardFrame({
 }: {
   icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
-  const { t } = useTranslation();
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-6">
         <PageHeader
           icon={icon}
           title={title}
-          subtitle={subtitle}
         />
         {children}
       </div>
@@ -100,16 +98,14 @@ function ProjectsSection({
   issues,
   doneIds,
   title = "Projects",
-  subtitle = "The projects you can access, with progress and next context in one place.",
 }: {
   projects: any[];
   issues: any[];
   doneIds: Array<string | number>;
   title?: string;
-  subtitle?: string;
 }) {
   return (
-    <SectionCard title={title} description={subtitle}>
+    <SectionCard title={title}>
       {projects.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2">
           {projects.map((project) => {
@@ -213,7 +209,6 @@ function WorkQueueSection({
   return (
     <SectionCard
       title={title}
-      description="The work most likely to slow delivery, with a direct route to resolve it."
       action={<Link to="/issues" className="text-xs font-semibold text-primary hover:underline">View all</Link>}
     >
       {openIssues.length > 0 ? (
@@ -257,7 +252,6 @@ function PlanningPulse({ issues, statuses, sprints }: { issues: any[]; statuses:
   return (
     <SectionCard
       title="Planning pulse"
-      description="A compact view of the active sprint and the work still to move."
       action={<Link to="/sprints" className="text-xs font-semibold text-primary hover:underline">Open sprints</Link>}
     >
       <div className="flex items-start gap-3 rounded-lg border border-border/70 bg-background p-3">
@@ -265,7 +259,6 @@ function PlanningPulse({ issues, statuses, sprints }: { issues: any[]; statuses:
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Active sprint</p>
           <p className="mt-1 truncate text-sm font-semibold text-foreground">{activeSprint?.name || "No active sprint"}</p>
-          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{activeSprint?.goal || "Start a sprint to create a shared delivery focus."}</p>
         </div>
       </div>
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
@@ -292,7 +285,7 @@ function DeliverySnapshot({ issues, statuses, title = "Delivery snapshot" }: { i
     { label: "Done", count: done, className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", bar: "bg-emerald-500" },
   ];
   return (
-    <SectionCard title={title} description="Understand where work is accumulating before opening a detailed report." action={<Link to="/reports" className="text-xs font-semibold text-primary hover:underline">Open reports</Link>}>
+    <SectionCard title={title} action={<Link to="/reports" className="text-xs font-semibold text-primary hover:underline">Open reports</Link>}>
       <div className="grid gap-3 md:grid-cols-3">
         {buckets.map((bucket) => (
           <div key={bucket.label} className="rounded-xl border border-border/70 bg-background p-3">
@@ -310,14 +303,16 @@ function DeliverySnapshot({ issues, statuses, title = "Delivery snapshot" }: { i
   );
 }
 
-function QuickActions({ actions }: { actions: Array<{ to: string; label: string; detail: string; icon: React.ReactNode }> }) {
+type QuickActionsProps = { actions: Array<{ to: string; label: string; detail?: string; icon: React.ReactNode }> };
+
+function QuickActions({ actions }: QuickActionsProps) {
   return (
-    <SectionCard title="Quick access" description="Jump straight into the next place you are likely to work.">
+    <SectionCard title="Quick access">
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {actions.map((action) => (
           <Link key={action.to} to={action.to} className="group flex items-start gap-3 rounded-xl border border-border/70 p-3 transition-colors hover:border-primary/40 hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground"><span aria-hidden="true">{action.icon}</span></span>
-            <span className="min-w-0"><span className="block text-sm font-semibold text-foreground group-hover:text-primary">{action.label}</span><span className="mt-1 block text-[11px] leading-relaxed text-muted-foreground">{action.detail}</span></span>
+            <span className="min-w-0"><span className="block text-sm font-semibold text-foreground group-hover:text-primary">{action.label}</span></span>
           </Link>
         ))}
       </div>
@@ -333,13 +328,9 @@ function ExternalProjectDashboard({ kind }: { kind: "partner" | "client" }) {
   const statuses = rows("statuses");
   const doneIds = statuses.filter((s) => s.category === "done").map((s) => s.id);
   const openIssues = issues.filter((issue) => !isDone(issue, doneIds));
-  const label = kind === "client" ? "Client project workspace" : "Partner project workspace";
-  const subtitle = kind === "client"
-    ? "Review the delivery, decisions, and work connected to your projects."
-    : "Work on the projects and tasks your organization has been assigned."
   return (
-    <DashboardFrame icon={<FolderOpen className="h-4 w-4" />} title={label} subtitle={subtitle}>
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title="Your projects" subtitle="Everything visible to your account is scoped to these projects." />
+    <DashboardFrame icon={<FolderOpen className="h-4 w-4" />} title="Dashboard">
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title="Projects" />
       <section className="grid gap-4 md:grid-cols-3">
         <StatCard label="Projects" value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label="Open work" value={openIssues.length} icon={<ClipboardList className="h-5 w-5" />} color={openIssues.length > 0 ? "yellow" : "green"} />
@@ -375,10 +366,9 @@ function SuperAdminDashboard() {
   return (
     <DashboardFrame
       icon={<Shield className="h-4 w-4" />}
-      title={t("dashboard.platformOverview")}
-      subtitle={t("summary.adminSubtitle")}
+      title="Dashboard"
     >
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.totalProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
@@ -438,10 +428,9 @@ function PMDashboard() {
   return (
     <DashboardFrame
       icon={<Target className="h-4 w-4" />}
-      title={t("summary.projectOverview")}
-      subtitle={t("summary.pmSubtitle")}
+      title="Dashboard"
     >
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.activeProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
@@ -478,7 +467,7 @@ function DeveloperDashboard() {
   const completed = myIssues.filter((issue) => isDone(issue, doneIds));
 
   return (
-    <DashboardFrame icon={<RefreshCw className="h-4 w-4" />} title={t("summary.myWork")} subtitle={t("summary.devSubtitle")}>
+    <DashboardFrame icon={<RefreshCw className="h-4 w-4" />} title="Dashboard">
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("summary.assignedToMe")} value={myIssues.length} icon={<ClipboardList className="h-5 w-5" />} />
         <StatCard label={t("dashboard.inProgress")} value={inProgress.length} icon={<RefreshCw className="h-5 w-5" />} />
@@ -519,7 +508,7 @@ function ViewerDashboard() {
   const completed = issues.filter((issue) => isDone(issue, doneIds)).length;
 
   return (
-    <DashboardFrame icon={<Eye className="h-4 w-4" />} title={t("summary.overview")} subtitle={t("summary.viewerSubtitle")}>
+    <DashboardFrame icon={<Eye className="h-4 w-4" />} title="Dashboard">
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.totalProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label={t("summary.totalTasks")} value={issues.length} icon={<ClipboardList className="h-5 w-5" />} />
@@ -527,7 +516,7 @@ function ViewerDashboard() {
         <StatCard label={t("summary.remaining")} value={issues.length - completed} icon={<Hourglass className="h-5 w-5" />} />
       </section>
 
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} subtitle="Open a project to review progress, work, and delivery context." />
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("summary.projects", { defaultValue: "Projects" })} />
     </DashboardFrame>
   );
 }
@@ -553,7 +542,7 @@ function ExecutiveDashboard() {
   });
 
   return (
-    <DashboardFrame icon={<BarChart3 className="h-4 w-4" />} title={t("dashboard.portfolioOverview")} subtitle={t("summary.adminSubtitle")}>
+    <DashboardFrame icon={<BarChart3 className="h-4 w-4" />} title="Dashboard">
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.projects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label={t("dashboard.overallCompletion")} value={`${completionRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />

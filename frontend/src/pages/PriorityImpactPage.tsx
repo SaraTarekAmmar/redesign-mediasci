@@ -245,10 +245,7 @@ export default function PriorityImpactPage() {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
-        <PageHeader
-          title="Priority Impact Preview"
-          subtitle="Model how assigning a new client request or project affects active resource capacity and Gantt timeline schedules."
-        />
+        <PageHeader title="Priority Impact" />
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
@@ -256,13 +253,7 @@ export default function PriorityImpactPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-              {usingDemoData
-                ? "No live client requests were found, so this page is using demo entries. Pick a request, run the simulator, and review bottlenecks, timeline shifts, and the recommendation panel."
-                : "This preview uses the selected request estimate to make capacity pressure and timeline trade-offs visible before you commit."}
-            </div>
-
-            <div className="mb-1 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-foreground">Answer one decision before you commit</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">This simulation tests whether the incoming request fits current capacity and what it may move on the delivery timeline.</p></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">Capacity + timeline</span></div><div className="mt-3 grid gap-2 text-left sm:grid-cols-3"><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Select</p><p className="mt-1 text-[11px] text-muted-foreground">Choose the request being considered.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Simulate</p><p className="mt-1 text-[11px] text-muted-foreground">Model resource and milestone pressure.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Decide</p><p className="mt-1 text-[11px] text-muted-foreground">Accept, split, defer, or review the plan.</p></div></div></div>
+            {usingDemoData && <div className="text-xs text-muted-foreground">Demo requests</div>}
 
             {/* Control Panel */}
             <div className="rounded-xl border bg-card p-5 flex flex-col sm:flex-row items-end gap-4 max-w-3xl">

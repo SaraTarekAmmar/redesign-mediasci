@@ -384,15 +384,6 @@ export default function ResourcesPage() {
               ? (isRTL ? `${scopedTeamName} — الأعضاء` : `${scopedTeamName} — Members`)
               : (isRTL ? "دليل الموارد البشرية والعمالة" : "Workforce Directory")
           }
-          subtitle={
-            isTeamScoped
-              ? (isRTL
-                ? `عرض أعضاء هذا الفريق فقط ضمن دليل الموارد. ${memberCountLabel}.`
-                : `Viewing members of this team through the shared Resources directory. ${memberCountLabel}.`)
-              : (isRTL
-                ? "إدارة شاملة لجميع الكوادر، المهارات، والقدرات التشغيلية للمؤسسة"
-                : "Single source of truth for organization members, skills, availability, and capacity.")
-          }
           actions={
             canManage && (
               <Button size="sm" className="gap-1.5" onClick={openCreateForm}>
