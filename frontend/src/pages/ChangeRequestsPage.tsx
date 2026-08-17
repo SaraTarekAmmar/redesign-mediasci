@@ -203,7 +203,17 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
           }
         />
 
-        <div className="mb-5 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-foreground">{view === "approvals" ? "Review changes with confidence" : "Make change decisions easier"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{view === "approvals" ? "Check the reason, impact, rollback plan, and owner before approving work that changes delivery." : "A clear request explains what should change, why it matters, how urgent it is, and how the team can safely reverse it."}</p></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">{view === "approvals" ? "Decision queue" : "Change lifecycle"}</span></div><div className="mt-3 grid grid-cols-3 gap-2"><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Awaiting review</p><p className="mt-1 text-xl font-semibold text-amber-600 dark:text-amber-400">{pendingCount}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Approved / active</p><p className="mt-1 text-xl font-semibold text-emerald-600 dark:text-emerald-400">{approvedCount}</p></div><div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Closed decisions</p><p className="mt-1 text-xl font-semibold text-foreground">{closedCount}</p></div></div></div>
+        <div className="mb-5 rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">{view === "approvals" ? "Decision queue" : "Change lifecycle"}</p>
+            <span className="text-xs text-muted-foreground">{pendingCount} awaiting review</span>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Awaiting review</p><p className="mt-1 text-xl font-semibold text-amber-600 dark:text-amber-400">{pendingCount}</p></div>
+            <div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Approved / active</p><p className="mt-1 text-xl font-semibold text-emerald-600 dark:text-emerald-400">{approvedCount}</p></div>
+            <div className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">Closed decisions</p><p className="mt-1 text-xl font-semibold text-foreground">{closedCount}</p></div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">{t("app.loading")}</div>
@@ -211,8 +221,8 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
           <EmptyState
             icon={<FileQuestion className="h-8 w-8" />}
             title={view === "my" ? t("changes.noMyRequests") : view === "approvals" ? t("changes.noApprovals") : t("changes.noRequests")}
-            subtitle={t("changes.subtitle", { pending: 0, total: 0 })}
-            action={view !== "approvals" ? <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> {t("changes.newRequest")}</Button> : <Button size="sm" variant="outline" onClick={() => navigate("/requests")}>Review all requests</Button>}
+            subtitle={view === "my" ? "Requests you submit will appear here." : view === "approvals" ? "No requests are waiting for your review." : "New change requests will appear here."}
+            action={view === "approvals" ? <Button size="sm" variant="outline" onClick={() => navigate("/requests")}>Review all requests</Button> : undefined}
           />
         ) : (
           <div className="space-y-2">
