@@ -348,7 +348,6 @@ function BudgetPage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("budget.title")}
-          subtitle={t("budget.subtitle")}
           actions={
             <div className="flex items-center gap-2">
               {activeTab !== "overview" && projectId && (
@@ -387,27 +386,6 @@ function BudgetPage() {
 
         {!dataLoading && (
           <>
-            <div className={`mb-5 flex items-start gap-3 rounded-xl border p-4 ${budgetConfigured ? "border-primary/30 bg-primary/5" : "border-primary/40 bg-primary/10"}`}>
-              {budgetConfigured ? (
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-              ) : (
-                <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-              )}
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground">
-                  {budgetConfigured
-                    ? t("budget.trackingReady", { defaultValue: "Budget tracking is ready" })
-                    : t("budget.setupPrompt", { defaultValue: "Set up your budget to make every number useful" })}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  {budgetConfigured
-                    ? t("budget.trackingReadyHint", { defaultValue: "Add expenses, cloud services, or licenses as they appear to keep this view current." })
-                    : t("budget.setupPromptHint", { defaultValue: "Start with a total budget and hourly rate below. You can add detailed costs afterward." })}
-                </p>
-              </div>
-              <ArrowRight className="ms-auto mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            </div>
-
             <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
               <StatTile label={t("budget.oneOffExpenses")} value={money(totalExpenses)} icon={<Receipt className="h-5 w-5" />} />
               <StatTile label={t("budget.monthlyCloud")} value={money(monthlyCloud)} icon={<CloudCog className="h-5 w-5" />} />
@@ -444,14 +422,9 @@ function BudgetPage() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   {/* Budget Setup */}
                   <div className={`rounded-xl border bg-card p-5 ${!budgetConfigured ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}>
-                    <div className="mb-4 flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-sm font-semibold text-foreground">{t("budget.budgetSetup")}</h3>
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                          {t("budget.setupHint", { defaultValue: "Two values unlock your budget runway and cost reporting." })}
-                        </p>
-                      </div>
-                      {!budgetConfigured && <span className="rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground">{t("budget.startHere", { defaultValue: "Start here" })}</span>}
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <h3 className="text-sm font-semibold text-foreground">{t("budget.budgetSetup")}</h3>
+                      <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${budgetConfigured ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-primary text-primary-foreground"}`}>{budgetConfigured ? "Configured" : "Required"}</span>
                     </div>
                     <div className="space-y-3">
                       <div className="space-y-1.5">
@@ -522,9 +495,6 @@ function BudgetPage() {
                     ) : (
                       <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
                         <p className="text-sm font-medium text-foreground">{t("budget.noBudget")}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                          {t("budget.noBudgetHint", { defaultValue: "Save a total budget above to see remaining budget, burn rate, and utilization here." })}
-                        </p>
                         <button type="button" onClick={() => document.getElementById("budget-setup")?.focus()} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                           {t("budget.goToSetup", { defaultValue: "Go to setup" })}
                           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
