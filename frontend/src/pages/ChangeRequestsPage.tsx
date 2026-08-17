@@ -184,7 +184,7 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
       : t("changes.subtitle", { pending: requests.filter((r) => r.status === "pending").length, total: requests.length });
 
   return (
-    <div className="h-full overflow-y-auto p-5" dir={i18n.dir()}>
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8" dir={i18n.dir()}>
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={viewTitle}

@@ -410,7 +410,7 @@ function PlanPage({ projectId, embedded = false }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const id = projectId ?? getActiveProjectId() ?? "";
-  const containerClass = embedded ? "space-y-5" : "h-full overflow-y-auto p-5";
+  const containerClass = embedded ? "space-y-5" : "h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8";
 
   const queryParams = new URLSearchParams(location.search);
   const tabParam = queryParams.get("tab");

@@ -48,7 +48,7 @@ interface Props {
 
 const milestoneStatusMeta = (t: (key: string) => string): Record<Milestone["status"], { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> => ({
   upcoming: { label: t("scope.upcoming"), color: "#64748b", icon: Circle },
-  in_progress: { label: t("scope.inProgress"), color: "#3b82f6", icon: Clock },
+  in_progress: { label: t("scope.inProgress"), color: "var(--primary)", icon: Clock },
   completed: { label: t("scope.completed"), color: "#22c55e", icon: CheckCircle2 },
   at_risk: { label: t("scope.atRisk"), color: "#ef4444", icon: AlertTriangle }
 });
@@ -313,7 +313,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
 
   if (loading) {
     return (
-      <div className="h-full overflow-y-auto p-5">
+      <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
         <div className="mx-auto max-w-screen-2xl space-y-4">
           <div className="h-7 w-48 animate-pulse rounded-md bg-muted" />
           <div className="h-4 w-72 animate-pulse rounded-md bg-muted" />
@@ -327,7 +327,7 @@ function ScopePage({ projectId: projectIdProp }: Props) {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-5">
+    <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("scope.title")}
