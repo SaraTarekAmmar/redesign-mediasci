@@ -116,6 +116,7 @@ export function IssueDetailSheet() {
   const boardStatusIds = lookups.statuses.map((s) => s.id);
 
   const [activeTab, setActiveTab] = useState<"overview" | "subtasks" | "checklist" | "attachments" | "time" | "dependencies" | "discussion" | "history">("overview");
+  const [moreOpen, setMoreOpen] = useState(false);
 
   // Task Details State
   const [executionData, setExecutionData] = useState<any>(null);
@@ -392,6 +393,20 @@ export function IssueDetailSheet() {
   };
 
   const open = Boolean(selectedIssueId && issue);
+  const tabClass = (active: boolean) => cn(
+    "inline-flex h-9 min-w-max shrink-0 items-center gap-1.5 whitespace-nowrap rounded-t-md border-b-2 px-2.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    active
+      ? "border-primary bg-primary/10 text-primary"
+      : "border-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+  );
+  const countClass = (active: boolean) => cn(
+    "rounded-full px-1.5 py-0.5 text-[10px] font-medium leading-none",
+    active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+  );
+  const chooseSecondaryTab = (tab: "attachments" | "dependencies" | "history") => {
+    setActiveTab(tab);
+    setMoreOpen(false);
+  };
 
   if (!issue) {
     return (
@@ -466,39 +481,55 @@ export function IssueDetailSheet() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-border px-5 gap-3 mt-4 text-xs font-semibold overflow-x-auto scrollbar-none">
-          <button onClick={() => setActiveTab("overview")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "overview" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <FileText className="h-3.5 w-3.5" />
-            <span>{isRTL ? "العام والجاهزية" : "Overview"}</span>
-          </button>
-          <button onClick={() => setActiveTab("discussion")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "discussion" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <MessageSquare className="h-3.5 w-3.5" />
-            <span>{isRTL ? "المناقشة" : "Discussion"} ({comments.length})</span>
-          </button>
-          <button onClick={() => setActiveTab("subtasks")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "subtasks" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <Layers className="h-3.5 w-3.5" />
-            <span>{isRTL ? "المهام الفرعية" : "Subtasks"} ({completedSubtasks}/{subtasks.length})</span>
-          </button>
-          <button onClick={() => setActiveTab("checklist")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "checklist" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <CheckSquare className="h-3.5 w-3.5" />
-            <span>{isRTL ? "قائمة التحقق" : "Checklist"} ({completedChecklists}/{checklists.length})</span>
-          </button>
-          <button onClick={() => setActiveTab("attachments")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "attachments" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <Upload className="h-3.5 w-3.5" />
-            <span>{isRTL ? "المرفقات" : "Attachments"} ({attachments.length})</span>
-          </button>
-          <button onClick={() => setActiveTab("time")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "time" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <Clock className="h-3.5 w-3.5" />
-            <span>{isRTL ? "الوقت والعمل" : "Time & Work"}</span>
-          </button>
-          <button onClick={() => setActiveTab("dependencies")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "dependencies" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <GitCommit className="h-3.5 w-3.5" />
-            <span>{isRTL ? "الارتباطات" : "Dependencies"}</span>
-          </button>
-          <button onClick={() => setActiveTab("history")} className={cn("pb-2 border-b-2 transition-colors flex items-center gap-1.5", activeTab === "history" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
-            <History className="h-3.5 w-3.5" />
-            <span>{isRTL ? "السجل والأحداث" : "Activity & History"}</span>
-          </button>
+        <div className="mt-3 overflow-x-auto border-b border-border px-4 scrollbar-none sm:px-5">
+          <div className="flex min-w-max items-center gap-1 text-xs font-semibold">
+            <button type="button" role="tab" aria-selected={activeTab === "overview"} onClick={() => setActiveTab("overview")} className={tabClass(activeTab === "overview")}>
+              <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{isRTL ? "العام والجاهزية" : "Overview"}</span>
+            </button>
+            <button type="button" role="tab" aria-selected={activeTab === "discussion"} onClick={() => setActiveTab("discussion")} className={tabClass(activeTab === "discussion")}>
+              <MessageSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{isRTL ? "المناقشة" : "Discussion"}</span>
+              <span className={countClass(activeTab === "discussion")}>{comments.length}</span>
+            </button>
+            <button type="button" role="tab" aria-selected={activeTab === "subtasks"} onClick={() => setActiveTab("subtasks")} className={tabClass(activeTab === "subtasks")}>
+              <Layers className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{isRTL ? "المهام الفرعية" : "Subtasks"}</span>
+              <span className={countClass(activeTab === "subtasks")}>{completedSubtasks}/{subtasks.length}</span>
+            </button>
+            <button type="button" role="tab" aria-selected={activeTab === "checklist"} onClick={() => setActiveTab("checklist")} className={tabClass(activeTab === "checklist")}>
+              <CheckSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{isRTL ? "قائمة التحقق" : "Checklist"}</span>
+              <span className={countClass(activeTab === "checklist")}>{completedChecklists}/{checklists.length}</span>
+            </button>
+            <button type="button" role="tab" aria-selected={activeTab === "time"} onClick={() => setActiveTab("time")} className={tabClass(activeTab === "time")}>
+              <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{isRTL ? "الوقت والعمل" : "Time & Work"}</span>
+            </button>
+            <Popover open={moreOpen} onOpenChange={setMoreOpen}>
+              <PopoverTrigger asChild>
+                <Button type="button" variant="ghost" size="sm" className={cn("h-9 min-w-max shrink-0 gap-1.5 px-2.5 text-xs font-semibold", activeTab === "attachments" || activeTab === "dependencies" || activeTab === "history" ? "bg-primary/10 text-primary" : "text-muted-foreground")} aria-label={isRTL ? "المزيد من خيارات المهمة" : "More task sections"}>
+                  <span>{isRTL ? "المزيد" : "More"}</span>
+                  <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-52 p-1">
+                <button type="button" onClick={() => chooseSecondaryTab("attachments")} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs font-medium text-foreground hover:bg-muted">
+                  <Upload className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <span className="flex-1 whitespace-nowrap">{isRTL ? "المرفقات" : "Attachments"}</span>
+                  <span className={countClass(activeTab === "attachments")}>{attachments.length}</span>
+                </button>
+                <button type="button" onClick={() => chooseSecondaryTab("dependencies")} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs font-medium text-foreground hover:bg-muted">
+                  <GitCommit className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <span className="flex-1 whitespace-nowrap">{isRTL ? "الارتباطات" : "Dependencies"}</span>
+                </button>
+                <button type="button" onClick={() => chooseSecondaryTab("history")} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs font-medium text-foreground hover:bg-muted">
+                  <History className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <span className="flex-1 whitespace-nowrap">{isRTL ? "السجل والأحداث" : "Activity & History"}</span>
+                </button>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         {/* Tab Content Body */}
