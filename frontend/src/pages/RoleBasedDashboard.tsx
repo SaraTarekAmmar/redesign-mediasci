@@ -159,12 +159,12 @@ function ExternalProjectDashboard({ kind }: { kind: "partner" | "client" }) {
     : "Work on the projects and tasks your organization has been assigned."
   return (
     <DashboardFrame icon={<FolderOpen className="h-4 w-4" />} title={label} subtitle={subtitle}>
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title="Your projects" subtitle="Everything visible to your account is scoped to these projects." />
       <section className="grid gap-4 md:grid-cols-3">
         <StatCard label="Projects" value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label="Open work" value={openIssues.length} icon={<ClipboardList className="h-5 w-5" />} color={openIssues.length > 0 ? "yellow" : "green"} />
         <StatCard label="Completed" value={issues.length - openIssues.length} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
       </section>
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title="Your projects" subtitle="Everything visible to your account is scoped to these projects." />
       <SectionCard title="Work needing attention" description="Open tasks and project decisions that may need your response.">
         {openIssues.length > 0 ? (
           <div className="space-y-2">
@@ -192,14 +192,14 @@ function SuperAdminDashboard() {
       title={t("dashboard.platformOverview")}
       subtitle={t("summary.adminSubtitle")}
     >
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.totalProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label={t("dashboard.totalIssues")} value={issues.length} icon={<ClipboardList className="h-5 w-5" />} />
         <StatCard label={t("dashboard.teamMembers")} value={users.length} icon={<UsersRound className="h-5 w-5" />} />
         <StatCard label={t("dashboard.openIssues")} value={openIssues.length} icon={<AlertCircle className="h-5 w-5" />} color="red" />
       </section>
-
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Start with the projects your organization is running, then open the work that needs attention." />
 
       <SectionCard title={t("dashboard.systemHealth")}>
         <div className="space-y-3">
@@ -246,14 +246,14 @@ function PMDashboard() {
       title={t("summary.projectOverview")}
       subtitle={t("summary.pmSubtitle")}
     >
+      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label={t("dashboard.activeProjects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label={t("dashboard.activeIssues")} value={activeIssues.length} icon={<ClipboardList className="h-5 w-5" />} />
         <StatCard label={t("dashboard.criticalIssues")} value={criticalIssues.length} icon={<AlertCircle className="h-5 w-5" />} color="red" />
         <StatCard label={t("dashboard.completion")} value={`${completionRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
       </section>
-
-      <ProjectsSection projects={projects} issues={issues} doneIds={doneIds} title={t("dashboard.projectsSection", { defaultValue: "Projects & Work" })} subtitle="Your active delivery portfolio, with progress linked directly to project work." />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <SectionCard title={t("summary.sprintHealth")}>
