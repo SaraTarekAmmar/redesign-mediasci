@@ -1,7 +1,7 @@
 
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useRef, useState } from "react";
-import { FileText, FileSpreadsheet, FileImage, File, Upload, Download, Trash2, Eye } from "lucide-react";
+import { FileText, FileSpreadsheet, FileImage, File, Upload, Download, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { lookups } from "../store/useStore";
 import { api } from "../lib/api";
@@ -23,11 +23,24 @@ interface DocumentItem {
   uploaded_by: string;
   created_at: string;
   updated_at: string;
-  createdAt?: string | null;
-  updatedAt?: string | null;
   uploader?: { id: string; name: string; avatar?: string } | null;
   file_url?: string;
 }
+
+const normalizeDocument = (raw: any): DocumentItem => ({
+  id: String(raw?.id ?? ""),
+  name: raw?.name ?? raw?.original_name ?? raw?.originalName ?? "Untitled document",
+  original_name: raw?.original_name ?? raw?.originalName ?? raw?.name ?? "Untitled document",
+  file_path: raw?.file_path ?? raw?.path ?? "",
+  mime_type: raw?.mime_type ?? raw?.mimeType ?? "",
+  file_size: Number(raw?.file_size ?? raw?.size ?? 0),
+  category: raw?.category ?? "general",
+  uploaded_by: String(raw?.uploaded_by ?? raw?.uploadedById ?? ""),
+  created_at: raw?.created_at ?? raw?.createdAt ?? "",
+  updated_at: raw?.updated_at ?? raw?.updatedAt ?? raw?.createdAt ?? "",
+  uploader: raw?.uploader ?? null,
+  file_url: raw?.file_url ?? raw?.fileUrl,
+});
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   "application/pdf": FileText,
@@ -42,9 +55,11 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const fmtSize = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1048576).toFixed(1)} MB`;
+  const value = Number(bytes);
+  if (!Number.isFinite(value) || value < 0) return "—";
+  if (value < 1024) return `${value} B`;
+  if (value < 1048576) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / 1048576).toFixed(1)} MB`;
 };
 
 const formatDocumentDate = (doc: DocumentItem) => {
@@ -55,11 +70,6 @@ const formatDocumentDate = (doc: DocumentItem) => {
 };
 
 const ACCEPTED_TYPES = ".pdf,.xlsx,.xls,.docx,.doc,.png,.jpg,.jpeg,.txt,.zip";
-
-function xsrfToken() {
-  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
 
 function DocumentsPage() {
   const { t } = useTranslation();
@@ -77,7 +87,7 @@ function DocumentsPage() {
     try {
       const res = await api.get<any>(`/documents?project_id=${projectId}`);
       const docs = res?.data ?? res?.documents ?? [];
-      setItems(Array.isArray(docs) ? docs : []);
+      setItems(Array.isArray(docs) ? docs.map(normalizeDocument) : []);
     } catch {
       toast.error(t("documents.loadFailed"));
     } finally {
@@ -115,8 +125,9 @@ function DocumentsPage() {
         throw new Error(data?.message || data?.error || data?.errors?.file?.[0] || `Upload failed (${res.status})`);
       }
 
-      if (data?.document) {
-        setItems((current) => [data.document, ...current]);
+      const uploadedDocument = data?.document ?? data;
+      if (uploadedDocument?.id) {
+        setItems((current) => [normalizeDocument(uploadedDocument), ...current]);
         toast.success(t("documents.uploadedToast", { name: file.name }));
       } else {
         throw new Error(t("documents.uploadNoDocReturned"));
@@ -171,6 +182,14 @@ function DocumentsPage() {
           }
         />
 
+        {!loading && items.length > 0 && (
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Files</p><p className="mt-1 text-sm font-semibold text-foreground">{items.length}</p></div>
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Formats</p><p className="mt-1 text-sm font-semibold text-foreground">{new Set(items.map((item) => item.category || item.mime_type || "file")).size}</p></div>
+            <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Total size</p><p className="mt-1 text-sm font-semibold text-foreground">{fmtSize(items.reduce((total, item) => total + (Number.isFinite(Number(item.file_size)) ? Number(item.file_size) : 0), 0))}</p></div>
+          </div>
+        )}
+
         {loading ? (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
@@ -187,9 +206,7 @@ function DocumentsPage() {
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card py-16">
             <File className="mb-3 h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">{t("documents.noDocuments")}</p>
-            <Button size="sm" className="mt-3 gap-1.5" onClick={openPicker}>
-              <Upload className="h-4 w-4" /> {t("documents.uploadFirst")}
-            </Button>
+            <p className="mt-1 text-xs text-muted-foreground">Use Upload in the page header to add the first project file.</p>
           </div>
         ) : (
           <div className="space-y-2">
