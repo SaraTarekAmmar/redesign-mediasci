@@ -179,6 +179,9 @@ function BoardPage() {
 
   const totalPoints = sprintIssues.reduce((sum, i) => sum + (i.storyPoints ?? 0), 0);
   const donePoints = sprintIssues.filter((i) => lookups.statusById[i.statusId]?.category === "done").reduce((sum, i) => sum + (i.storyPoints ?? 0), 0);
+  const doneIssueCount = sprintIssues.filter((i) => lookups.statusById[i.statusId]?.category === "done").length;
+  const inProgressIssueCount = sprintIssues.filter((i) => lookups.statusById[i.statusId]?.category === "in_progress").length;
+  const unassignedIssueCount = sprintIssues.filter((i) => !i.assigneeId && !i.externalAssigneeId).length;
 
   const overloadedUsers = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -285,6 +288,12 @@ function BoardPage() {
         <div className="mt-3">
           <FilterBar />
         </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4" aria-label="Board pulse">
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Work</p><p className="mt-1 text-xl font-semibold text-foreground">{sprintIssues.length}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">In progress</p><p className="mt-1 text-xl font-semibold text-primary">{inProgressIssueCount}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Done</p><p className="mt-1 text-xl font-semibold text-emerald-700 dark:text-emerald-300">{doneIssueCount}</p></div>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5"><p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Unassigned</p><p className={`mt-1 text-xl font-semibold ${unassignedIssueCount > 0 ? "text-amber-700 dark:text-amber-300" : "text-foreground"}`}>{unassignedIssueCount}</p></div>
+        </div>
       </div>
 
       {overloadedUsers.length > 0 && (
@@ -303,7 +312,7 @@ function BoardPage() {
 
       {viewMode === "board" && (
         <div className="flex-1 overflow-x-auto p-5">
-        <div className="flex h-full gap-5">
+        <div className="flex min-h-[360px] items-start gap-5 pb-2">
           {displayColumns.map((col, index) => {
             const columnIssues = sprintIssues.filter((i) => col.matchingStatusIds.includes(i.statusId));
             return (

@@ -39,7 +39,7 @@ export const BoardColumn = React.memo(function BoardColumn({
   const activeColor = stageColor || status.color || "#6366F1";
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col rounded-xl border border-border bg-muted/40 p-3">
+    <div className="flex min-h-[360px] w-80 shrink-0 flex-col rounded-xl border border-border bg-muted/40 p-3">
       <div className="mb-3 flex items-center justify-between px-1">
         <div className="flex items-center gap-2 min-w-0">
           <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: activeColor }} aria-hidden />
