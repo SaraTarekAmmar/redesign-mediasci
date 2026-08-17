@@ -283,6 +283,38 @@ function PlanningPulse({ issues, statuses, sprints }: { issues: any[]; statuses:
   );
 }
 
+function DeliverySnapshot({ issues, statuses, title = "Delivery snapshot" }: { issues: any[]; statuses: any[]; title?: string }) {
+  const doneIds = statuses.filter((status) => status.category === "done").map((status) => status.id);
+  const todo = issues.filter((issue) => issueStatus(issue, statuses)?.category === "todo").length;
+  const inProgress = issues.filter((issue) => issueStatus(issue, statuses)?.category === "in_progress").length;
+  const done = issues.filter((issue) => isDone(issue, doneIds)).length;
+  const unassigned = issues.filter((issue) => !issueField(issue, "assigneeId", "assignee_id", "externalAssigneeId", "external_assignee_id")).length;
+  const overdue = issues.filter((issue) => issueIsOverdue(issue, statuses)).length;
+  const total = issues.length || 1;
+  const buckets = [
+    { label: "To do", count: todo, className: "bg-muted text-muted-foreground", bar: "bg-muted-foreground/40" },
+    { label: "In progress", count: inProgress, className: "bg-primary/10 text-primary", bar: "bg-primary" },
+    { label: "Done", count: done, className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", bar: "bg-emerald-500" },
+  ];
+  return (
+    <SectionCard title={title} description="Understand where work is accumulating before opening a detailed report." action={<Link to="/reports" className="text-xs font-semibold text-primary hover:underline">Open reports</Link>}>
+      <div className="grid gap-3 md:grid-cols-3">
+        {buckets.map((bucket) => (
+          <div key={bucket.label} className="rounded-xl border border-border/70 bg-background p-3">
+            <div className="flex items-center justify-between gap-2"><span className="text-xs font-medium text-muted-foreground">{bucket.label}</span><span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${bucket.className}`}>{bucket.count}</span></div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className={`h-full rounded-full ${bucket.bar}`} style={{ width: `${Math.min(100, Math.round((bucket.count / total) * 100))}%` }} /></div>
+            <p className="mt-2 text-[11px] text-muted-foreground">{Math.round((bucket.count / total) * 100)}% of visible work</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <Link to="/issues" className="flex items-center justify-between rounded-lg border border-border/70 px-3 py-2.5 hover:bg-accent/30"><span className="text-xs text-muted-foreground">Unassigned work</span><span className={unassigned > 0 ? "text-sm font-semibold text-amber-700 dark:text-amber-300" : "text-sm font-semibold text-foreground"}>{unassigned}</span></Link>
+        <Link to="/issues" className="flex items-center justify-between rounded-lg border border-border/70 px-3 py-2.5 hover:bg-accent/30"><span className="text-xs text-muted-foreground">Overdue work</span><span className={overdue > 0 ? "text-sm font-semibold text-destructive" : "text-sm font-semibold text-foreground"}>{overdue}</span></Link>
+      </div>
+    </SectionCard>
+  );
+}
+
 function QuickActions({ actions }: { actions: Array<{ to: string; label: string; detail: string; icon: React.ReactNode }> }) {
   return (
     <SectionCard title="Quick access" description="Jump straight into the next place you are likely to work.">
@@ -322,6 +354,7 @@ function ExternalProjectDashboard({ kind }: { kind: "partner" | "client" }) {
         <WorkQueueSection issues={issues} statuses={statuses} priorities={priorities} title="Work needing attention" />
         <PlanningPulse issues={issues} statuses={statuses} sprints={sprints} />
       </div>
+      <DeliverySnapshot issues={issues} statuses={statuses} title="Delivery snapshot" />
       <QuickActions actions={[
         { to: "/issues", label: "Project work", detail: "Review tasks and add project comments.", icon: <ListChecks className="h-4 w-4" /> },
         { to: "/board", label: "Open board", detail: "See the delivery flow for your projects.", icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -363,6 +396,7 @@ function SuperAdminDashboard() {
         <WorkQueueSection issues={issues} statuses={statuses} priorities={priorities} title="Platform attention" />
         <PlanningPulse issues={issues} statuses={statuses} sprints={sprints} />
       </div>
+      <DeliverySnapshot issues={issues} statuses={statuses} title="Platform delivery snapshot" />
       <QuickActions actions={[
         { to: "/projects", label: "All projects", detail: "Review portfolio status and ownership.", icon: <FolderOpen className="h-4 w-4" /> },
         { to: "/issues", label: "Issue triage", detail: "Resolve blockers and high-priority work.", icon: <ListChecks className="h-4 w-4" /> },
@@ -425,6 +459,7 @@ function PMDashboard() {
         <WorkQueueSection issues={issues} statuses={statuses} priorities={priorities} title="Delivery attention" />
         <PlanningPulse issues={issues} statuses={statuses} sprints={sprints} />
       </div>
+      <DeliverySnapshot issues={issues} statuses={statuses} title="Delivery snapshot" />
 
       <QuickActions actions={[
         { to: "/board", label: "Open board", detail: "Move work across delivery stages.", icon: <LayoutDashboard className="h-4 w-4" /> },
