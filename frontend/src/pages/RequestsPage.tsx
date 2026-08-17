@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Inbox, Plus, Sparkles, FolderKanban, Loader2, Calendar, PencilLine, Trash2 } from "lucide-react";
+import { Inbox, Plus, Sparkles, FolderKanban, Loader2, Calendar, PencilLine, Trash2, Search } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
@@ -30,6 +30,7 @@ export default function RequestsPage() {
   const [editingRequest, setEditingRequest] = useState<ClientRequest | null>(null);
   const [deletingRequest, setDeletingRequest] = useState<ClientRequest | null>(null);
   const [saving, setSaving] = useState(false);
+  const [requestSearch, setRequestSearch] = useState("");
 
   const [requestForm, setRequestForm] = useState(blankForm());
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
@@ -58,6 +59,7 @@ export default function RequestsPage() {
       const requestsRes = await api.get<ClientRequest[] | { data?: ClientRequest[] }>("/requests");
       const requestsData = Array.isArray(requestsRes) ? requestsRes : requestsRes?.data ?? [];
       setRequests(requestsData);
+      setSelectedRequest((current) => current ?? requestsData[0] ?? null);
       const clientsData = await api.get<Client[]>("/clients");
       setClients(clientsData || []);
       if (selectedRequest) {
@@ -169,6 +171,11 @@ export default function RequestsPage() {
   };
 
   const hasEstimate = !!(selectedRequest?.estimated_hours || selectedRequest?.estimated_cost);
+  const visibleRequests = requests.filter((request) => {
+    const query = requestSearch.trim().toLowerCase();
+    if (!query) return true;
+    return `${request.title} ${request.client?.name ?? ""} ${request.type} ${request.status ?? "pending"}`.toLowerCase().includes(query);
+  });
 
   const handleConvertToProject = async () => {
     if (!selectedRequest) return;
@@ -208,10 +215,23 @@ export default function RequestsPage() {
         ) : (
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-1 space-y-3">
-              <div className="rounded-xl border bg-card p-4">
-                <h3 className="text-sm font-semibold text-foreground mb-3">{t("requests.registry")}</h3>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold text-foreground">{t("requests.registry")}</h3>
+                  <span className="text-xs text-muted-foreground">{visibleRequests.length}/{requests.length}</span>
+                </div>
+                <div className="relative mb-3">
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                  <Input
+                    value={requestSearch}
+                    onChange={(event) => setRequestSearch(event.target.value)}
+                    placeholder={t("requests.search", { defaultValue: "Search requests" })}
+                    aria-label={t("requests.search", { defaultValue: "Search requests" })}
+                    className="h-8 pl-8 text-xs"
+                  />
+                </div>
                 <div className="space-y-2">
-                  {requests.map((r) => (
+                  {visibleRequests.map((r) => (
                     <button
                       key={r.id}
                       onClick={() => {
@@ -228,11 +248,12 @@ export default function RequestsPage() {
                         <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-muted text-muted-foreground">
                           {r.type}
                         </span>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
-                          r.status === "accepted" ? "bg-success/15 text-success" :
-                          r.status === "rejected" ? "bg-destructive/15 text-destructive" :
-                          r.status === "review" ? "bg-warning/15 text-warning" : "bg-info/15 text-info"
-                        }`}>
+                                                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                            r.status === "accepted" ? "bg-success/15 text-success" :
+                            r.status === "rejected" ? "bg-destructive/15 text-destructive" :
+                            r.status === "review" ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground"
+                          }`}>
+
                           {(r.status || "pending").toUpperCase()}
                         </span>
                       </div>
@@ -242,8 +263,10 @@ export default function RequestsPage() {
                       </p>
                     </button>
                   ))}
-                  {requests.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">{t("requests.noRequests")}</p>
+                  {visibleRequests.length === 0 && (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      {requests.length === 0 ? t("requests.noRequests") : t("requests.noSearchResults", { defaultValue: "No requests match that search" })}
+                    </p>
                   )}
                 </div>
               </div>

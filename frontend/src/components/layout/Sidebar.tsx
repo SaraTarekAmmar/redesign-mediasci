@@ -72,19 +72,25 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
     ],
   },
   {
+    headingKey: "Work",
+    items: [
+      { to: "/projects", labelKey: "nav.projects", icon: FolderKanban, permissions: ["view-projects"] },
+      { to: "/board", labelKey: "nav.board", icon: KanbanSquare },
+      { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },
+      { to: "/backlog", labelKey: "nav.backlog", icon: ListTodo },
+      { to: "/sprints", labelKey: "nav.sprints", icon: Repeat, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer"], permissions: ["view-sprints"] },
+    ],
+  },
+  {
     headingKey: "Planning",
     items: [
       { to: "/scope", labelKey: "nav.scope", icon: Target, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-scope"] },
-      { to: "/board", labelKey: "nav.board", icon: KanbanSquare },
-      { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },
-      { to: "/sprints", labelKey: "nav.sprints", icon: Repeat, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer"], permissions: ["view-sprints"] },
-      { to: "/sprints/global", labelKey: "nav.globalSprints", icon: Layers },
-      { to: "/backlog", labelKey: "nav.backlog", icon: ListTodo },
-      { to: "/triage", labelKey: "nav.triage", icon: Inbox, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-issues"] },
       { to: "/roadmap", labelKey: "nav.roadmap", icon: RoadmapIcon, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
+      { to: "/sprints/global", labelKey: "nav.globalSprints", icon: Layers },
       { to: "/enterprise-gantt", labelKey: "nav.enterpriseGantt", icon: Network, roles: ["super-admin", "admin", "project-manager"] },
       { to: "/plan-comparison", labelKey: "nav.planComparison", icon: TrendingUp, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-analytics"] },
       { to: "/gantt", labelKey: "nav.gantt", icon: GanttChart, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-projects"] },
+      { to: "/triage", labelKey: "nav.triage", icon: Inbox, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-issues"] },
     ],
   },
   {

@@ -1,4 +1,5 @@
 {
+  "work.heading": "العمل",
   "planning.heading": "التخطيط",
   "pre-sales.heading": "ما قبل البيع",
   "delivery.heading": "التسليم",
@@ -11,6 +12,7 @@
   "approvals": "الموافقات",
   "customFields": "الحقول المخصصة",
   "gantt": "جانت",
+  "projects": "المشاريع",
   "clients": "العملاء",
   "partners": "الشركاء",
   "workforce": "القوى العاملة",

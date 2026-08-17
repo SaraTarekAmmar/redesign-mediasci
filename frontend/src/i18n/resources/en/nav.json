@@ -1,4 +1,5 @@
 {
+  "work.heading": "Work",
   "planning.heading": "Planning",
   "pre-sales.heading": "Pre-Sales",
   "delivery.heading": "Delivery",
@@ -11,6 +12,7 @@
   "approvals": "Approvals",
   "customFields": "Custom Fields",
   "gantt": "Gantt",
+  "projects": "Projects",
   "clients": "Clients",
   "partners": "Partners",
   "workforce": "Workforce",
