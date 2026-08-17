@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../components/ui/Button";
 import { UserAvatar } from "../components/common/UserAvatar";
+import { PageHeader } from "../components/common/PageHeader";
+import { StatTile } from "../components/common/StatTile";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/Dialog";
 import { api } from "../lib/api";
 import { cn } from "../lib/utils";
@@ -82,74 +84,39 @@ export default function TeamPage() {
   return (
     <div className="h-full overflow-y-auto p-5" dir={isRTL ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-screen-2xl space-y-5">
-      {/* Team Header & Switcher */}
-      <div className="bg-card p-6 rounded-xl border border-border space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-primary text-primary-foreground">
-              <FolderKanban className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                {isRTL ? "فريق العمل المباشر" : "Team Execution View"}
-              </div>
-              <h1 className="text-[1.4rem] font-bold tracking-tight text-foreground leading-tight">
-                {currentTeam?.name || (isRTL ? "تفاصيل الفريق" : "Team Details")}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {currentTeam?.description || (isRTL ? "عرض أعضاء الفريق والموارد المخصصة لهذا الفريق" : "Resources assigned strictly to this team.")}
-              </p>
-            </div>
-          </div>
+      <PageHeader
+        icon={<FolderKanban className="h-4 w-4" />}
+        title={currentTeam?.name || (isRTL ? "تفاصيل الفريق" : "Team Details")}
+        subtitle={currentTeam?.description || (isRTL ? "عرض أعضاء الفريق والموارد المخصصة لهذا الفريق" : "Resources assigned strictly to this team.")}
+        badge={<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">{isRTL ? "فريق العمل المباشر" : "Team execution"}</span>}
+        actions={currentTeam ? (
+          <Button variant="outline" onClick={() => navigate(`/resources?team_id=${currentTeam.id}`)}>
+            {isRTL ? "إدارة الموارد" : "Manage Resources"}
+          </Button>
+        ) : undefined}
+      />
 
-          {/* Team Switcher Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {currentTeam && (
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/resources?team_id=${currentTeam.id}`)}
-              >
-                {isRTL ? "إدارة الموارد" : "Manage Resources"}
-              </Button>
+      <div className="mb-5 flex flex-wrap gap-2">
+        {teams.map((tm) => (
+          <button
+            key={tm.id}
+            onClick={() => setSelectedTeamId(tm.id)}
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+              selectedTeamId === tm.id
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-muted text-muted-foreground hover:bg-accent"
             )}
-            {teams.map((tm) => (
-              <button
-                key={tm.id}
-                onClick={() => setSelectedTeamId(tm.id)}
-                className={cn(
-                  "px-3 py-1.5 text-xs font-medium rounded-lg border transition-all",
-                  selectedTeamId === tm.id
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-muted text-muted-foreground border-border hover:bg-accent"
-                )}
-              >
-                {tm.name}
-              </button>
-            ))}
-          </div>
-        </div>
+          >
+            {tm.name}
+          </button>
+        ))}
+      </div>
 
-        {/* Team Overview Stats */}
-        <div className="grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
-          <div className="rounded-lg border border-border/60 px-3 py-2">
-            <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي أعضاء الفريق" : "Team Members"}</span>
-            <span className="text-xl font-bold text-foreground">{teamResources.length}</span>
-          </div>
-          <div className="rounded-lg border border-border/60 px-3 py-2">
-            <span className="text-xs text-muted-foreground block">{isRTL ? "إجمالي السعة الأسبوعية" : "Total Capacity"}</span>
-            <span className="text-xl font-bold text-primary">
-              {teamResources.reduce((acc, r) => acc + (r.weekly_capacity || 40), 0)} hrs
-            </span>
-          </div>
-          <div className="rounded-lg border border-border/60 px-3 py-2">
-            <span className="text-xs text-muted-foreground block">{isRTL ? "متوسط الاستغلال" : "Avg Utilization"}</span>
-            <span className="text-xl font-bold text-emerald-600">
-              {teamResources.length
-                ? Math.round(teamResources.reduce((acc, r) => acc + r.utilization_percentage, 0) / teamResources.length)
-                : 0}%
-            </span>
-          </div>
-        </div>
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatTile label={isRTL ? "إجمالي أعضاء الفريق" : "Team members"} value={teamResources.length} icon={<Users className="h-4 w-4" />} color="neutral" />
+        <StatTile label={isRTL ? "إجمالي السعة الأسبوعية" : "Total capacity"} value={`${teamResources.reduce((acc, r) => acc + (r.weekly_capacity || 40), 0)} hrs`} icon={<Briefcase className="h-4 w-4" />} color="neutral" />
+        <StatTile label={isRTL ? "متوسط الاستغلال" : "Avg utilization"} value={`${teamResources.length ? Math.round(teamResources.reduce((acc, r) => acc + r.utilization_percentage, 0) / teamResources.length) : 0}%`} icon={<Check className="h-4 w-4" />} color="green" />
       </div>
 
       {/* Team Members List (NO global search, NO department filter, NO team dropdown) */}

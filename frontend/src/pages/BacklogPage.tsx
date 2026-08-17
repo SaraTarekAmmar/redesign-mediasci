@@ -5,6 +5,7 @@ import { ListChecks } from "lucide-react";
 import { useStore, lookups, matchesFilters } from "../store/useStore";
 import type { Issue } from "../data/types";
 import { FilterBar } from "../components/common/FilterBar";
+import { PageHeader } from "../components/common/PageHeader";
 import { SavedViewsDropdown } from "../components/common/SavedViewsDropdown";
 import { CreateIssueDialog } from "../components/issue/CreateIssueDialog";
 import { IssueTypeIcon } from "../components/common/IssueTypeIcon";
@@ -250,29 +251,21 @@ function BacklogPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-border px-5 py-4">
-        <div className="flex items-end justify-between gap-3">
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-primary text-primary-foreground">
-              <ListChecks className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-[1.4rem] font-bold tracking-tight text-foreground leading-tight">{t("backlog.title")}</h1>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                {t("backlog.description")}
-              </p>
-            </div>
-          </div>
-          <SavedViewsDropdown
-            pageKey="backlog"
-            currentConfig={currentConfig}
-            onLoad={handleLoadView}
-            hasUnsavedChanges={hasUnsavedChanges}
-          />
-        </div>
-        <div className="mt-3">
-          <FilterBar />
-        </div>
+      <div className="border-b border-border px-5 py-5">
+        <PageHeader
+          icon={<ListChecks className="h-4 w-4" />}
+          title={t("backlog.title")}
+          subtitle={t("backlog.description")}
+          actions={
+            <SavedViewsDropdown
+              pageKey="backlog"
+              currentConfig={currentConfig}
+              onLoad={handleLoadView}
+              hasUnsavedChanges={hasUnsavedChanges}
+            />
+          }
+        />
+        <FilterBar />
       </div>
 
       <div className="flex-1 overflow-y-auto p-5">

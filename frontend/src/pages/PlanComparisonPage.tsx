@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../components/ui/Badge";
+import { EmptyState } from "../components/common/EmptyState";
+import { PageHeader } from "../components/common/PageHeader";
 import { Button } from "../components/ui/Button";
 import {
   DropdownMenu,
@@ -304,97 +306,82 @@ export const PlanComparisonPage: React.FC = () => {
 
   if (!selectedProjectId || projects.length === 0) {
     return (
-      <div className="h-full overflow-y-auto p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <Layers3 className="w-12 h-12 text-muted-foreground/50 mb-4" />
-        <h2 className="text-lg font-semibold text-foreground">No Project Selected</h2>
-        <p className="mt-2 text-sm text-muted-foreground max-w-md">
-          Create or select a project to view plan vs actual monitoring.
-        </p>
-        <Button className="mt-6" onClick={() => navigate("/projects")}>
-          Browse Projects
-        </Button>
+      <div className="h-full overflow-y-auto p-6">
+        <PageHeader
+          icon={<Layers3 className="h-4 w-4" />}
+          title="Plan vs Actual Monitoring"
+          subtitle="Real-time execution monitoring against project baselines."
+        />
+        <EmptyState
+          icon={<Layers3 className="h-8 w-8" />}
+          title="No project selected"
+          subtitle="Create or select a project to view plan vs actual monitoring."
+          action={<Button onClick={() => navigate("/projects")}>Browse Projects</Button>}
+        />
       </div>
     );
   }
 
   if (loadError || !intelligenceData) {
     return (
-      <div className="h-full overflow-y-auto p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <ShieldAlert className="w-12 h-12 text-rose-500/70 mb-4" />
-        <h2 className="text-lg font-semibold text-foreground">Unable to Load Dashboard</h2>
-        <p className="mt-2 text-sm text-muted-foreground max-w-md">
-          {loadError || "Planning intelligence is not available for this project yet."}
-        </p>
-        {activeProject && (
-          <Button className="mt-6 gap-2" onClick={() => navigate(`/projects/${activeProject.id}/plan`)}>
-            <Workflow className="w-4 h-4" />
-            Open Planning Workspace
-          </Button>
-        )}
+      <div className="h-full overflow-y-auto p-6">
+        <PageHeader
+          icon={<Layers3 className="h-4 w-4" />}
+          title="Plan vs Actual Monitoring"
+          subtitle="Real-time execution monitoring against project baselines."
+        />
+        <EmptyState
+          icon={<ShieldAlert className="h-8 w-8 text-rose-500" />}
+          title="Unable to load dashboard"
+          subtitle={loadError || "Planning intelligence is not available for this project yet."}
+          action={activeProject ? (
+            <Button className="gap-2" onClick={() => navigate(`/projects/${activeProject.id}/plan`)}>
+              <Workflow className="h-4 w-4" />
+              Open Planning Workspace
+            </Button>
+          ) : undefined}
+        />
       </div>
     );
   }
 
   return (
     <div className="h-full overflow-y-auto p-6 max-w-[1600px] mx-auto space-y-6 animate-fade-in">
-      {/* ── Executive Header Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-card via-card to-primary/5 p-6 rounded-2xl border border-border shadow-sm animate-slide-up">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
-              Executive Dashboard
-            </span>
-            <span className="text-xs text-muted-foreground">· Single Source of Truth</span>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Plan vs Actual Monitoring
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Real-time execution monitoring against project baselines. Read-only visualization.
-          </p>
-        </div>
-
-        {/* Project Dropdown Selector */}
-        <div className="flex items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2 text-sm font-semibold">
-                <Layers3 className="w-4 h-4 text-primary" />
-                {activeProject?.name || "Select Project"}
-                <ChevronDown className="w-4 h-4 ml-1 opacity-60" />
+      <PageHeader
+        icon={<Layers3 className="h-4 w-4" />}
+        title="Plan vs Actual Monitoring"
+        subtitle="Real-time execution monitoring against project baselines. Read-only visualization."
+        badge={<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">Executive dashboard</span>}
+        actions={
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 text-sm font-semibold">
+                  <Layers3 className="h-4 w-4 text-primary" />
+                  {activeProject?.name || "Select Project"}
+                  <ChevronDown className="ml-1 h-4 w-4 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel>Active Projects</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {projects.map((p) => (
+                  <DropdownMenuItem key={p.id} onClick={() => setActiveProjectId(p.id)} className="cursor-pointer justify-between">
+                    <span className="truncate font-medium">{p.name}</span>
+                    <Badge variant="outline" className="text-[10px]">{p.key}</Badge>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {activeProject && (
+              <Button variant="default" size="sm" className="gap-2" onClick={() => navigate(`/projects/${activeProject.id}/plan`)}>
+                <Workflow className="h-4 w-4" />
+                Edit Planning
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
-              <DropdownMenuLabel>Active Projects</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {projects.map((p) => (
-                <DropdownMenuItem
-                  key={p.id}
-                  onClick={() => setActiveProjectId(p.id)}
-                  className="justify-between cursor-pointer"
-                >
-                  <span className="font-medium truncate">{p.name}</span>
-                  <Badge variant="outline" className="text-[10px]">
-                    {p.key}
-                  </Badge>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {activeProject && (
-            <Button
-              variant="default"
-              size="sm"
-              className="gap-2"
-              onClick={() => navigate(`/projects/${activeProject.id}/plan`)}
-            >
-              <Workflow className="w-4 h-4" />
-              Edit Planning
-            </Button>
-          )}
-        </div>
-      </div>
+            )}
+          </div>
+        }
+      />
 
       {/* 1. Executive KPI Cards Row */}
       <div className="animate-slide-up" style={{ animationDelay: "40ms" }}>

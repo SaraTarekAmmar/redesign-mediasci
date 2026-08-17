@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Check, X, Eye } from "lucide-react";
+import { Plus, Check, X, Eye, FileQuestion } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
@@ -49,23 +50,23 @@ interface CR {
   project?: { id: number; name: string; key: string } | null;
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  pending:     { label: "Pending",     color: "#f59e0b" },
-  approved:    { label: "Approved",    color: "#22c55e" },
-  rejected:    { label: "Rejected",    color: "#ef4444" },
-  implemented: { label: "Implemented", color: "#6366f1" },
+const STATUS_MAP: Record<string, { label: string; className: string }> = {
+  pending:     { label: "Pending",     className: "bg-amber-500/10 text-amber-700 dark:text-amber-300" },
+  approved:    { label: "Approved",    className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" },
+  rejected:    { label: "Rejected",    className: "bg-destructive/10 text-destructive" },
+  implemented: { label: "Implemented", className: "bg-primary/10 text-primary" },
 };
 
-const IMPACT_COLOR: Record<string, string> = {
-  low: "#64748b",
-  medium: "#f59e0b",
-  high: "#ef4444",
+const IMPACT_CLASS: Record<string, string> = {
+  low: "bg-muted text-muted-foreground",
+  medium: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  high: "bg-destructive/10 text-destructive",
 };
 
-const TYPE_COLOR: Record<string, string> = {
-  standard:  "#22c55e",
-  normal:    "#3b82f6",
-  emergency: "#ef4444",
+const TYPE_CLASS: Record<string, string> = {
+  standard: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  normal: "bg-muted text-muted-foreground",
+  emergency: "bg-destructive/10 text-destructive",
 };
 
 type View = "all" | "my" | "approvals";
@@ -200,9 +201,12 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
         {loading ? (
           <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">{t("app.loading")}</div>
         ) : requests.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
-            {view === "my" ? t("changes.noMyRequests") : view === "approvals" ? t("changes.noApprovals") : t("changes.noRequests")}
-          </div>
+          <EmptyState
+            icon={<FileQuestion className="h-8 w-8" />}
+            title={view === "my" ? t("changes.noMyRequests") : view === "approvals" ? t("changes.noApprovals") : t("changes.noRequests")}
+            subtitle={t("changes.subtitle", { pending: 0, total: 0 })}
+            action={view !== "approvals" ? <Button size="sm" className="gap-1.5" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> {t("changes.newRequest")}</Button> : undefined}
+          />
         ) : (
           <div className="space-y-2">
             {requests.map((r) => {
@@ -213,16 +217,13 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
                     <div className="min-w-0 cursor-pointer flex-1" onClick={() => setSelectedRequest(r)}>
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-mono text-xs text-muted-foreground">CR-{String(r.id).padStart(3, "0")}</span>
-                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                          style={{ backgroundColor: `${st.color}1f`, color: st.color }}>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${st.className}`}>
                           {st.label}
                         </span>
-                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                          style={{ backgroundColor: `${IMPACT_COLOR[r.impact] ?? IMPACT_COLOR.medium}1f`, color: IMPACT_COLOR[r.impact] ?? IMPACT_COLOR.medium }}>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${IMPACT_CLASS[r.impact] ?? IMPACT_CLASS.medium}`}>
                           {r.impact}
                         </span>
-                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                          style={{ backgroundColor: `${TYPE_COLOR[r.type] ?? TYPE_COLOR.normal}1f`, color: TYPE_COLOR[r.type] ?? TYPE_COLOR.normal }}>
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${TYPE_CLASS[r.type] ?? TYPE_CLASS.normal}`}>
                           {r.type}
                         </span>
                         {r.priority && (
@@ -270,12 +271,10 @@ function ChangeRequestsPage({ view = "all" }: { view?: View }) {
             <DialogHeader>
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-mono text-xs text-muted-foreground">CR-{String(selectedRequest.id).padStart(3, "0")}</span>
-                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                  style={{ backgroundColor: `${STATUS_MAP[selectedRequest.status]?.color ?? "#888"}1f`, color: STATUS_MAP[selectedRequest.status]?.color ?? "#888" }}>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_MAP[selectedRequest.status]?.className ?? "bg-muted text-muted-foreground"}`}>
                   {STATUS_MAP[selectedRequest.status]?.label ?? selectedRequest.status}
                 </span>
-                <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                  style={{ backgroundColor: `${IMPACT_COLOR[selectedRequest.impact] ?? IMPACT_COLOR.medium}1f`, color: IMPACT_COLOR[selectedRequest.impact] ?? IMPACT_COLOR.medium }}>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${IMPACT_CLASS[selectedRequest.impact] ?? IMPACT_CLASS.medium}`}>
                   {selectedRequest.impact} impact
                 </span>
               </div>
