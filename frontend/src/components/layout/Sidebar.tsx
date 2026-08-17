@@ -63,17 +63,17 @@ export interface NavItem {
   permissions?: string[];
 }
 
-export const allGroups: { headingKey: string; items: NavItem[] }[] = [
+export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavItem[] }[] = [
   {
-    headingKey: "Administration",
+    headingKey: "Home",
+    hideHeading: true,
     items: [
-      { to: "/administration", labelKey: "nav.administration", icon: Shield, roles: ["super-admin", "admin"] },
+      { to: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, end: true },
     ],
   },
   {
     headingKey: "Planning",
     items: [
-      { to: "/", labelKey: "nav.summary", icon: LayoutDashboard, end: true },
       { to: "/scope", labelKey: "nav.scope", icon: Target, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-scope"] },
       { to: "/board", labelKey: "nav.board", icon: KanbanSquare },
       { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },
@@ -128,6 +128,7 @@ export const allGroups: { headingKey: string; items: NavItem[] }[] = [
   {
     headingKey: "Workspace",
     items: [
+      { to: "/administration", labelKey: "nav.administration", icon: Shield, roles: ["super-admin", "admin"] },
       { to: "/teams", labelKey: "nav.teams", icon: Layers, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-teams"] },
       { to: "/skills", labelKey: "nav.skills", icon: BookOpen, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["manage-skills"] },
       { to: "/departments", labelKey: "nav.departments", icon: Building2, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-departments"] },
@@ -512,7 +513,7 @@ function SidebarBody({
   onNavigate,
 }: {
   collapsed: boolean;
-  groups: { headingKey: string; items: NavItem[] }[];
+  groups: { headingKey: string; hideHeading?: boolean; items: NavItem[] }[];
   onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
@@ -540,12 +541,12 @@ function SidebarBody({
             : t(`${group.headingKey.toLocaleLowerCase()}.heading`, { ns: "nav", defaultValue: group.headingKey });
           return (
             <section key={group.headingKey} aria-labelledby={headingId} className={group.headingKey === "Active Project" ? "mb-0" : "mb-1"}>
-              {!collapsed && (
+              {!collapsed && !group.hideHeading && (
                 <h2 id={headingId} className="px-2.5 pb-0.5 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
                   {headingLabel}
                 </h2>
               )}
-              {collapsed && <span id={headingId} className="sr-only">{headingLabel}</span>}
+              {(collapsed || group.hideHeading) && <span id={headingId} className="sr-only">{headingLabel}</span>}
               {collapsed && <div className="my-2 border-t border-sidebar-border" aria-hidden="true" />}
               <div className={cn("space-y-0.5", collapsed && "space-y-1")}>
                 {group.items.map((item) => (

@@ -43,6 +43,7 @@
   "delivery": "Delivery",
   "insights": "Insights",
   "workspace": "Workspace",
+  "nav.dashboard": "Dashboard",
   "nav.summary": "Summary",
   "nav.backToGlobal": "Back to Global",
   "nav.overview": "Overview",
