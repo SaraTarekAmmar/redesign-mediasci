@@ -9,6 +9,7 @@ import {
   epics,
   sprints,
   issueTypes,
+  normalizeIssue,
 } from
 "../data/seed";
 import { api, getActiveProjectId, setActiveProject } from "../lib/api";
@@ -162,10 +163,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
       const getArray = (res: any) => Array.isArray(res) ? res : res?.data ?? [];
       
-      const parsedIssues = getArray(issuesData).map((issue: any) => ({
-        ...issue,
-        comments: Array.isArray(issue?.comments) ? issue.comments : [],
-      }));
+      const parsedIssues = getArray(issuesData).map((issue: any) => normalizeIssue(issue));
       const parsedStatuses = getArray(statusesData);
       const parsedPriorities = getArray(prioritiesData);
       const parsedTypes = getArray(issueTypesData).map((t: any) => ({
@@ -207,10 +205,10 @@ export const useStore = create<StoreState>((set, get) => ({
       lookups.sprints.splice(0, lookups.sprints.length, ...parsedSprints);
       lookups.issueTypes.splice(0, lookups.issueTypes.length, ...parsedTypes);
 
-      Object.keys(lookups.statusById).forEach((k) => delete lookups.statusById[k]);
+      // Keep lookup entries from every project in the active multi-project scope.
+      // Clearing this map on each concurrent fetch made status pills disappear
+      // for projects whose response arrived before the last fetch completed.
       Object.assign(lookups.statusById, Object.fromEntries(parsedStatuses.map((s) => [s.id, s])));
-
-      Object.keys(lookups.priorityById).forEach((k) => delete lookups.priorityById[k]);
       Object.assign(lookups.priorityById, Object.fromEntries(parsedPriorities.map((p) => [p.id, p])));
 
       Object.keys(lookups.userById).forEach((k) => delete lookups.userById[k]);

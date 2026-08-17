@@ -111,10 +111,31 @@ export const sprints: Sprint[] = D.sprints ?? [
 
 const now = "2026-07-20T09:00:00Z";
 
-function normalizeIssue(issue: any): Issue {
+export function normalizeIssue(issue: any): Issue {
+  const rawType = String(issue.typeKey ?? issue.type_key ?? issue.type ?? issue.issue_type?.key ?? issue.issue_type?.name ?? "task").toLowerCase();
+  const normalizedType = rawType === "feature" ? "story" : rawType === "sub-task" ? "subtask" : rawType;
   return {
     ...issue,
-    projectId: String(issue.projectId ?? issue.project_id ?? project.id)
+    id: String(issue.id),
+    key: String(issue.key ?? issue.issue_key ?? `ISSUE-${issue.id}`),
+    title: issue.title ?? issue.summary ?? "Untitled issue",
+    projectId: String(issue.projectId ?? issue.project_id ?? project.id),
+    statusId: String(issue.statusId ?? issue.status_id ?? issue.issue_status_id ?? ""),
+    priorityId: String(issue.priorityId ?? issue.priority_id ?? issue.issue_priority_id ?? ""),
+    typeKey: normalizedType as IssueTypeKey,
+    assigneeId: issue.assigneeId ?? issue.assignee_id ? String(issue.assigneeId ?? issue.assignee_id) : undefined,
+    externalAssigneeId: issue.externalAssigneeId ?? issue.external_assignee_id ? String(issue.externalAssigneeId ?? issue.external_assignee_id) : undefined,
+    reporterId: String(issue.reporterId ?? issue.reporter_id ?? ""),
+    sprintId: issue.sprintId ?? issue.sprint_id ? String(issue.sprintId ?? issue.sprint_id) : undefined,
+    epicId: issue.epicId ?? issue.epic_id ? String(issue.epicId ?? issue.epic_id) : undefined,
+    labelIds: Array.isArray(issue.labelIds) ? issue.labelIds.map(String) : Array.isArray(issue.label_ids) ? issue.label_ids.map(String) : [],
+    storyPoints: issue.storyPoints ?? issue.story_points,
+    dueDate: issue.dueDate ?? issue.due_date,
+    startDate: issue.startDate ?? issue.start_date,
+    workstream: issue.workstream ?? issue.custom_fields?.workstream,
+    customFields: issue.customFields ?? issue.custom_fields,
+    comments: Array.isArray(issue.comments) ? issue.comments : [],
+    position: Number(issue.position ?? 0),
   };
 }
 
