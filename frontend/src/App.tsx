@@ -15,6 +15,7 @@ import { statuses } from "./data/seed";
 import { useProjectCatalogStore } from "./store/useProjectCatalog";
 
 const SummaryPage = lazy(() => import("./pages/SummaryPage"));
+const RoleBasedDashboard = lazy(() => import("./components/dashboard/RoleBasedDashboard"));
 const BoardPage = lazy(() => import("./pages/BoardPage"));
 const BacklogPage = lazy(() => import("./pages/BacklogPage"));
 const RoadmapPage = lazy(() => import("./pages/RoadmapPage"));
@@ -197,6 +198,7 @@ export function App() {
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-muted-foreground text-sm">Loading...</div>}>
                   <Routes>
                     <Route path="/" element={<ProtectedRoute><SummaryPage /></ProtectedRoute>} />
+                    <Route path="/dashboard" element={<ProtectedRoute><RoleBasedDashboard /></ProtectedRoute>} />
                     <Route path="/projects" element={<ProtectedRoute permissions={["view-projects"]}><ProjectsPage /></ProtectedRoute>} />
                     <Route path="/clients" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><ClientsPage /></ProtectedRoute>} />
                     <Route path="/requests" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><RequestsPage /></ProtectedRoute>} />
