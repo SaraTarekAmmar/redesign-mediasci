@@ -319,12 +319,11 @@ function SettingsPage() {
   }, [activeProjectId]);
 
   useEffect(() => {
+    // GitHub linking is not exposed by the current backend route set. Keep the
+    // card honest and quiet instead of showing a misleading Not Found toast.
     if (!activeProjectId) return;
-    let live = true;
-    api.get<any[]>(`/projects/${activeProjectId}/github`)
-      .then((data) => { if (live) setGithubIntegrations(Array.isArray(data) ? data : []); })
-      .catch((error: any) => { if (live) toast.error(error?.message ?? "Could not load GitHub integrations."); });
-    return () => { live = false; };
+    setGithubIntegrations([]);
+    setIntegrations((current) => ({ ...current, github: { connected: false } }));
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -994,36 +993,23 @@ function SettingsPage() {
               </section>
 
               <section className="rounded-xl border border-border bg-card p-5">
-                <h2 className="text-sm font-semibold text-foreground">{t("settings.brandSystem")}</h2>
-                <p className="mb-4 mt-0.5 text-xs text-muted-foreground">
-                  {t("settings.brandSystemDesc")}
+                <h2 className="text-sm font-semibold text-foreground">{t("settings.brandSystem", { defaultValue: "Visual system" })}</h2>
+                <p className="mb-4 mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                  {t("settings.brandSystemDesc", { defaultValue: "This workspace uses one focused visual language so status, actions, and navigation stay easy to recognize." })}
                 </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  {[
-                    { name: "Default Ink", value: "oklch(0.205 0 0)" },
-                    { name: "Ocean Blue", value: "#0ea5e9" },
-                    { name: "Premium Purple", value: "#8b5cf6" },
-                    { name: "Forest Green", value: "#10b981" },
-                    { name: "Warm Amber", value: "#f59e0b" },
-                    { name: "Crimson Red", value: "#ef4444" },
-                  ].map((themeOpt) => (
-                    <button
-                      key={themeOpt.value}
-                      onClick={() => {
-                        localStorage.setItem("brand-theme-color", themeOpt.value);
-                        document.documentElement.style.setProperty("--primary", themeOpt.value);
-                        document.documentElement.style.setProperty("--ring", themeOpt.value);
-                        toast.success(t("settings.brandingUpdated"));
-                      }}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold hover:bg-accent/40 hover:border-accent transition-all cursor-pointer"
-                    >
-                      <span
-                        className="h-3.5 w-3.5 rounded-full border border-border"
-                        style={{ backgroundColor: themeOpt.value.includes("oklch") ? "#18181b" : themeOpt.value }}
-                      />
-                      {themeOpt.name}
-                    </button>
-                  ))}
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold">
+                    <span className="h-3.5 w-3.5 rounded-full bg-black ring-1 ring-border" aria-hidden="true" />
+                    {t("settings.visualInk", { defaultValue: "Ink sidebar" })}
+                  </div>
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold">
+                    <span className="h-3.5 w-3.5 rounded-full bg-primary ring-1 ring-primary/40" aria-hidden="true" />
+                    {t("settings.visualAccent", { defaultValue: "Pink actions" })}
+                  </div>
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold">
+                    <span className="h-3.5 w-3.5 rounded-full bg-muted ring-1 ring-border" aria-hidden="true" />
+                    {t("settings.visualSurface", { defaultValue: "Warm surfaces" })}
+                  </div>
                 </div>
               </section>
             </div>
@@ -1539,34 +1525,13 @@ function SettingsPage() {
                   </span>
                 </div>
                 <p className="mb-3 text-xs text-muted-foreground">{t("settings.githubDesc")}</p>
-
-                {githubIntegrations.length > 0 && (
-                  <div className="mb-3 space-y-2">
-                    {githubIntegrations.map((g) => (
-                      <div key={g.id} className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm">
-                        <span>{t("settings.connectedToRepo", { repo: `${g.repo_owner}/${g.repo_name}` })}</span>
-                        <Button size="sm" variant="outline" className="text-destructive" onClick={() => disconnectGithub(g.id)} disabled={integrationBusy === "github"}>
-                          {t("settings.disconnect")}
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <Input
-                    placeholder={t("settings.repoOwner")}
-                    value={githubForm.repo_owner}
-                    onChange={(e) => setGithubForm((cur) => ({ ...cur, repo_owner: e.target.value }))}
-                  />
-                  <Input
-                    placeholder={t("settings.repoName")}
-                    value={githubForm.repo_name}
-                    onChange={(e) => setGithubForm((cur) => ({ ...cur, repo_name: e.target.value }))}
-                  />
-                  <Button onClick={connectGithub} disabled={integrationBusy === "github"}>
-                    {t("settings.connect")}
-                  </Button>
+                <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
+                  <p className="text-sm font-medium text-foreground">
+                    {t("settings.githubUnavailable", { defaultValue: "GitHub linking is not available in this workspace yet." })}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {t("settings.githubUnavailableHint", { defaultValue: "The rest of your project settings are ready to use. GitHub connections will appear here when the integration is enabled." })}
+                  </p>
                 </div>
               </section>
             </div>

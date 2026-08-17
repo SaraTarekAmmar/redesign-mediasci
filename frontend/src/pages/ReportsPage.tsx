@@ -28,6 +28,12 @@ import { useStore, lookups } from "../store/useStore";
 import { PageHeader } from "../components/common/PageHeader";
 import { Button } from "../components/ui/Button";
 import { UserAvatar } from "../components/common/UserAvatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/DropdownMenuEnhanced";
 import { IssueTypeIcon } from "../components/common/IssueTypeIcon";
 import {
   Dialog,
@@ -594,18 +600,28 @@ function ReportsPage() {
           subtitle={isRTL ? "استعراض تفاعلي للرسوم وتحليل الانحراف ومصفوفة عبء الفريق" : "Interactive chart inspection, variance analysis, and team workload matrix"}
           actions={
             <div className="flex items-center gap-2 no-print">
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportCsv}>
-                <FileSpreadsheet className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                {isRTL ? "تصدير CSV" : "Export CSV"}
-              </Button>
-              <Button size="sm" variant="outline" className="gap-1.5" onClick={handleExportXlsx}>
-                <FileSpreadsheet className="h-4 w-4 text-muted-foreground" />
-                {isRTL ? "تصدير Excel" : "Export Excel"}
-              </Button>
-              <Button size="sm" className="gap-1.5" onClick={handleExportPdf}>
-                <Printer className="h-4 w-4" />
-                {isRTL ? "تصدير PDF / طباعة" : "Export PDF / Print"}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" className="gap-1.5">
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    {isRTL ? "تصدير" : "Export"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52 p-1.5">
+                  <DropdownMenuItem onSelect={handleExportCsv}>
+                    <FileSpreadsheet className="me-2 h-4 w-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                    {isRTL ? "تصدير CSV" : "Export CSV"}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={handleExportXlsx}>
+                    <FileSpreadsheet className="me-2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                    {isRTL ? "تصدير Excel" : "Export Excel"}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={handleExportPdf}>
+                    <Printer className="me-2 h-4 w-4" aria-hidden="true" />
+                    {isRTL ? "تصدير PDF / طباعة" : "Export PDF / Print"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           }
         />
@@ -689,8 +705,30 @@ function ReportsPage() {
           </div>
         </div>
 
+        <div className={`mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 ${pointVariance < 0 ? "border-amber-500/30 bg-amber-500/5" : "border-emerald-500/30 bg-emerald-500/5"}`} role="status" aria-live="polite">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className={`mt-0.5 h-5 w-5 shrink-0 ${pointVariance < 0 ? "text-amber-600" : "text-emerald-600"}`} aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {pointVariance < 0
+                  ? (isRTL ? `${shouldHaveBeenDoneTasks.length} مهمة تحتاج إلى مراجعة` : `${shouldHaveBeenDoneTasks.length} tasks need a review`)
+                  : (isRTL ? "الخطة تسير بشكل جيد" : "The plan is tracking well")}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {pointVariance < 0
+                  ? (isRTL ? `الفعلي أقل من الهدف بمقدار ${Math.abs(pointVariance)} نقطة. ابدأ بتحليل الخطة مقابل الفعلي.` : `Actual delivery is ${Math.abs(pointVariance)} points behind target. Start with Planned vs Actual Analysis.`)
+                  : (isRTL ? "قارن التقدم الفعلي بالخطة أو راجع عبء الفريق لمواصلة التحسين." : "Compare actual progress with the plan or review team workload to keep momentum.")}
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" onClick={() => setActiveTab("plan_vs_actual")} className="gap-1.5">
+            {isRTL ? "مراجعة الخطة" : "Review the plan"}
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+
         {/* View Navigation Tabs */}
-        <div className="mb-6 flex border-b border-border text-sm font-medium no-print">
+        <div className="mb-6 flex flex-wrap border-b border-border text-sm font-medium no-print">
           <button
             onClick={() => setActiveTab("plan_vs_actual")}
             className={`flex items-center gap-2 border-b-2 px-4 py-2.5 transition-colors ${
