@@ -368,6 +368,20 @@ function RoadmapPage() {
           </div>
         </div>
 
+        <div className="mb-5 flex flex-col gap-3 rounded-xl border border-border bg-card p-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><RoadmapIcon className="h-4 w-4" aria-hidden="true" /></div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Next best action</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{stats.total === 0 ? "Create the first issue to give this roadmap a starting point." : epics.length === 0 ? "Your work has momentum but no organizing theme yet. Use Timeline for dates or add a phase for delivery structure." : "Use the view that matches the question you are answering: themes, dates, workstreams, or phases."}</p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {stats.total > 0 && <Button variant="outline" size="sm" onClick={() => setViewMode("timeline")}>{t("roadmap.viewTimeline", { defaultValue: "Open timeline" })}</Button>}
+            <Button size="sm" onClick={openCreatePhase}><Plus className="mr-1.5 h-4 w-4" />{t("roadmap.addPhase", { defaultValue: "Add phase" })}</Button>
+          </div>
+        </div>
+
         {/* View: By Epic */}
         {viewMode === "epic" && (
           <div className="space-y-4">
