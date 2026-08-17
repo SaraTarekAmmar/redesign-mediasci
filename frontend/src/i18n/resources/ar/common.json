@@ -1372,7 +1372,7 @@
   "recovery.forceDeleteDescription": "سيتم حذف \"{{name}}\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
   "adminTasks.loadError": "فشل تحميل المهام",
   "adminTasks.title": "جدول المهام",
-  "adminTasks.subtitle": "متعقب مهام مخصص يدعم الأشخاص الخارجيين",
+  "adminTasks.subtitle": "تابع المهام الإدارية بوضوح وملكية ومواعيد محددة",
   "adminTasks.newTask": "مهمة جديدة",
   "adminTasks.searchPlaceholder": "بحث في الموضوع...",
   "adminTasks.allStatuses": "كل الحالات",

@@ -308,7 +308,6 @@ function AdminTasksPage() {
             subtitle={search || statusFilter !== "all" || projectFilter !== "all"
               ? t("adminTasks.emptyFiltered", { defaultValue: "Try clearing a filter or create a new task for this queue." })
               : t("adminTasks.emptySubtitle", { defaultValue: "Create the first task to give this queue a clear owner and next action." })}
-            action={<Button size="sm" className="gap-1.5" onClick={openCreate}><Plus className="h-4 w-4" /> {t("adminTasks.newTask")}</Button>}
           />
         )}
 

@@ -904,8 +904,8 @@ def seed_demo_data():
         upsert(
             db,
             AdminTask,
-            {"title": "Confirm project budgets"},
-            {"description": "Verify seeded budgets and alerts are visible.", "category": "finance", "priority": "medium", "status": "open", "assigned_to": users["superadmin@taskflow.dev"].id, "due_date": today + timedelta(days=3), "created_by": users["superadmin@taskflow.dev"].id},
+            {"title": "Review delivery health signals"},
+            {"description": "Check project health and reporting alerts after the latest refresh.", "category": "reporting", "priority": "medium", "status": "open", "assigned_to": users["superadmin@taskflow.dev"].id, "due_date": today + timedelta(days=3), "created_by": users["superadmin@taskflow.dev"].id},
         )
 
         # ── Demo partner login: external org assigned to DBP, can receive/reassign tasks ──

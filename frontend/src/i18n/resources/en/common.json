@@ -1372,7 +1372,7 @@
   "recovery.forceDeleteDescription": "\"{{name}}\" will be permanently deleted. This cannot be undone.",
   "adminTasks.loadError": "Failed to load tasks",
   "adminTasks.title": "Task Table",
-  "adminTasks.subtitle": "Custom task tracker with external person support",
+  "adminTasks.subtitle": "Keep administrative follow-ups owned, dated, and moving",
   "adminTasks.newTask": "New Task",
   "adminTasks.searchPlaceholder": "Search subject...",
   "adminTasks.allStatuses": "All Status",
