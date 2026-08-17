@@ -350,8 +350,7 @@ export const PlanComparisonPage: React.FC = () => {
       <PageHeader
         icon={<Layers3 className="h-4 w-4" />}
         title="Plan vs Actual Monitoring"
-        subtitle="Real-time execution monitoring against project baselines. Read-only visualization."
-        badge={<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">Executive dashboard</span>}
+        subtitle="Compare the baseline, live execution, and the next decisions for this project."
         actions={
           <div className="flex items-center gap-2">
             <DropdownMenu>
@@ -382,6 +381,13 @@ export const PlanComparisonPage: React.FC = () => {
           </div>
         }
       />
+
+      <div className={`rounded-xl border p-4 ${kpiData.blockedMilestones > 0 || kpiData.openRisks > 0 ? "border-rose-500/30 bg-rose-500/5" : "border-emerald-500/30 bg-emerald-500/5"}`}>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3"><ShieldAlert className={`mt-0.5 h-5 w-5 shrink-0 ${kpiData.blockedMilestones > 0 || kpiData.openRisks > 0 ? "text-rose-600" : "text-emerald-600"}`} aria-hidden="true" /><div><p className="text-sm font-semibold text-foreground">{kpiData.blockedMilestones > 0 || kpiData.openRisks > 0 ? "What needs attention" : "Execution is clear"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{kpiData.blockedMilestones > 0 || kpiData.openRisks > 0 ? `${kpiData.blockedMilestones} blocked milestone(s) and ${kpiData.openRisks} open risk(s) are affecting delivery. Review the plan before the next status update.` : "No blocked milestones or open risks are currently reported for this project."}</p></div></div>
+          <Button variant="outline" size="sm" className="shrink-0 gap-1.5" onClick={() => navigate(`/projects/${activeProject.id}/plan`)}><Workflow className="h-3.5 w-3.5" />Open planning workspace</Button>
+        </div>
+      </div>
 
       {/* 1. Executive KPI Cards Row */}
       <div className="animate-slide-up" style={{ animationDelay: "40ms" }}>
