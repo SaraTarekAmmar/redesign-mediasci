@@ -17,6 +17,7 @@ import { Textarea } from "../components/ui/Textarea";
 import { DatePicker } from "../components/ui/DatePicker";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { PageHeader } from "../components/common/PageHeader";
+import { EmptyState } from "../components/common/EmptyState";
 import { Route as RoadmapIcon } from "lucide-react";
 import {
   Dialog,
@@ -370,6 +371,21 @@ function RoadmapPage() {
         {/* View: By Epic */}
         {viewMode === "epic" && (
           <div className="space-y-4">
+            {epicGroups.length === 0 && (
+              <EmptyState
+                icon={<Layers className="h-8 w-8" />}
+                title={t("roadmap.noEpics", { defaultValue: "No epics are organizing this work yet" })}
+                subtitle={stats.total > 0
+                  ? t("roadmap.noEpicsWithWork", { defaultValue: "Your project has issues and progress, but no epic groups yet. Use Timeline to review due dates or add an epic when the work has a clear theme." })
+                  : t("roadmap.noEpicsNoWork", { defaultValue: "Add an epic or create the first issue to give this roadmap a starting point." })}
+                action={
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setViewMode("timeline")}>{t("roadmap.viewTimeline", { defaultValue: "Timeline" })}</Button>
+                    <Button size="sm" onClick={openCreatePhase}>{t("roadmap.addPhase", { defaultValue: "Add phase" })}</Button>
+                  </div>
+                }
+              />
+            )}
             {epicGroups.map(({ epic, issues: epicIssues, done, inProgress, overdue, points, donePoints, pct }) => (
               <div key={epic.id} className="overflow-hidden rounded-xl border border-border bg-card">
                 {/* Epic header */}
