@@ -158,6 +158,10 @@ function SkillsPage() {
       .slice(0, 3);
   }, [taskBrief, data]);
 
+  const membersWithSkills = data?.users.filter((u) => u.skills.length > 0).length ?? 0;
+  const skillAssignments = data?.users.reduce((total, user) => total + user.skills.length, 0) ?? 0;
+  const membersWithoutSkills = (data?.users.length ?? 0) - membersWithSkills;
+
   const filtered = data?.users.filter((u) => {
     if (search && !u.name.toLowerCase().includes(search.toLowerCase()) && !u.email.toLowerCase().includes(search.toLowerCase())) return false;
     if (skillFilter && !u.skills.some((s) => s.id === skillFilter)) return false;
@@ -264,11 +268,18 @@ function SkillsPage() {
           }
         />
 
+        <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "أعضاء الفريق" : "Team members"}</p><p className="mt-1 text-sm font-semibold text-foreground">{data?.users.length ?? 0}</p></div>
+          <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "لديهم مهارات" : "With skills"}</p><p className="mt-1 text-sm font-semibold text-foreground">{membersWithSkills}</p></div>
+          <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "تغطية المهارات" : "Skill coverage"}</p><p className="mt-1 text-sm font-semibold text-foreground">{data?.users.length ? Math.round((membersWithSkills / data.users.length) * 100) : 0}%</p></div>
+          <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "فجوات التغطية" : "Coverage gaps"}</p><p className="mt-1 text-sm font-semibold text-foreground">{membersWithoutSkills} · {skillAssignments} {isRTL ? "تعيين" : "assignments"}</p></div>
+        </div>
+
         <div className="mb-5 rounded-xl border border-border bg-card p-4">
           <div className="mb-3 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <div>
-              <h2 className="text-sm font-semibold text-foreground">{isRTL ? "مُطابِق المهام بالذكاء الاصطناعي" : "AI task matcher"}</h2>
+              <h2 className="text-sm font-semibold text-foreground">{isRTL ? "مطابقة مهمة" : "Task matcher"}</h2>
               <p className="text-xs text-muted-foreground">
                 {isRTL
                   ? "اكتب وصف المهمة لعرض الأشخاص الذين تناسب مهاراتهم هذه المهمة."
