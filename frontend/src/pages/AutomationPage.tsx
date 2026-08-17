@@ -416,6 +416,10 @@ function AutomationPage() {
     );
   };
 
+  const activeRuleCount = rules.filter((rule) => rule.enabled).length;
+  const pausedRuleCount = rules.length - activeRuleCount;
+  const totalRuns = rules.reduce((total, rule) => total + (Number(rule.execution_count) || 0), 0);
+
   /* ================================================================ */
   /*  RENDER                                                           */
   /* ================================================================ */
@@ -432,22 +436,10 @@ function AutomationPage() {
         }
       />
 
-      <div className="mb-4 rounded-xl border border-border bg-muted/30 p-4">
-        <div className="flex items-start gap-3">
-          <Zap className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-          <div>
-            <p className="text-sm font-medium text-foreground">
-              {isRTL
-                ? "القواعد تربط حدثًا واحدًا بإجراء واحد."
-                : "Rules connect one issue event to one action."}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {isRTL
-                ? "ابدأ بالمحفز ثم اختَر ما الذي يجب أن يحدث بعده. إذا بدا الوصف غير واضح، فالقيمة تحتاج تبسيطًا."
-                : "Start with the trigger, then choose exactly one thing that should happen next. If the rule sounds unclear, the values still need simplification."}
-            </p>
-          </div>
-        </div>
+      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "قواعد نشطة" : "Active rules"}</p><p className="mt-1 text-sm font-semibold text-foreground">{activeRuleCount}</p></div>
+        <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "متوقفة" : "Paused"}</p><p className="mt-1 text-sm font-semibold text-foreground">{pausedRuleCount}</p></div>
+        <div className="rounded-xl border border-border bg-card px-4 py-3"><p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{isRTL ? "إجمالي التشغيلات" : "Total runs"}</p><p className="mt-1 text-sm font-semibold text-foreground">{totalRuns}</p></div>
       </div>
 
       {/* ── Rules table ── */}
@@ -457,7 +449,6 @@ function AutomationPage() {
         </div>
       ) : rules.length === 0 ? (
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-foreground">
                 {isRTL ? "ابدأ بوصفة جاهزة" : "Start with a starter recipe"}
@@ -466,11 +457,6 @@ function AutomationPage() {
                 {isRTL ? "اختر مثالًا قريبًا من عملك ثم عدّل التفاصيل قبل الحفظ." : "Choose a familiar workflow, then adjust the details before saving."}
               </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => { setDraft(blankRule()); setDialogOpen(true); }}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              {t("automation.createRule")}
-            </Button>
-          </div>
 
           <div className="grid gap-3 md:grid-cols-3">
             {starterRecipes.map((recipe) => {
