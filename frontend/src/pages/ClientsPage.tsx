@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Building2, Plus, Mail, Phone, ExternalLink, ShieldCheck, Loader2, X, Send, PencilLine, Trash2 } from "lucide-react";
+import { Building2, Plus, Mail, Phone, ExternalLink, ShieldCheck, Loader2, X, Send, PencilLine, Trash2, Search } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
 import { EmptyState } from "../components/common/EmptyState";
 import { Button } from "../components/ui/Button";
@@ -25,6 +25,7 @@ export default function ClientsPage() {
   const [addingContact, setAddingContact] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
+  const [clientSearch, setClientSearch] = useState("");
 
   // Form states
   const [clientForm, setClientForm] = useState({ name: "", industry: "", website: "" });
@@ -35,11 +36,14 @@ export default function ClientsPage() {
     setLoading(true);
     try {
       const data = await api.get<Client[]>("/clients");
-      setClients(data || []);
+      const nextClients = data || [];
+      setClients(nextClients);
       const targetId = preferredClientId || selectedClient?.id;
       if (targetId) {
-        const updated = (data || []).find((c) => c.id === targetId);
+        const updated = nextClients.find((c) => c.id === targetId);
         if (updated) setSelectedClient(updated);
+      } else if (!selectedClient && nextClients[0]) {
+        setSelectedClient(nextClients[0]);
       }
     } catch (e) {
       toast.error(t("clients.loadFailed"));
@@ -51,6 +55,14 @@ export default function ClientsPage() {
   useEffect(() => {
     loadClients();
   }, []);
+
+  const filteredClients = useMemo(() => {
+    const query = clientSearch.trim().toLowerCase();
+    if (!query) return clients;
+    return clients.filter((client) => [client.name, client.industry, client.company].filter(Boolean).some((value) => String(value).toLowerCase().includes(query)));
+  }, [clients, clientSearch]);
+  const activeClients = clients.filter((client) => client.status === "active").length;
+  const contactCount = clients.reduce((sum, client) => sum + (client.contacts?.length || 0), 0);
 
   const openCreateClientDialog = () => {
     setEditingClient(null);
@@ -155,13 +167,20 @@ export default function ClientsPage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("clients.title")}
-          subtitle={t("clients.subtitle")}
           action={
             <Button onClick={openCreateClientDialog} className="flex items-center gap-1">
               <Plus className="h-4 w-4" /> {t("clients.addClient")}
             </Button>
           }
         />
+
+        {!loading && clients.length > 0 && (
+          <section className="mb-5 grid gap-3 sm:grid-cols-3" aria-label="Client overview">
+            <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Accounts</p><p className="mt-1 text-2xl font-semibold text-foreground">{clients.length}</p></div>
+            <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Active</p><p className="mt-1 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{activeClients}</p></div>
+            <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Contacts</p><p className="mt-1 text-2xl font-semibold text-foreground">{contactCount}</p></div>
+          </section>
+        )}
 
         {loading && clients.length === 0 ? (
           <div className="grid gap-6 lg:grid-cols-3">
@@ -201,9 +220,10 @@ export default function ClientsPage() {
             {/* Client List */}
             <div className="lg:col-span-1 space-y-3">
               <div className="rounded-xl border bg-card p-4">
-                <h3 className="text-sm font-semibold text-foreground mb-3">{t("clients.allClients")}</h3>
+                <div className="mb-3 flex items-center justify-between gap-2"><h3 className="text-sm font-semibold text-foreground">{t("clients.allClients")}</h3><span className="text-xs text-muted-foreground">{clients.length}</span></div>
+                <div className="relative mb-3"><Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={clientSearch} onChange={(event) => setClientSearch(event.target.value)} placeholder="Search clients" className="h-9 ps-9" /></div>
                 <div className="space-y-2">
-                  {clients.map((c) => (
+                  {filteredClients.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => setSelectedClient(c)}
@@ -218,15 +238,12 @@ export default function ClientsPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {c.industry || t("clients.generalIndustry")}
-                        </p>
+                        <div className="flex items-center gap-2"><p className="text-xs text-muted-foreground truncate">{c.industry || t("clients.generalIndustry")}</p><span className={`h-1.5 w-1.5 rounded-full ${c.status === "active" ? "bg-emerald-500" : "bg-muted-foreground/40"}`} aria-label={c.status} /></div>
                       </div>
                     </button>
                   ))}
-                  {clients.length === 0 && (
-                    <EmptyState icon={<Building2 className="h-8 w-8" />} title={t("clients.noClients")} subtitle={t("clients.noClientsSubtitle", { defaultValue: "Add a client organization to start building the relationship workspace." })} />
-                  )}
+                  {clients.length === 0 && <EmptyState icon={<Building2 className="h-8 w-8" />} title={t("clients.noClients")} />}
+                  {clients.length > 0 && filteredClients.length === 0 && <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">No matching clients</p>}
                 </div>
               </div>
             </div>
@@ -237,8 +254,8 @@ export default function ClientsPage() {
                 <div className="rounded-xl border bg-card p-6 space-y-6">
                   <div className="flex justify-between items-start border-b border-border pb-4">
                     <div>
-                      <h2 className="text-xl font-bold text-foreground">{selectedClient.name}</h2>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2"><h2 className="text-xl font-bold text-foreground">{selectedClient.name}</h2><span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${selectedClient.status === "active" ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-muted text-muted-foreground"}`}>{selectedClient.status}</span></div>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
                         <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                           {selectedClient.industry || t("clients.noIndustry")}
                         </span>
@@ -261,11 +278,6 @@ export default function ClientsPage() {
                       <Button variant="outline" size="sm" className="h-8 gap-1.5 text-destructive" onClick={() => setDeletingClient(selectedClient)}>
                         <Trash2 className="h-3.5 w-3.5" /> {t("clients.delete")}
                       </Button>
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        selectedClient.status === "active" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
-                      }`}>
-                        {selectedClient.status.toUpperCase()}
-                      </span>
                       <Button
                         onClick={() => navigate(`/requests?clientId=${selectedClient.id}`)}
                         size="sm"
@@ -275,6 +287,12 @@ export default function ClientsPage() {
                         <Send className="h-3.5 w-3.5 mr-1" /> {t("clients.newRequest")}
                       </Button>
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 border-b border-border pb-5">
+                    <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Contacts</p><p className="mt-1 text-xl font-semibold text-foreground">{selectedClient.contacts?.length || 0}</p></div>
+                    <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Industry</p><p className="mt-1 truncate text-sm font-semibold text-foreground">{selectedClient.industry || "—"}</p></div>
+                    <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Website</p><p className="mt-1 text-sm font-semibold text-foreground">{selectedClient.website ? "Linked" : "—"}</p></div>
                   </div>
 
                   {/* Contacts Section */}
@@ -320,7 +338,7 @@ export default function ClientsPage() {
               ) : (
                 <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">
                   <Building2 className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p className="text-sm font-medium">{t("clients.selectClientHint")}</p>
+                  <p className="text-sm font-medium text-foreground">{t("clients.selectClientHint")}</p><Button size="sm" className="mt-4" onClick={openCreateClientDialog}><Plus className="mr-1 h-4 w-4" />{t("clients.addClient")}</Button>
                 </div>
               )}
             </div>
