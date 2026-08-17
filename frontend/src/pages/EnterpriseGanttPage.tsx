@@ -382,9 +382,14 @@ function EnterpriseGanttPage() {
         />
 
         {!loading && !planId && projectId && (
-          <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
-            <p className="mb-3 text-sm text-muted-foreground">{t("enterpriseGantt.noPlan", { project: selectedProject?.name })}</p>
-            <Button size="sm" onClick={createDefaultPlan}>{t("enterpriseGantt.createPlan")}</Button>
+          <div className="rounded-xl border border-dashed border-border bg-card p-6 md:p-10">
+            <div className="mx-auto max-w-2xl text-center">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary"><MilestoneIcon className="h-5 w-5" aria-hidden="true" /></div>
+              <p className="mt-4 text-base font-semibold text-foreground">Start a delivery plan for {selectedProject?.name}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A plan turns milestones and tasks into a schedule the team can coordinate. After you create it, you can add tasks, connect dependencies, place milestones, and switch between day, week, and month views.</p>
+              <div className="mt-5 grid gap-2 text-start sm:grid-cols-3"><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Plan</p><p className="mt-1 text-[11px] text-muted-foreground">Create the schedule container.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Add work</p><p className="mt-1 text-[11px] text-muted-foreground">Add tasks and milestones.</p></div><div className="rounded-lg border border-border bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Connect</p><p className="mt-1 text-[11px] text-muted-foreground">Add dependencies and owners.</p></div></div>
+              <div className="mt-5 flex flex-wrap justify-center gap-2"><Button size="sm" onClick={createDefaultPlan}>{t("enterpriseGantt.createPlan")}</Button><Button variant="outline" size="sm" onClick={() => window.location.assign("/scope")}>Review scope first</Button></div>
+            </div>
           </div>
         )}
 
