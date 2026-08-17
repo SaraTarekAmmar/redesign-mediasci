@@ -23,7 +23,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  DollarSign,
   GanttChart,
   Network,
   Calendar,
@@ -60,7 +59,6 @@ interface PlanningBaselineRecord {
   id: number;
   project_id: number;
   planned_duration_days: number;
-  planned_budget: number;
   planned_hours: number;
   planned_resources_count: number;
   created_at?: string | null;
@@ -89,10 +87,6 @@ interface PlanningSummary {
   actual_hours?: number;
   remaining_hours?: number;
   hours_variance?: number;
-  planned_budget?: number;
-  actual_cost?: number;
-  remaining_budget?: number;
-  budget_variance?: number;
   blocked_milestones?: number;
   open_risks?: number;
   blocked_project?: boolean;
@@ -114,7 +108,6 @@ interface PlanningSummary {
   }[];
   projects_needing_attention?: number;
   expected_delays?: number;
-  estimated_budget_overrun?: number;
   total_blocked_work?: number;
   health_breakdown?: {
     overall: number;
@@ -209,9 +202,6 @@ interface PlanningMilestone {
   planned_hours?: number;
   actual_hours?: number;
   hours_variance?: number;
-  planned_budget?: number;
-  actual_budget?: number;
-  budget_variance?: number;
   planned_progress?: number;
   planned_progress_pct?: number;
   actual_progress_pct?: number;
@@ -270,7 +260,6 @@ interface IntelligenceResponse {
     projects_needing_attention: number;
     critical_milestones: number;
     expected_delays: number;
-    estimated_budget_overrun: number;
     total_blocked_work: number;
     summary: string;
   };
@@ -292,11 +281,9 @@ interface IntelligenceResponse {
   plan_vs_actual?: PlanningMilestone[];
   baseline?: {
     planned_duration_days: number;
-    planned_budget: number;
     planned_hours: number;
     planned_resources_count: number;
     planning: { planned_hours: number; actual_hours: number; variance: number };
-    budget: { planned: number; actual: number; variance: number };
     dates: { planned_finish?: string | null; forecast_finish?: string | null; variance_days: number };
     resources: { planned_count: number; actual_count: number };
   };
@@ -309,14 +296,12 @@ interface Props {
 
 interface BaselineForm {
   planned_duration_days: string;
-  planned_budget: string;
   planned_hours: string;
   planned_resources_count: string;
 }
 
 const blankBaseline = (): BaselineForm => ({
   planned_duration_days: "",
-  planned_budget: "",
   planned_hours: "",
   planned_resources_count: "",
 });
@@ -327,9 +312,6 @@ const formatShortDate = (value?: string | null) => {
   if (Number.isNaN(date.getTime())) return "—";
   return date.toLocaleDateString([], { month: "short", day: "numeric" });
 };
-
-const formatCurrency = (value?: number | null) =>
-  new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value ?? 0));
 
 const formatHours = (value?: number | null) => `${Number(value ?? 0).toFixed(1)}h`;
 const formatDays = (value?: number | null) => {
@@ -361,10 +343,6 @@ const createEmptyIntelligence = (): IntelligenceResponse => ({
     actual_hours: 0,
     remaining_hours: 0,
     hours_variance: 0,
-    planned_budget: 0,
-    actual_cost: 0,
-    remaining_budget: 0,
-    budget_variance: 0,
     blocked_milestones: 0,
     open_risks: 0,
     blocked_project: false,
@@ -382,11 +360,10 @@ const createEmptyIntelligence = (): IntelligenceResponse => ({
     critical_dependencies: [],
     projects_needing_attention: 0,
     expected_delays: 0,
-    estimated_budget_overrun: 0,
     total_blocked_work: 0,
   },
   health_breakdown: { overall: 0, state: "Green", tone: "success", schedule: 0, budget: 0, completion: 0, dependencies: 0, deliverables: 0, resources: 0, risks: 0 },
-  ceo_summary: { overall_portfolio_health: 0, projects_needing_attention: 0, critical_milestones: 0, expected_delays: 0, estimated_budget_overrun: 0, total_blocked_work: 0, summary: "" },
+  ceo_summary: { overall_portfolio_health: 0, projects_needing_attention: 0, critical_milestones: 0, expected_delays: 0, total_blocked_work: 0, summary: "" },
   forecast: { original_finish: null, forecast_finish: null, delay_days: 0, confidence: "Low", main_cause: null },
   critical_path: { milestones: [], critical_dependencies: [], critical_chain_length: 0, non_critical_milestones: [] },
   resource_planning: { resources: [], overloaded_resources: [], available_resources: [], suggested_replacement_candidates: [] },
@@ -395,11 +372,9 @@ const createEmptyIntelligence = (): IntelligenceResponse => ({
   plan_vs_actual: [],
   baseline: {
     planned_duration_days: 0,
-    planned_budget: 0,
     planned_hours: 0,
     planned_resources_count: 0,
     planning: { planned_hours: 0, actual_hours: 0, variance: 0 },
-    budget: { planned: 0, actual: 0, variance: 0 },
     dates: { planned_finish: null, forecast_finish: null, variance_days: 0 },
     resources: { planned_count: 0, actual_count: 0 },
   },
@@ -513,7 +488,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
         setBaselineId(baselineRes.id);
         setBaseline({
           planned_duration_days: String(baselineRes.planned_duration_days ?? ""),
-          planned_budget: String(baselineRes.planned_budget ?? ""),
           planned_hours: String(baselineRes.planned_hours ?? ""),
           planned_resources_count: String(baselineRes.planned_resources_count ?? ""),
         });
@@ -521,7 +495,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
         setBaselineId(null);
         setBaseline({
           planned_duration_days: String(intelligenceRes.baseline.planned_duration_days ?? ""),
-          planned_budget: String(intelligenceRes.baseline.planned_budget ?? ""),
           planned_hours: String(intelligenceRes.baseline.planned_hours ?? ""),
           planned_resources_count: String(intelligenceRes.baseline.planned_resources_count ?? ""),
         });
@@ -572,7 +545,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
     try {
       const payload = {
         planned_duration_days: Number(baseline.planned_duration_days) || 0,
-        planned_budget: Number(baseline.planned_budget) || 0,
         planned_hours: Number(baseline.planned_hours) || 0,
         planned_resources_count: Number(baseline.planned_resources_count) || 0,
       };
@@ -611,7 +583,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
       planned_start_date: new Date().toISOString().split("T")[0],
       planned_end_date: new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0],
       planned_hours: "80",
-      planned_budget: "5000",
       owner_resource_id: "",
     });
     setMilestoneDialogOpen(true);
@@ -626,7 +597,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
       planned_start_date: m.planned_start_date ? m.planned_start_date.split("T")[0] : "",
       planned_end_date: m.planned_end_date ? m.planned_end_date.split("T")[0] : "",
       planned_hours: String(m.planned_hours ?? 0),
-      planned_budget: String(m.planned_budget ?? 0),
       owner_resource_id: m.owner_resource_id ? String(m.owner_resource_id) : "",
     });
     setMilestoneDialogOpen(true);
@@ -645,7 +615,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
         planned_start_date: milestoneForm.planned_start_date || null,
         planned_end_date: milestoneForm.planned_end_date || null,
         planned_hours: Number(milestoneForm.planned_hours) || 0,
-        planned_budget: Number(milestoneForm.planned_budget) || 0,
         owner_resource_id: milestoneForm.owner_resource_id ? Number(milestoneForm.owner_resource_id) : null,
       };
 
@@ -672,7 +641,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
         planned_start_date: m.planned_start_date || null,
         planned_end_date: m.planned_end_date || null,
         planned_hours: m.planned_hours || 0,
-        planned_budget: m.planned_budget || 0,
         owner_resource_id: m.owner_resource_id || null,
       };
       await api.post(`/projects/${id}/milestones`, payload);
@@ -1097,7 +1065,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
               <MetricCard label="Health Score" value={`${intelligence.summary.health_breakdown?.overall ?? 85}/100`} tone="text-foreground" />
               <MetricCard label="Completion" value={`${intelligence.summary.milestone_completion_pct ?? 0}%`} tone="text-foreground" />
               <MetricCard label="Schedule Variance" value={formatDays(intelligence.summary.schedule_variance_days)} tone="text-foreground" />
-              <MetricCard label="Budget Variance" value={formatCurrency(intelligence.summary.budget_variance)} tone="text-foreground" />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1114,8 +1081,8 @@ function PlanPage({ projectId, embedded = false }: Props) {
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-semibold text-foreground">Planning Baseline Configuration</h2>
-                <p className="text-xs text-muted-foreground">Set target duration, budget, hours, and resources to calculate real-time project variance.</p>
+                <h2 className="text-base font-semibold text-foreground">Planning baseline</h2>
+                <p className="text-xs text-muted-foreground">Set the delivery targets used to calculate schedule, effort, and staffing variance.</p>
               </div>
               {baselineId && (
                 <Badge variant="outline" className="text-xs">Baseline ID: #{baselineId}</Badge>
@@ -1129,14 +1096,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
                   value={baseline.planned_duration_days}
                   onChange={(e) => setBaseline((c) => ({ ...c, planned_duration_days: e.target.value }))}
                   placeholder="30"
-                />
-              </Field>
-              <Field label="Planned Budget ($)">
-                <Input
-                  type="number"
-                  value={baseline.planned_budget}
-                  onChange={(e) => setBaseline((c) => ({ ...c, planned_budget: e.target.value }))}
-                  placeholder="10000"
                 />
               </Field>
               <Field label="Planned Hours">
@@ -1222,7 +1181,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
                     <th className="px-4 py-3 text-left">Start</th>
                     <th className="px-4 py-3 text-left">Finish</th>
                     <th className="px-4 py-3 text-right">Planned Hours</th>
-                    <th className="px-4 py-3 text-right">Budget</th>
                     <th className="px-4 py-3 text-left">Status</th>
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
@@ -1238,7 +1196,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
                       <td className="px-4 py-3 text-muted-foreground">{formatShortDate(m.planned_start_date)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{formatShortDate(m.planned_end_date)}</td>
                       <td className="px-4 py-3 text-right text-foreground">{formatHours(m.planned_hours)}</td>
-                      <td className="px-4 py-3 text-right text-foreground">{formatCurrency(m.planned_budget)}</td>
                       <td className="px-4 py-3">
                         <Badge variant={m.status === "completed" ? "default" : m.status === "archived" ? "secondary" : "outline"}>
                           {m.status}
@@ -1546,9 +1503,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Planned Hours">
                 <Input type="number" value={milestoneForm.planned_hours} onChange={(e) => setMilestoneForm((c) => ({ ...c, planned_hours: e.target.value }))} />
-              </Field>
-              <Field label="Planned Budget ($)">
-                <Input type="number" value={milestoneForm.planned_budget} onChange={(e) => setMilestoneForm((c) => ({ ...c, planned_budget: e.target.value }))} />
               </Field>
             </div>
             <Field label="Status">
