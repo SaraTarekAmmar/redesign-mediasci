@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, Users, Briefcase, LayoutGrid, List, Sparkles, Plus, Pencil, Trash2 } from "lucide-react";
+import { Search, Users, Briefcase, LayoutGrid, List, Grid2X2, Sparkles, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import { cn } from "../lib/utils";
@@ -62,7 +62,7 @@ function SkillsPage() {
   const [search, setSearch] = useState("");
   const [skillFilter, setSkillFilter] = useState("");
   const [deptFilter, setDeptFilter] = useState("");
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  const [viewMode, setViewMode] = useState<"cards" | "table" | "matrix">("cards");
   const isRTL = i18n.dir() === "rtl";
 
   // CRUD state variables
@@ -247,6 +247,18 @@ function SkillsPage() {
               <List className="h-3.5 w-3.5" aria-hidden="true" />
               {t("skills.viewTable")}
             </button>
+            <button
+              role="tab"
+              aria-selected={viewMode === "matrix"}
+              onClick={() => setViewMode("matrix")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                viewMode === "matrix" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Grid2X2 className="h-3.5 w-3.5" aria-hidden="true" />
+              {isRTL ? "المصفوفة" : "Matrix"}
+            </button>
           </div>
           </>
           }
@@ -402,7 +414,7 @@ function SkillsPage() {
               </div>
             ))}
           </div>
-        ) : (
+        ) : viewMode === "table" ? (
           /* Table view */
           <div className="overflow-x-auto rounded-xl border border-border bg-card">
             <table className="w-full text-sm" role="table">
@@ -448,6 +460,48 @@ function SkillsPage() {
                         )}
                       </div>
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* Matrix view */
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
+            <div className="border-b border-border bg-muted/30 px-4 py-3">
+              <p className="text-sm font-semibold text-foreground">{isRTL ? "مصفوفة المهارات" : "Capability matrix"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{isRTL ? "قارن تغطية المهارات ومستوى الإتقان عبر الأشخاص." : "Compare skill coverage and proficiency across people at a glance."}</p>
+            </div>
+            <table className="min-w-[760px] w-full text-sm" aria-label={isRTL ? "مصفوفة المهارات" : "Skills matrix"}>
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="sticky start-0 z-10 bg-card px-4 py-3 text-start font-medium">{isRTL ? "الشخص" : "Person"}</th>
+                  {(data?.skills ?? []).map((skill) => (
+                    <th key={skill.id} className="min-w-[108px] px-3 py-3 text-center font-medium">{skill.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((user) => (
+                  <tr key={user.id} className="border-b border-border/50 last:border-0 hover:bg-accent/20">
+                    <th scope="row" className="sticky start-0 z-10 bg-card px-4 py-3 text-start">
+                      <span className="block max-w-[160px] truncate font-semibold text-foreground">{user.name}</span>
+                      <span className="block max-w-[160px] truncate text-[11px] font-normal text-muted-foreground">{user.job_title || user.department || "—"}</span>
+                    </th>
+                    {(data?.skills ?? []).map((skill) => {
+                      const match = user.skills.find((assigned) => String(assigned.id) === String(skill.id));
+                      const level = match?.proficiency;
+                      const tone = level === "expert" ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : level === "advanced" ? "bg-primary/10 text-primary" : level === "intermediate" ? "bg-amber-500/10 text-amber-700 dark:text-amber-300" : "bg-muted text-muted-foreground";
+                      return (
+                        <td key={skill.id} className="px-3 py-3 text-center">
+                          {match ? (
+                            <span className={cn("inline-flex min-w-[76px] justify-center rounded-full px-2 py-1 text-[10px] font-semibold", tone)} aria-label={`${skill.name}: ${level}`}>
+                              {getProficiencyLabel(level, isRTL)}
+                            </span>
+                          ) : <span className="text-xs text-muted-foreground/50" aria-label={`${skill.name}: ${isRTL ? "غير مضافة" : "Not assigned"}`}>—</span>}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
