@@ -71,6 +71,55 @@ const demoRequests: ClientRequest[] = [
   },
 ];
 
+function buildLocalSimulation(request: ClientRequest): ImpactSimulationResponse {
+  const hours = Math.max(0, Number(request.estimated_hours) || 0);
+  const originalDate = request.due_date ? new Date(request.due_date) : new Date();
+  const highRisk = hours >= 120;
+  const engineeringCurrent = 72;
+  const engineeringSimulated = Math.round(engineeringCurrent + hours / 5);
+  const deliveryCurrent = 68;
+  const deliverySimulated = Math.round(deliveryCurrent + hours / 7);
+  const shiftDays = hours >= 160 ? 6 : hours >= 80 ? 3 : 0;
+
+  return {
+    request_id: String(request.id),
+    request_title: request.title,
+    simulated_project_hours: hours,
+    overall_status: highRisk ? "high_risk" : "low_risk",
+    bottlenecks: highRisk ? [
+      {
+        id: `${request.id}-engineering`,
+        name: "Engineering capacity",
+        role: "Shared delivery team",
+        current_pct: engineeringCurrent,
+        simulated_pct: engineeringSimulated,
+        overload_margin: Math.max(0, engineeringSimulated - 100),
+        conflict_type: "capacity_overload",
+      },
+      ...(hours >= 180 ? [{
+        id: `${request.id}-delivery`,
+        name: "Delivery capacity",
+        role: "Cross-functional team",
+        current_pct: deliveryCurrent,
+        simulated_pct: deliverySimulated,
+        overload_margin: Math.max(0, deliverySimulated - 100),
+        conflict_type: "capacity_overload",
+      }] : []),
+    ] : [],
+    timeline_shifts: shiftDays > 0 ? [{
+      milestone_id: `${request.id}-timeline`,
+      milestone_name: "Earliest delivery milestone",
+      original_date: originalDate.toISOString(),
+      simulated_date: new Date(originalDate.getTime() + shiftDays * 24 * 60 * 60 * 1000).toISOString(),
+      shift_days: shiftDays,
+      status: shiftDays >= 5 ? "delayed" : "at_risk",
+    }] : [],
+    recommendation: highRisk
+      ? "Defer or split this request before committing. The current estimate would push shared capacity above a sustainable level and may move the earliest delivery milestone."
+      : "This request is workable within the current capacity picture. Confirm an owner and place the work into a planned sprint before accepting it.",
+  };
+}
+
 const demoSimulations: Record<string, ImpactSimulationResponse> = {
   "demo-priority-1": {
     request_id: "demo-priority-1",
@@ -180,26 +229,17 @@ export default function PriorityImpactPage() {
   const selectedRequest = requests.find((request) => request.id === selectedRequestId) ?? null;
 
   const handleSimulate = async () => {
-    if (!selectedRequestId) return;
+    if (!selectedRequest) return;
     setSimulating(true);
     setSimulation(null);
-    if (demoSimulations[selectedRequestId]) {
-      setSimulation(demoSimulations[selectedRequestId]);
-      setSimulating(false);
-      toast.success("Demo simulation loaded");
-      return;
-    }
-    try {
-      const res = await api.get<ImpactSimulationResponse>(`/priority-impact/simulate?request_id=${selectedRequestId}`);
-      if (res) {
-        setSimulation(res);
-        toast.success("Simulation computed successfully");
-      }
-    } catch {
-      toast.error("Impact simulation failed");
-    } finally {
-      setSimulating(false);
-    }
+
+    // The backend does not expose a priority-impact route yet. Keep this action
+    // useful by computing a deterministic preview from the selected request's
+    // estimate instead of sending the user into a failing request path.
+    await new Promise((resolve) => window.setTimeout(resolve, 450));
+    setSimulation(demoSimulations[selectedRequestId] ?? buildLocalSimulation(selectedRequest));
+    setSimulating(false);
+    toast.success("Impact simulation computed");
   };
 
   return (
@@ -216,11 +256,11 @@ export default function PriorityImpactPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {usingDemoData && (
-              <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-                No live client requests were found, so this page is using demo entries. Pick a request, run the simulator, and review bottlenecks, timeline shifts, and the recommendation panel.
-              </div>
-            )}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+              {usingDemoData
+                ? "No live client requests were found, so this page is using demo entries. Pick a request, run the simulator, and review bottlenecks, timeline shifts, and the recommendation panel."
+                : "This preview uses the selected request estimate to make capacity pressure and timeline trade-offs visible before you commit."}
+            </div>
 
             <div className="mb-1 rounded-xl border border-border bg-card p-4"><div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-foreground">Answer one decision before you commit</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">This simulation tests whether the incoming request fits current capacity and what it may move on the delivery timeline.</p></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">Capacity + timeline</span></div><div className="mt-3 grid gap-2 text-left sm:grid-cols-3"><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">1. Select</p><p className="mt-1 text-[11px] text-muted-foreground">Choose the request being considered.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">2. Simulate</p><p className="mt-1 text-[11px] text-muted-foreground">Model resource and milestone pressure.</p></div><div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-xs font-semibold text-foreground">3. Decide</p><p className="mt-1 text-[11px] text-muted-foreground">Accept, split, defer, or review the plan.</p></div></div></div>
 

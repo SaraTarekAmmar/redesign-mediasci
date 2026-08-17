@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Search, Plus, Pencil, Trash2, X, Loader2, UserMinus, ChevronRight,
+  Search, Plus, Pencil, Trash2, X, Loader2, UserMinus, ChevronRight, BarChart3, AlertTriangle, CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -313,6 +313,17 @@ export default function ResourcesPage() {
     ? `${resources.length} أعضاء`
     : `${resources.length} ${resources.length === 1 ? "Member" : "Members"}`;
 
+  const capacityMetrics = useMemo(() => {
+    const total = resources.length;
+    const average = total ? Math.round(resources.reduce((sum, resource) => sum + (Number(resource.utilization_percentage) || 0), 0) / total) : 0;
+    const overallocated = resources.filter((resource) => (Number(resource.utilization_percentage) || 0) > 100).length;
+    const available = resources.filter((resource) => resource.availability_status === "available").length;
+    const weeklyCapacity = resources.reduce((sum, resource) => sum + (Number(resource.weekly_capacity) || 0), 0);
+    const plannedHours = resources.reduce((sum, resource) => sum + ((Number(resource.weekly_capacity) || 0) * (Number(resource.utilization_percentage) || 0)) / 100, 0);
+    const chartMax = Math.max(140, Math.ceil(Math.max(...resources.map((resource) => Number(resource.utilization_percentage) || 0), 0) / 20) * 20);
+    return { total, average, overallocated, available, weeklyCapacity, plannedHours: Math.round(plannedHours), chartMax };
+  }, [resources]);
+
   const openCreateForm = () => {
     const nextDraft = defaultDraft();
     setDraft(nextDraft);
@@ -412,6 +423,58 @@ export default function ResourcesPage() {
             </Button>
           </div>
         )}
+
+        <section className="rounded-xl border border-border bg-card p-4 md:p-5" aria-labelledby="capacity-overview-heading">
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                <h2 id="capacity-overview-heading" className="text-sm font-semibold text-foreground">Capacity at a glance</h2>
+              </div>
+              <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">Read every bar against the 100% capacity line. Anything beyond it is an over-allocation that needs a rebalance before new work is accepted.</p>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-500" />Healthy</span>
+              <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-500" />Watch</span>
+              <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-destructive" />Over</span>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Average utilization</p><p className="mt-1 text-2xl font-semibold text-foreground">{capacityMetrics.average}%</p><p className="mt-0.5 text-xs text-muted-foreground">across {capacityMetrics.total} people</p></div>
+            <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Overallocated</p><p className="mt-1 text-2xl font-semibold text-destructive">{capacityMetrics.overallocated}</p><p className="mt-0.5 text-xs text-muted-foreground">above the 100% line</p></div>
+            <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Available now</p><p className="mt-1 text-2xl font-semibold text-foreground">{capacityMetrics.available}</p><p className="mt-0.5 text-xs text-muted-foreground">ready for assignment</p></div>
+            <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Planned hours</p><p className="mt-1 text-2xl font-semibold text-foreground">{capacityMetrics.plannedHours}<span className="ml-1 text-sm font-medium text-muted-foreground">/ {capacityMetrics.weeklyCapacity}h</span></p><p className="mt-0.5 text-xs text-muted-foreground">estimated weekly load</p></div>
+          </div>
+
+          {resources.length > 0 && (
+            <div className="mt-5 rounded-lg border border-border/70 bg-background p-3 md:p-4">
+              <div className="mb-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+                <span className="font-medium">Utilization by person</span>
+                <span>0% <span className="mx-1 text-border">·</span> {capacityMetrics.chartMax}% scale</span>
+              </div>
+              <div className="space-y-3">
+                {resources.map((resource) => {
+                  const utilization = Math.max(0, Number(resource.utilization_percentage) || 0);
+                  const width = Math.min(100, (utilization / capacityMetrics.chartMax) * 100);
+                  const threshold = (100 / capacityMetrics.chartMax) * 100;
+                  const barTone = utilization > 100 ? "bg-destructive" : utilization >= 80 ? "bg-amber-500" : "bg-emerald-500";
+                  return (
+                    <div key={`chart-${resource.id}`} className="grid grid-cols-[minmax(120px,1fr)_minmax(160px,3fr)_auto] items-center gap-3">
+                      <div className="min-w-0"><p className="truncate text-xs font-medium text-foreground">{resource.name}</p><p className="truncate text-[11px] text-muted-foreground">{resource.weekly_capacity || 0}h weekly capacity</p></div>
+                      <div className="relative h-5 rounded-full bg-muted" aria-label={`${resource.name} utilization ${utilization}%`} role="img">
+                        <div className="absolute inset-y-0 z-10 border-l border-dashed border-foreground/50" style={{ left: `${threshold}%` }} aria-hidden="true" />
+                        <div className={cn("h-full rounded-full transition-all", barTone)} style={{ width: `${width}%` }} />
+                      </div>
+                      <div className="flex items-center justify-end gap-1.5 text-right"><span className={cn("text-xs font-semibold", utilization > 100 ? "text-destructive" : utilization >= 80 ? "text-amber-700 dark:text-amber-400" : "text-emerald-700 dark:text-emerald-400")}>{utilization}%</span>{utilization > 100 ? <AlertTriangle className="h-3.5 w-3.5 text-destructive" /> : utilization < 40 ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> : null}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-3 flex items-center justify-end gap-1.5 text-[11px] text-muted-foreground"><span className="h-3 border-l border-dashed border-foreground/50" />100% capacity line</div>
+            </div>
+          )}
+        </section>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 bg-card p-4 rounded-xl border border-border">
           <div className="relative">
