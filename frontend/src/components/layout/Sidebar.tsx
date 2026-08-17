@@ -155,7 +155,7 @@ function NavRow({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       aria-label={label}
       className={({ isActive }) =>
         cn(
-          "group relative flex items-center rounded-md transition-all duration-150",
+          "group relative flex items-center rounded-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
           collapsed ? "justify-center px-2 py-2.5" : "gap-2.5 px-2.5 py-2",
           isRTL && !collapsed && "flex-row-reverse",
           isActive
@@ -533,21 +533,28 @@ function SidebarBody({
       <ProjectScopeMenu collapsed={collapsed} />
 
       <nav className="flex-1 overflow-y-auto px-3 py-2" onClick={onNavigate}>
-        {groups.map((group) => (
-          <div key={group.headingKey} className={group.headingKey === "Active Project" ? "mb-0" : "mb-1"}>
-            {!collapsed && group.headingKey !== "Active Project" && (
-              <p className="px-2.5 pb-0.5 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
-                {t(`${group.headingKey.toLocaleLowerCase()}.heading`, { ns: "nav" })}
-              </p>
-            )}
-            {collapsed && <div className="my-2 border-t border-sidebar-border" />}
-            <div className={cn("space-y-0.5", collapsed && "space-y-1")}>
-              {group.items.map((item) => (
-                <NavRow key={item.to} item={item} collapsed={collapsed} />
-              ))}
-            </div>
-          </div>
-        ))}
+        {groups.map((group) => {
+          const headingId = `sidebar-group-${group.headingKey.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+          const headingLabel = group.headingKey === "Active Project"
+            ? t("nav.activeProject", { defaultValue: "Active project" })
+            : t(`${group.headingKey.toLocaleLowerCase()}.heading`, { ns: "nav", defaultValue: group.headingKey });
+          return (
+            <section key={group.headingKey} aria-labelledby={headingId} className={group.headingKey === "Active Project" ? "mb-0" : "mb-1"}>
+              {!collapsed && (
+                <h2 id={headingId} className="px-2.5 pb-0.5 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+                  {headingLabel}
+                </h2>
+              )}
+              {collapsed && <span id={headingId} className="sr-only">{headingLabel}</span>}
+              {collapsed && <div className="my-2 border-t border-sidebar-border" aria-hidden="true" />}
+              <div className={cn("space-y-0.5", collapsed && "space-y-1")}>
+                {group.items.map((item) => (
+                  <NavRow key={item.to} item={item} collapsed={collapsed} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </nav>
     </>
   );
@@ -648,8 +655,9 @@ export function Sidebar({ mobileOpen, onCloseMobile }: { mobileOpen?: boolean; o
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? sidebarExpandLabel : sidebarCollapseLabel}
             aria-label={collapsed ? sidebarExpandLabel : sidebarCollapseLabel}
+            type="button"
             className={cn(
-              "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/70 hover:text-sidebar-foreground",
+              "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/70 hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
               collapsed && "px-2"
             )}
           >
@@ -677,10 +685,12 @@ export function Sidebar({ mobileOpen, onCloseMobile }: { mobileOpen?: boolean; o
             dir={i18n.dir()}
           >
             <div className="flex items-center justify-end px-2 pt-2">
-              <button
-                onClick={onCloseMobile}
-                aria-label={t("app.closeNavigation")}
-                className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/70"
+                              <button
+                  type="button"
+                  onClick={onCloseMobile}
+                  aria-label={t("app.closeNavigation")}
+                  className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
+
               >
                 <X className="h-5 w-5" />
               </button>

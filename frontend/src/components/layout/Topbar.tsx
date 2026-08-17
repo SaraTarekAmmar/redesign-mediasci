@@ -117,7 +117,7 @@ export function Topbar({ onOpenIssueDialog, onOpenChangeRequestDialog, dark, onT
           type="button"
           onClick={onOpenMobileNav}
           aria-label={t("app.openNavigation")}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 md:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 md:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -133,7 +133,7 @@ export function Topbar({ onOpenIssueDialog, onOpenChangeRequestDialog, dark, onT
           type="button"
           onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
           aria-label={t("commandPalette.search")}
-          className="hidden w-full max-w-xs items-center gap-2 rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/50 sm:flex"
+          className="hidden w-full max-w-xs items-center gap-2 rounded-lg border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 sm:flex"
         >
           <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="flex-1 truncate text-start">{t("commandPalette.search")}</span>
@@ -145,7 +145,7 @@ export function Topbar({ onOpenIssueDialog, onOpenChangeRequestDialog, dark, onT
           type="button"
           onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
           aria-label={t("commandPalette.search")}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 sm:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 sm:hidden"
         >
           <Search className="h-4 w-4" aria-hidden="true" />
         </button>
@@ -197,9 +197,11 @@ export function Topbar({ onOpenIssueDialog, onOpenChangeRequestDialog, dark, onT
             <span>LIVE SYNC</span>
           </div>
           {peerAvatars.map((u, index) => (
-            <div
+            <button
               key={u.id}
-              className="group relative cursor-pointer hover:z-30 hover:scale-105 transition-all"
+              type="button"
+              aria-label={`${u.name} — active member`}
+              className="group relative cursor-pointer rounded-full hover:z-30 hover:scale-105 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2"
               onClick={() => {
                 toast.info(`Multiplayer Presence: ${u.name} is currently active in the workspace`);
               }}
@@ -208,7 +210,7 @@ export function Topbar({ onOpenIssueDialog, onOpenChangeRequestDialog, dark, onT
               <div className="absolute top-full right-1/2 translate-x-1/2 mt-2 whitespace-nowrap hidden group-hover:block bg-slate-900 px-2 py-1 text-[10px] text-white rounded shadow z-40 dark:bg-slate-800">
                 {u.name} - Active member #{index + 1}
               </div>
-            </div>
+            </button>
           ))}
         </div>
 

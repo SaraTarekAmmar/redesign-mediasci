@@ -181,6 +181,7 @@ export function App() {
   return (
     <BrowserRouter basename="/">
       <TooltipProvider delayDuration={200}>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
           <Sidebar mobileOpen={mobileNavOpen} onCloseMobile={() => setMobileNavOpen(false)} />
           <div className="flex min-w-0 flex-1 flex-col">
@@ -192,7 +193,7 @@ export function App() {
               onOpenMobileNav={() => setMobileNavOpen(true)}
             />
 
-            <main className="min-h-0 flex-1 overflow-hidden" role="main">
+            <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-hidden" role="main" aria-label="Main content">
               <ErrorBoundaryWrapper>
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-muted-foreground text-sm">Loading...</div>}>
                   <Routes>

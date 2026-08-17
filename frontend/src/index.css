@@ -499,6 +499,23 @@ tbody tr:hover { background-color: color-mix(in oklab, var(--accent) 28%, transp
 input, textarea, select { border-radius: 0.4rem; }
 input:focus, textarea:focus, select:focus { border-color: oklch(0.62 0.15 340); box-shadow: 0 0 0 3px oklch(0.82 0.19 340 / 0.18); }
 
+.skip-link {
+  position: fixed;
+  inset-inline-start: 0.75rem;
+  top: 0.75rem;
+  z-index: 2000;
+  transform: translateY(-200%);
+  border: 2px solid var(--foreground);
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.65rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 150ms ease;
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
 @media (max-width: 767px) {
   .page-header { align-items: flex-start; }
   .page-header > :last-child { width: 100%; }
@@ -506,5 +523,11 @@ input:focus, textarea:focus, select:focus { border-color: oklch(0.62 0.15 340); 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skip-link { transition: none; }
 }
