@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Users, ShieldCheck, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "../components/common/PageHeader";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Badge } from "../components/ui/Badge";
 import { UserAvatar } from "../components/common/UserAvatar";
+import { StatTile } from "../components/common/StatTile";
 import {
   Dialog,
   DialogContent,
@@ -129,6 +130,10 @@ function UsersPage() {
     fetchUsers();
     fetchRoles();
   }, []);
+
+  const activeCount = users.filter((user) => user.is_active).length;
+  const inactiveCount = users.length - activeCount;
+  const roleCount = new Set(users.map((user) => user.role).filter(Boolean)).size;
 
   const filtered = users.filter(
     (u) =>
@@ -284,9 +289,21 @@ function UsersPage() {
           }
         />
 
-        <div className="relative mb-3 w-72 max-w-full">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("users.searchPlaceholder")} className="h-8 pl-8" />
+        <div className="mb-5 grid gap-3 sm:grid-cols-3">
+          <StatTile label="Total users" value={users.length} icon={<Users className="h-4 w-4" />} hint="All workspace accounts" />
+          <StatTile label="Active" value={activeCount} color="green" icon={<ShieldCheck className="h-4 w-4" />} hint={`${inactiveCount} inactive`} />
+          <StatTile label="Roles in use" value={roleCount} color="neutral" icon={<UserX className="h-4 w-4" />} hint="Distinct access levels" />
+        </div>
+
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Workspace access</h2>
+            <p className="mt-1 text-xs text-muted-foreground">Invite, review, or deactivate accounts without leaving the roster.</p>
+          </div>
+          <div className="relative w-72 max-w-full">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input aria-label={t("users.searchPlaceholder")} value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("users.searchPlaceholder")} className="h-8 pl-8" />
+          </div>
         </div>
 
         <div className="overflow-hidden rounded-xl border border-border bg-card">
