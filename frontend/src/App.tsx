@@ -196,37 +196,37 @@ export function App() {
               <ErrorBoundaryWrapper>
                 <Suspense fallback={<div className="flex items-center justify-center h-full text-muted-foreground text-sm">Loading...</div>}>
                   <Routes>
-                    <Route path="/" element={<ProtectedRoute><RoleBasedDashboard /></ProtectedRoute>} />
-                    <Route path="/projects" element={<ProtectedRoute permissions={["view-projects"]}><ProjectsPage /></ProtectedRoute>} />
+                    <Route path="/" element={<ProtectedRoute allowExternal><RoleBasedDashboard /></ProtectedRoute>} />
+                    <Route path="/projects" element={<ProtectedRoute allowExternal permissions={["view-projects"]}><ProjectsPage /></ProtectedRoute>} />
                     <Route path="/clients" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><ClientsPage /></ProtectedRoute>} />
                     <Route path="/requests" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><RequestsPage /></ProtectedRoute>} />
                     <Route path="/proposals" element={<ProtectedRoute permissions={["view-projects", "view-clients"]}><ProposalBuilderPage /></ProtectedRoute>} />
                     <Route path="/presentations" element={<ProtectedRoute permissions={["view-documents"]}><PresentationBankPage /></ProtectedRoute>} />
-                    <Route path="/validation" element={<ProtectedRoute permissions={["view-projects"]}><ValidationPage /></ProtectedRoute>} />
+                    <Route path="/validation" element={<ProtectedRoute allowExternal permissions={["view-projects"]}><ValidationPage /></ProtectedRoute>} />
                     <Route path="/priority-impact" element={<ProtectedRoute permissions={["view-projects"]}><PriorityImpactPage /></ProtectedRoute>} />
-                    <Route path="/board" element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />
-                    <Route path="/issues" element={<ProtectedRoute><IssuesPage /></ProtectedRoute>} />
-                    <Route path="/sprints" element={<ProtectedRoute permissions={["view-sprints"]}><SprintsPage /></ProtectedRoute>} />
-                    <Route path="/backlog" element={<ProtectedRoute><BacklogPage /></ProtectedRoute>} />
-                    <Route path="/roadmap" element={<ProtectedRoute permissions={["view-projects"]}><RoadmapPage /></ProtectedRoute>} />
-                    <Route path="/scope" element={<ProtectedRoute permissions={["view-scope"]}><ScopePage /></ProtectedRoute>} />
-                    <Route path="/risks" element={<ProtectedRoute permissions={["view-risks"]}><RisksPage /></ProtectedRoute>} />
+                    <Route path="/board" element={<ProtectedRoute allowExternal><BoardPage /></ProtectedRoute>} />
+                    <Route path="/issues" element={<ProtectedRoute allowExternal><IssuesPage /></ProtectedRoute>} />
+                    <Route path="/sprints" element={<ProtectedRoute allowExternal permissions={["view-sprints"]}><SprintsPage /></ProtectedRoute>} />
+                    <Route path="/backlog" element={<ProtectedRoute allowExternal><BacklogPage /></ProtectedRoute>} />
+                    <Route path="/roadmap" element={<ProtectedRoute allowExternal permissions={["view-projects"]}><RoadmapPage /></ProtectedRoute>} />
+                    <Route path="/scope" element={<ProtectedRoute allowExternal permissions={["view-scope"]}><ScopePage /></ProtectedRoute>} />
+                    <Route path="/risks" element={<ProtectedRoute allowExternal permissions={["view-risks"]}><RisksPage /></ProtectedRoute>} />
                     <Route path="/changes" element={<ProtectedRoute permissions={["view-change-requests"]}><ChangeRequestsAllPage /></ProtectedRoute>} />
-                    <Route path="/changes/my-requests" element={<ProtectedRoute permissions={["view-change-requests"]}><ChangeRequestsMyPage /></ProtectedRoute>} />
+                    <Route path="/changes/my-requests" element={<ProtectedRoute allowExternal permissions={["view-change-requests"]}><ChangeRequestsMyPage /></ProtectedRoute>} />
                     <Route path="/changes/approvals" element={<ProtectedRoute permissions={["approve-change-requests"]}><ChangeRequestsApprovalsPage /></ProtectedRoute>} />
                     <Route path="/resources" element={<ProtectedRoute permissions={["view-resources"]}><ResourcesPage /></ProtectedRoute>} />
                     <Route path="/partners" element={<ProtectedRoute roles={["super-admin", "admin"]}><PartnersPage /></ProtectedRoute>} />
                     <Route path="/workforce" element={<ProtectedRoute permissions={["view-projects"]}><ProjectWorkforcePage /></ProtectedRoute>} />
                     <Route path="/administration" element={<ProtectedRoute roles={["super-admin", "admin"]}><AdministrationPage /></ProtectedRoute>} />
                     <Route path="/time-logs" element={<ProtectedRoute permissions={["view-time-logs"]}><TimeLogsPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholdersPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders/analytics" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderAnalyticsPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders/registration" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderRegistrationPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders/engagement" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderEngagementPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders/impact" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderImpactPage /></ProtectedRoute>} />
-                    <Route path="/stakeholders/:id" element={<ProtectedRoute permissions={["view-stakeholders"]}><StakeholderDetailPage /></ProtectedRoute>} />
-                    <Route path="/documents" element={<ProtectedRoute permissions={["view-documents"]}><DocumentsPage /></ProtectedRoute>} />
-                    <Route path="/reports" element={<ProtectedRoute permissions={["view-reports"]}><ReportsPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholdersPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders/analytics" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholderAnalyticsPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders/registration" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholderRegistrationPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders/engagement" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholderEngagementPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders/impact" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholderImpactPage /></ProtectedRoute>} />
+                    <Route path="/stakeholders/:id" element={<ProtectedRoute allowExternal permissions={["view-stakeholders"]}><StakeholderDetailPage /></ProtectedRoute>} />
+                    <Route path="/documents" element={<ProtectedRoute allowExternal permissions={["view-documents"]}><DocumentsPage /></ProtectedRoute>} />
+                    <Route path="/reports" element={<ProtectedRoute allowExternal permissions={["view-reports"]}><ReportsPage /></ProtectedRoute>} />
                     <Route path="/team" element={<ProtectedRoute permissions={["view-teams"]}><TeamPage /></ProtectedRoute>} />
                     <Route path="/teams" element={<ProtectedRoute permissions={["view-teams"]}><TeamsPage /></ProtectedRoute>} />
                     <Route path="/team-tasks" element={<ProtectedRoute permissions={["view-resources"]}><TeamTasksPage /></ProtectedRoute>} />
@@ -245,13 +245,13 @@ export function App() {
                     <Route path="/triage" element={<ProtectedRoute permissions={["view-issues"]}><TriagePage /></ProtectedRoute>} />
                     <Route path="/custom-fields" element={<ProtectedRoute permissions={["manage-settings"]}><CustomFieldsPage /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute permissions={["manage-settings"]}><SettingsPage /></ProtectedRoute>} />
-                    <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute allowExternal><ProfilePage /></ProtectedRoute>} />
                     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
                     <Route path="/projects/new" element={<ProtectedRoute roles={["super-admin", "admin"]}><ProjectCreatePage /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/milestones" element={<ProtectedRoute><ProjectMilestonesRoute /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/plan" element={<ProtectedRoute><ProjectPlanRoute /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectOverviewRoute /></ProtectedRoute>} />
-                    <Route path="/projects/:projectId/issues/:issueId" element={<ProtectedRoute><ProjectIssueRoute /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/milestones" element={<ProtectedRoute allowExternal><ProjectMilestonesRoute /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/plan" element={<ProtectedRoute allowExternal><ProjectPlanRoute /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId" element={<ProtectedRoute allowExternal><ProjectOverviewRoute /></ProtectedRoute>} />
+                    <Route path="/projects/:projectId/issues/:issueId" element={<ProtectedRoute allowExternal><ProjectIssueRoute /></ProtectedRoute>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Suspense>

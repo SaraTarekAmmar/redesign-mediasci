@@ -60,6 +60,7 @@ export interface NavItem {
   end?: boolean;
   roles?: string[];
   permissions?: string[];
+  externalAllowed?: boolean;
 }
 
 export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavItem[] }[] = [
@@ -73,19 +74,19 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
   {
     headingKey: "Work",
     items: [
-      { to: "/projects", labelKey: "nav.projects", icon: FolderKanban, permissions: ["view-projects"] },
-      { to: "/board", labelKey: "nav.board", icon: KanbanSquare },
-      { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin"] },
-      { to: "/backlog", labelKey: "nav.backlog", icon: ListTodo },
-      { to: "/sprints", labelKey: "nav.sprints", icon: Repeat, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer"], permissions: ["view-sprints"] },
+      { to: "/projects", labelKey: "nav.projects", icon: FolderKanban, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"], permissions: ["view-projects"], externalAllowed: true },
+      { to: "/board", labelKey: "nav.board", icon: KanbanSquare, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"] },
+      { to: "/issues", labelKey: "nav.issues", icon: CheckSquare2, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"] },
+      { to: "/backlog", labelKey: "nav.backlog", icon: ListTodo, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"] },
+      { to: "/sprints", labelKey: "nav.sprints", icon: Repeat, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "partner", "client"], permissions: ["view-sprints"], externalAllowed: true },
       { to: "/triage", labelKey: "nav.triage", icon: Inbox, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-issues"] },
     ],
   },
   {
     headingKey: "Planning",
     items: [
-      { to: "/scope", labelKey: "nav.scope", icon: Target, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-scope"] },
-      { to: "/roadmap", labelKey: "nav.roadmap", icon: RoadmapIcon, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
+      { to: "/scope", labelKey: "nav.scope", icon: Target, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-scope"], externalAllowed: true },
+      { to: "/roadmap", labelKey: "nav.roadmap", icon: RoadmapIcon, roles: ["super-admin", "admin", "project-manager", "team-leader", "partner", "client"], permissions: ["view-projects"], externalAllowed: true },
       { to: "/sprints/global", labelKey: "nav.globalSprints", icon: Layers },
       { to: "/enterprise-gantt", labelKey: "nav.enterpriseGantt", icon: Network, roles: ["super-admin", "admin", "project-manager"] },
       { to: "/gantt", labelKey: "nav.gantt", icon: GanttChart, roles: ["super-admin", "admin", "project-manager"], permissions: ["view-projects"] },
@@ -103,10 +104,10 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
   {
     headingKey: "Delivery",
     items: [
-      { to: "/risks", labelKey: "nav.risks", icon: ShieldAlert, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer"], permissions: ["view-risks"] },
-      { to: "/changes/my-requests", labelKey: "nav.myRequests", icon: Send, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member"], permissions: ["view-change-requests"] },
+      { to: "/risks", labelKey: "nav.risks", icon: ShieldAlert, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "partner", "client"], permissions: ["view-risks"], externalAllowed: true },
+      { to: "/changes/my-requests", labelKey: "nav.myRequests", icon: Send, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "partner", "client"], permissions: ["view-change-requests"], externalAllowed: true },
       { to: "/changes/approvals", labelKey: "nav.approvals", icon: ShieldCheck, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["approve-change-requests"] },
-      { to: "/validation", labelKey: "nav.validation", icon: CheckSquare2, roles: ["super-admin", "admin", "project-manager", "team-leader"] },
+      { to: "/validation", labelKey: "nav.validation", icon: CheckSquare2, roles: ["super-admin", "admin", "project-manager", "team-leader", "partner", "client"] },
       { to: "/priority-impact", labelKey: "nav.priorityImpact", icon: GitPullRequestArrow, roles: ["super-admin", "admin", "project-manager", "team-leader"] },
     ],
   },
@@ -116,24 +117,24 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
       { to: "/resources", labelKey: "nav.resources", icon: UsersRound, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-resources"] },
       { to: "/workforce", labelKey: "nav.workforce", icon: Handshake, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-projects"] },
       { to: "/partners", labelKey: "nav.partners", icon: Handshake, roles: ["super-admin", "admin"] },
-      { to: "/time-logs", labelKey: "nav.timeLogs", icon: Clock },
+      { to: "/time-logs", labelKey: "nav.timeLogs", icon: Clock, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer"] },
       { to: "/team-tasks", labelKey: "nav.teamTasks", icon: ClipboardCheck, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-resources"] },
     ],
   },
   {
     headingKey: "Stakeholders",
     items: [
-      { to: "/stakeholders", labelKey: "nav.stakeholders", icon: Contact, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
-      { to: "/stakeholders/analytics", labelKey: "nav.stakeholderAnalytics", icon: PieChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
-      { to: "/stakeholders/registration", labelKey: "nav.stakeholderRegistration", icon: UserPlus, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
-      { to: "/stakeholders/engagement", labelKey: "nav.stakeholderEngagement", icon: Activity, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
-      { to: "/stakeholders/impact", labelKey: "nav.stakeholderImpact", icon: AlertTriangle, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer"], permissions: ["view-stakeholders"] },
+      { to: "/stakeholders", labelKey: "nav.stakeholders", icon: Contact, end: true, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-stakeholders"], externalAllowed: true },
+      { to: "/stakeholders/analytics", labelKey: "nav.stakeholderAnalytics", icon: PieChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-stakeholders"], externalAllowed: true },
+      { to: "/stakeholders/registration", labelKey: "nav.stakeholderRegistration", icon: UserPlus, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-stakeholders"], externalAllowed: true },
+      { to: "/stakeholders/engagement", labelKey: "nav.stakeholderEngagement", icon: Activity, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-stakeholders"], externalAllowed: true },
+      { to: "/stakeholders/impact", labelKey: "nav.stakeholderImpact", icon: AlertTriangle, roles: ["super-admin", "admin", "project-manager", "team-leader", "viewer", "partner", "client"], permissions: ["view-stakeholders"], externalAllowed: true },
     ],
   },
   {
     headingKey: "Assets",
     items: [
-      { to: "/documents", labelKey: "nav.documents", icon: FileText },
+      { to: "/documents", labelKey: "nav.documents", icon: FileText, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"], externalAllowed: true },
       { to: "/workflow-templates", labelKey: "nav.workflowTemplates", icon: Repeat, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },
       { to: "/automation", labelKey: "nav.automation", icon: Zap, roles: ["super-admin", "admin", "project-manager"], permissions: ["manage-settings"] },
     ],
@@ -142,7 +143,7 @@ export const allGroups: { headingKey: string; hideHeading?: boolean; items: NavI
     headingKey: "Insights",
     items: [
       { to: "/plan-comparison", labelKey: "nav.planComparison", icon: TrendingUp, roles: ["super-admin", "admin", "project-manager", "team-leader"], permissions: ["view-analytics"] },
-      { to: "/reports", labelKey: "nav.reports", icon: BarChart3, permissions: ["view-reports"] },
+      { to: "/reports", labelKey: "nav.reports", icon: BarChart3, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "partner", "client"], permissions: ["view-reports"], externalAllowed: true },
       { to: "/analytics", labelKey: "nav.analytics", icon: LineChart, roles: ["super-admin", "admin", "project-manager", "team-leader", "developer", "member", "viewer", "account-manager", "department-manager", "hr-manager", "reviewer", "executive"] },
     ],
   },
@@ -592,6 +593,7 @@ export function Sidebar({ mobileOpen, onCloseMobile }: { mobileOpen?: boolean; o
   const location = useLocation();
   const isRTL = i18n.dir() === "rtl";
   const { hasRole, hasPermission } = useAuth();
+  const externalUser = hasRole("partner", "client");
   const activeProjectIdFromStore = useProjectCatalogStore((s) => s.activeProjectId);
   const projectScopeModeFromStore = useProjectCatalogStore((s) => s.projectScopeMode);
   const projectScope = getProjectScope() ?? { mode: "single" as const, projectIds: [], primaryProjectId: "" };
@@ -628,7 +630,9 @@ export function Sidebar({ mobileOpen, onCloseMobile }: { mobileOpen?: boolean; o
           }
           if (hasRole("executive") && !executiveAllowedRoutes.has(item.to)) return false;
           const roleAllowed = !item.roles || hasRole(...item.roles);
-          const permissionAllowed = !item.permissions || item.permissions.some((permission) => hasPermission(permission));
+          const permissionAllowed = externalUser && item.externalAllowed
+            ? true
+            : !item.permissions || item.permissions.some((permission) => hasPermission(permission));
           return roleAllowed && permissionAllowed;
         }),
       }))
@@ -644,7 +648,7 @@ export function Sidebar({ mobileOpen, onCloseMobile }: { mobileOpen?: boolean; o
     }
 
     return baseGroups;
-  }, [hasPermission, hasRole, wideScope, effectiveActiveProjectId, location.pathname]);
+  }, [hasPermission, hasRole, externalUser, wideScope, effectiveActiveProjectId, location.pathname]);
 
   useEffect(() => {
     try { localStorage.setItem("sidebar-collapsed", String(collapsed)); } catch {}
