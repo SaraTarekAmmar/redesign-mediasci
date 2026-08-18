@@ -597,7 +597,7 @@
   "risks.colStatus": "Status",
   "risks.colActions": "Actions",
   "risks.riskMatrix": "Risk matrix",
-  "risks.matrixDesc": "Impact (rows) Ã— Probability (cols)",
+  "risks.matrixDesc": "Impact by probability",
   "risks.noRisks": "No risks yet. Click \"Log risk\" to add one.",
   "risks.editRisk": "Edit risk",
   "risks.logRiskDialog": "Log risk",
