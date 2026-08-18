@@ -13,6 +13,7 @@ router = APIRouter(tags=["Clients"])
 
 
 def _fmt_client(c: Client) -> dict:
+    projects = [project for project in (c.projects or []) if getattr(project, "deleted_at", None) is None]
     return {
         "id": str(c.id),
         "name": c.name,
@@ -24,6 +25,7 @@ def _fmt_client(c: Client) -> dict:
         "address": c.address or "",
         "notes": c.notes or "",
         "status": c.status or "active",
+        "projectsCount": len(projects),
         "contacts": [
             {
                 "id": str(ct.id),

@@ -147,6 +147,7 @@ export interface Client {
   industry?: string;
   website?: string;
   status: "active" | "inactive";
+  projectsCount?: number;
   contacts: ClientContact[];
   createdAt?: string;
   created_at: string;

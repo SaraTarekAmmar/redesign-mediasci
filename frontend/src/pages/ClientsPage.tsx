@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Building2, Plus, Mail, Phone, ExternalLink, ShieldCheck, Loader2, X, Send, PencilLine, Trash2, Search } from "lucide-react";
+import { Building2, FolderOpen, Plus, Mail, Phone, ExternalLink, ShieldCheck, Loader2, X, Send, PencilLine, Trash2, Search } from "lucide-react";
 import { PageHeader } from "../components/common/PageHeader";
 import { EmptyState } from "../components/common/EmptyState";
 import { Button } from "../components/ui/Button";
@@ -175,10 +175,11 @@ export default function ClientsPage() {
         />
 
         {!loading && clients.length > 0 && (
-          <section className="mb-5 grid gap-3 sm:grid-cols-3" aria-label="Client overview">
+          <section className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Client overview">
             <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Accounts</p><p className="mt-1 text-2xl font-semibold text-foreground">{clients.length}</p></div>
             <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Active</p><p className="mt-1 text-2xl font-semibold text-emerald-700 dark:text-emerald-300">{activeClients}</p></div>
             <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Contacts</p><p className="mt-1 text-2xl font-semibold text-foreground">{contactCount}</p></div>
+            <div className="rounded-xl border border-border bg-card p-4"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Linked projects</p><p className="mt-1 text-2xl font-semibold text-foreground">{clients.reduce((sum, client) => sum + (client.projectsCount || 0), 0)}</p></div>
           </section>
         )}
 
@@ -279,6 +280,14 @@ export default function ClientsPage() {
                         <Trash2 className="h-3.5 w-3.5" /> {t("clients.delete")}
                       </Button>
                       <Button
+                        onClick={() => navigate("/projects")}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 gap-1.5"
+                      >
+                        <FolderOpen className="h-3.5 w-3.5" /> Open projects
+                      </Button>
+                      <Button
                         onClick={() => navigate(`/requests?clientId=${selectedClient.id}`)}
                         size="sm"
                         variant="outline"
@@ -289,7 +298,8 @@ export default function ClientsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 border-b border-border pb-5">
+                  <div className="grid grid-cols-2 gap-3 border-b border-border pb-5 sm:grid-cols-4">
+                    <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Projects</p><p className="mt-1 text-xl font-semibold text-foreground">{selectedClient.projectsCount || 0}</p></div>
                     <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Contacts</p><p className="mt-1 text-xl font-semibold text-foreground">{selectedClient.contacts?.length || 0}</p></div>
                     <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Industry</p><p className="mt-1 truncate text-sm font-semibold text-foreground">{selectedClient.industry || "—"}</p></div>
                     <div className="rounded-lg border border-border/70 bg-background p-3"><p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Website</p><p className="mt-1 text-sm font-semibold text-foreground">{selectedClient.website ? "Linked" : "—"}</p></div>
