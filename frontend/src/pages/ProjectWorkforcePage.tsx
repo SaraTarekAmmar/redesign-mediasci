@@ -236,7 +236,12 @@ function ProjectWorkforcePage() {
   const externalShare = totalEligible ? Math.round((external.length / totalEligible) * 100) : 0;
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-5 md:px-6 md:py-8">
-      <PageHeader icon={<UsersRound className="h-5 w-5" />} title={t("workforce.title", { defaultValue: "Project Workforce" })} />
+      <PageHeader
+        icon={<UsersRound className="h-5 w-5" />}
+        title={activeProject?.name ? `${activeProject.name} workforce` : t("workforce.title", { defaultValue: "Project Workforce" })}
+        subtitle="Assign internal or external capacity, then confirm who can receive project work."
+        badge={activeProject?.key ? <Badge variant="outline">{activeProject.key}</Badge> : undefined}
+      />
 
       {loading ? <div className="flex items-center justify-center py-16 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div> : (
         <div className="space-y-5">
@@ -277,7 +282,7 @@ function ProjectWorkforcePage() {
 
           <section className="rounded-xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Resolved, task-eligible workforce ({internal.length + external.length})</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">Deduplicated across every active assignment path. Removing an assignment changes future eligibility without deleting historical task records.</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">This is the final assignment list used by task pickers. It is deduplicated across every active path; removing a source changes future eligibility without deleting history.</p>
             <div className="mt-4 grid gap-5 lg:grid-cols-2">
               <div>
                 <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
