@@ -93,8 +93,12 @@ function StakeholderEngagementPage() {
                 {data.stakeholders.map((s) => (
                   <tr
                     key={s.id}
-                    className="cursor-pointer border-b border-border last:border-0 hover:bg-accent/40"
+                    className="cursor-pointer border-b border-border last:border-0 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`Open stakeholder ${s.name}`}
                     onClick={() => navigate(`/stakeholders/${s.id}`)}
+                    onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/stakeholders/${s.id}`); } }}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -125,8 +129,12 @@ function StakeholderEngagementPage() {
                 {data.interactions.map((i) => (
                   <div
                     key={i.id}
-                    className="cursor-pointer rounded-lg border border-border bg-muted/20 p-2.5 text-xs hover:bg-accent/40"
+                    className="cursor-pointer rounded-lg border border-border bg-muted/20 p-2.5 text-left text-xs hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`Open stakeholder activity for ${i.stakeholderName || "unknown stakeholder"}`}
                     onClick={() => navigate(`/stakeholders/${i.stakeholderId}`)}
+                    onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/stakeholders/${i.stakeholderId}`); } }}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-foreground">{i.stakeholderName || "—"}</span>
