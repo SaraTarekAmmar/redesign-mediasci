@@ -153,7 +153,12 @@ function TeamTasksPage() {
                   <tr
                     key={m.user.id}
                     onClick={() => setSelectedMember(selectedMember === m.user.id ? "" : m.user.id)}
-                    className="border-b border-border/50 cursor-pointer transition-colors hover:bg-accent/30"
+                    onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedMember(selectedMember === m.user.id ? "" : m.user.id); } }}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={selectedMember === m.user.id}
+                    aria-label={`${m.user.name}: ${isRTL ? "عرض مهام العضو" : "View member tasks"}`}
+                    className="border-b border-border/50 cursor-pointer transition-colors hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
                   >
                     <td className="px-4 py-2.5">
                       <div className="flex items-center justify-center gap-2">
@@ -164,9 +169,12 @@ function TeamTasksPage() {
                       </div>
                     </td>
                     <td className="px-4 py-2.5 text-foreground">{m.total}</td>
-                    <td className="px-4 py-2.5" style={{ color: m.done > 0 ? "#22c55e" : "var(--muted-foreground)" }}>{m.done}</td>
-                    <td className="px-4 py-2.5" style={{ color: m.in_progress > 0 ? "#3b82f6" : "var(--muted-foreground)" }}>{m.in_progress}</td>
-                    <td className="px-4 py-2.5 font-medium" style={{ color: m.overdue > 0 ? "#ef4444" : "var(--muted-foreground)" }}>{m.overdue}</td>
+                    <td className="px-4 py-2.5" style={{ color: m.done > 0 ? "#10b981" : "var(--muted-foreground)" }}
+>{m.done}</td>
+                    <td className="px-4 py-2.5" style={{ color: m.in_progress > 0 ? "var(--primary)" : "var(--muted-foreground)" }}
+>{m.in_progress}</td>
+                    <td className="px-4 py-2.5 font-medium" style={{ color: m.overdue > 0 ? "#f43f5e" : "var(--muted-foreground)" }}
+>{m.overdue}</td>
                     <td className="px-4 py-2.5 text-muted-foreground">{m.estimated_hours}h</td>
                     <td className="px-4 py-2.5 text-muted-foreground">{m.actual_hours}h</td>
                     <td className="px-4 py-2.5">

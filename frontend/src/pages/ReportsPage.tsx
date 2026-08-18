@@ -641,7 +641,11 @@ function ReportsPage() {
                 tasks: expectedTasks
               })
             }
-            className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 cursor-pointer"
+            className="group rounded-xl border border-border bg-card p-4 text-start transition-all hover:border-primary/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            role="button"
+            tabIndex={0}
+            aria-label={isRTL ? "فتح تفاصيل الخطة المتوقعة" : "Open expected plan details"}
+            onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.currentTarget.click(); } }}
           >
             <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg border border-foreground/15 bg-muted text-foreground group-hover:scale-105 transition-transform">
               <Target className="h-4 w-4" />
@@ -661,7 +665,11 @@ function ReportsPage() {
                 tasks: actualDoneTasks
               })
             }
-            className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-emerald-500/50 cursor-pointer"
+            className="group rounded-xl border border-border bg-card p-4 text-start transition-all hover:border-emerald-500/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            role="button"
+            tabIndex={0}
+            aria-label={isRTL ? "فتح تفاصيل المهام المكتملة" : "Open completed task details"}
+            onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.currentTarget.click(); } }}
           >
             <span className="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
               <CheckCircle2 className="h-4 w-4" />
@@ -681,7 +689,11 @@ function ReportsPage() {
                 tasks: shouldHaveBeenDoneTasks
               })
             }
-            className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-amber-500/50 cursor-pointer"
+            className="group rounded-xl border border-border bg-card p-4 text-start transition-all hover:border-amber-500/50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            role="button"
+            tabIndex={0}
+            aria-label={isRTL ? "فتح تفاصيل انحراف الخطة" : "Open plan variance details"}
+            onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.currentTarget.click(); } }}
           >
             <span
               className={`mb-2 flex h-8 w-8 items-center justify-center rounded-lg ${
