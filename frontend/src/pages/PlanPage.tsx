@@ -114,7 +114,6 @@ interface PlanningSummary {
     state: "Green" | "Yellow" | "Red";
     tone: "success" | "warning" | "danger";
     schedule: number;
-    budget: number;
     completion: number;
     dependencies: number;
     deliverables: number;
@@ -362,7 +361,7 @@ const createEmptyIntelligence = (): IntelligenceResponse => ({
     expected_delays: 0,
     total_blocked_work: 0,
   },
-  health_breakdown: { overall: 0, state: "Green", tone: "success", schedule: 0, budget: 0, completion: 0, dependencies: 0, deliverables: 0, resources: 0, risks: 0 },
+  health_breakdown: { overall: 0, state: "Green", tone: "success", schedule: 0, completion: 0, dependencies: 0, deliverables: 0, resources: 0, risks: 0 },
   ceo_summary: { overall_portfolio_health: 0, projects_needing_attention: 0, critical_milestones: 0, expected_delays: 0, total_blocked_work: 0, summary: "" },
   forecast: { original_finish: null, forecast_finish: null, delay_days: 0, confidence: "Low", main_cause: null },
   critical_path: { milestones: [], critical_dependencies: [], critical_chain_length: 0, non_critical_milestones: [] },
@@ -415,7 +414,6 @@ function PlanPage({ projectId, embedded = false }: Props) {
     planned_start_date: "",
     planned_end_date: "",
     planned_hours: "0",
-    planned_budget: "0",
     owner_resource_id: "",
   });
 
@@ -982,7 +980,7 @@ function PlanPage({ projectId, embedded = false }: Props) {
           <PageHeader
             icon={<Target className="h-5 w-5" />}
             title={`${project.name} Planning Workspace`}
-            subtitle="Single source of truth for project planning, baseline, milestones, deliverables, dependencies, and timeline."
+            subtitle="Plan milestones, deliverables, dependencies, resources, and timeline."
             badge={
               <div className="flex flex-wrap gap-1.5">
                 <Badge variant={intelligence.summary.traffic_light === "Red" ? "destructive" : intelligence.summary.traffic_light === "Yellow" ? "secondary" : "default"}>
@@ -1010,8 +1008,9 @@ function PlanPage({ projectId, embedded = false }: Props) {
         )}
 
         {/* Workspace Tab Navigation */}
-        <div className="border-b border-border">
-          <nav className="flex space-x-6 overflow-x-auto" aria-label="Planning Tabs">
+                  <div className="border-b border-border">
+            <nav className="flex space-x-6 overflow-x-auto" aria-label="Planning tabs" role="tablist">
+
             {[
               { id: "overview", label: "Overview", icon: Target },
               { id: "baseline", label: "Baseline", icon: Save },
@@ -1026,6 +1025,11 @@ function PlanPage({ projectId, embedded = false }: Props) {
               return (
                 <button
                   key={tab.id}
+                  type="button"
+                  role="tab"
+                  id={`planning-tab-${tab.id}`}
+                  aria-selected={active}
+                  aria-controls={`planning-panel-${tab.id}`}
                   onClick={() => handleTabChange(tab.id as PlanTab)}
                   className={cn(
                     "flex items-center gap-2 border-b-2 py-3 text-sm font-medium transition-colors whitespace-nowrap",
@@ -1042,7 +1046,7 @@ function PlanPage({ projectId, embedded = false }: Props) {
 
         {/* Tab 1: Overview */}
         {activeTab === "overview" && (
-          <div className="space-y-5">
+          <div id="planning-panel-overview" role="tabpanel" aria-labelledby="planning-tab-overview" className="space-y-5">
             {intelligence.ceo_summary && (
               <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -1062,16 +1066,17 @@ function PlanPage({ projectId, embedded = false }: Props) {
             )}
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Health Score" value={`${intelligence.summary.health_breakdown?.overall ?? 85}/100`} tone="text-foreground" />
               <MetricCard label="Completion" value={`${intelligence.summary.milestone_completion_pct ?? 0}%`} tone="text-foreground" />
               <MetricCard label="Schedule Variance" value={formatDays(intelligence.summary.schedule_variance_days)} tone="text-foreground" />
+              <MetricCard label="Forecast Finish" value={formatShortDate(intelligence.summary.forecast_finish || intelligence.summary.forecast?.forecast_finish)} tone="text-foreground" />
+              <MetricCard label="Blocked Milestones" value={intelligence.summary.blocked_milestones ?? 0} tone="text-destructive" />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <MetricCard label="Milestones" value={rows.length} tone="text-foreground" />
               <MetricCard label="Deliverables" value={allDeliverables.length} tone="text-foreground" />
-              <MetricCard label="Blocked Work" value={intelligence.summary.blocked_milestones ?? 0} tone="text-destructive" />
               <MetricCard label="Open Risks" value={intelligence.summary.open_risks ?? 0} tone="text-amber-500" />
+              <MetricCard label="Remaining Issues" value={intelligence.summary.remaining_issues ?? 0} tone="text-foreground" />
             </div>
           </div>
         )}

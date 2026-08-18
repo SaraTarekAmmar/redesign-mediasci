@@ -39,7 +39,7 @@ const sections = [
     description: "Create projects and explicitly control every internal and external assignment path.",
     items: [
       { to: "/projects", label: "Projects", detail: "Project lifecycle, metadata, and creation", icon: FolderKanban },
-      { to: "/workforce", label: "Project workforce", detail: "Teams, resources, partners, teams, and people", icon: UsersRound },
+      { to: "/workforce", label: "Project workforce", detail: "Teams, resources, partners, and people", icon: UsersRound },
       { to: "/partners", label: "External partners", detail: "Organizations, partner teams, and consultants", icon: Handshake },
       { to: "/clients", label: "Clients", detail: "Client organizations connected to delivery", icon: Building2 },
       { to: "/requests", label: "Requests", detail: "Pre-sales and incoming project requests", icon: ClipboardCheck },
@@ -57,14 +57,20 @@ const sections = [
     ],
   },
   {
-    title: "Governance and system",
-    description: "Review system health and manage configuration with auditable, recoverable controls.",
+    title: "Insights and control",
+    description: "Review delivery signals, reporting, and reusable data configuration.",
     items: [
-      { to: "/analytics", label: "Analytics", detail: "Portfolio and delivery analytics", icon: BarChart3 },
+      { to: "/analytics", label: "Analytics", detail: "Portfolio and delivery signals", icon: BarChart3 },
       { to: "/reports", label: "Reports", detail: "Operational and portfolio reporting", icon: FileText },
       { to: "/custom-fields", label: "Custom fields", detail: "Schema extensions for delivery records", icon: SlidersHorizontal },
+    ],
+  },
+  {
+    title: "System and settings",
+    description: "Manage project governance and recoverable system controls.",
+    items: [
       { to: "/recovery", label: "Audit and recovery", detail: "Restore archived records and review recovery state", icon: Archive },
-      { to: "/settings", label: "Project settings", detail: "Project governance, calendar, budget, and integration configuration", icon: Settings },
+      { to: "/settings", label: "Project settings", detail: "Project governance, calendar, workflow, and integrations", icon: Settings },
     ],
   },
 ];

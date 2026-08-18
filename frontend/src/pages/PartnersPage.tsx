@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import {
   ChevronDown,
   ChevronRight,
@@ -288,7 +289,7 @@ function PartnersPage() {
       <PageHeader
         icon={<Handshake className="h-5 w-5" />}
         title={t("partners.title", { defaultValue: "External Partners" })}
-        subtitle={t("partners.subtitle", { defaultValue: "External delivery organizations with teams and members" })}
+        subtitle={t("partners.subtitle", { defaultValue: "External organizations, members, and project access" })}
         actions={canManage ? (
           <Button onClick={openCreatePartner} className="gap-1.5">
             <Plus className="h-4 w-4" /> {t("partners.add", { defaultValue: "Add Partner" })}
@@ -376,6 +377,14 @@ function PartnersPage() {
                 <div><span className="text-muted-foreground">Status: </span><Badge variant={selected.status === "active" ? "secondary" : "outline"}>{selected.status}</Badge></div>
               </div>
               {selected.notes && <p className="mt-3 rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">{selected.notes}</p>}
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Project access is assigned per project</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Add this partner, one of its teams, or a member from the project workforce view.</p>
+                </div>
+                {canManage && <Link to="/projects" className="text-sm font-semibold text-primary hover:underline">Open projects</Link>}
+              </div>
 
               <div className="mt-6 rounded-xl border border-border/80 bg-muted/10 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -544,14 +553,9 @@ function PartnersPage() {
                   <h3 className="text-sm font-semibold text-foreground">
                     All partner members ({selected.members.length})
                   </h3>
-                  {canManage && (
-                    <Button size="sm" variant="outline" className="gap-1.5" onClick={openCreateMember}>
-                      <UserPlus className="h-3.5 w-3.5" /> Add Member
-                    </Button>
-                  )}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Full roster for this partner. Team membership is managed above and is never inferred from partner membership alone.
+                  Full roster for this partner. Team membership is managed in the hierarchy above; project access is managed from the project workforce view.
                 </p>
                 <div className="mt-3 space-y-2">
                   {selected.members.length === 0 ? (
