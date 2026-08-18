@@ -1814,7 +1814,6 @@
   "dashboard.portfolioOverview": "Portfolio Overview",
   "dashboard.overallCompletion": "Overall Completion",
   "dashboard.openRisks": "Open Risks",
-  "dashboard.totalSpend": "Total Spend",
   "dashboard.projectHealth": "Project Health",
   "dashboard.issueCount": "{{count}} issues",
   "dashboard.noProjectsInScope": "No projects in scope.",

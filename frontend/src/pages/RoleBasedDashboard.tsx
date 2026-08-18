@@ -7,7 +7,6 @@ import {
   BarChart3,
   CheckCircle2,
   ClipboardList,
-  DollarSign,
   CalendarClock,
   Gauge,
   ListChecks,
@@ -526,14 +525,12 @@ function ExecutiveDashboard() {
   const projects = rows("projects");
   const issues = rows("issues");
   const risks = rows("risks");
-  const expenses = rows("expenses");
   const resources = rows("resources");
   const statuses = rows("statuses");
   const doneIds = statuses.filter((s) => s.category === "done").map((s) => s.id);
   const completed = issues.filter((issue) => isDone(issue, doneIds)).length;
   const completionRate = issues.length ? Math.round((completed / issues.length) * 100) : 0;
   const openRisks = risks.filter((risk) => risk.status !== "closed");
-  const totalSpend = expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
   const activeResources = resources.filter((resource) => resource.isActive ?? resource.is_active ?? true).length;
   const perProject = projects.map((project) => {
     const projectIssues = issues.filter((issue) => String(projectId(issue)) === String(project.id));
@@ -547,7 +544,7 @@ function ExecutiveDashboard() {
         <StatCard label={t("dashboard.projects")} value={projects.length} icon={<FolderOpen className="h-5 w-5" />} />
         <StatCard label={t("dashboard.overallCompletion")} value={`${completionRate}%`} icon={<CheckCircle2 className="h-5 w-5" />} color="green" />
         <StatCard label={t("dashboard.openRisks")} value={openRisks.length} icon={<ShieldAlert className="h-5 w-5" />} color="red" />
-        <StatCard label={t("dashboard.totalSpend")} value={`$${totalSpend.toLocaleString()}`} icon={<DollarSign className="h-5 w-5" />} />
+        <StatCard label={t("dashboard.activeResources")} value={activeResources} icon={<UsersRound className="h-5 w-5" />} />
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)]">

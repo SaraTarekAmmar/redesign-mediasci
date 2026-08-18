@@ -1814,7 +1814,6 @@
   "dashboard.portfolioOverview": "نظرة عامة على المحفظة",
   "dashboard.overallCompletion": "الإنجاز الكلي",
   "dashboard.openRisks": "المخاطر المفتوحة",
-  "dashboard.totalSpend": "إجمالي الإنفاق",
   "dashboard.projectHealth": "صحة المشروع",
   "dashboard.issueCount": "{{count}} مهمة",
   "dashboard.noProjectsInScope": "لا توجد مشاريع في النطاق.",
