@@ -80,7 +80,7 @@ def format_resource_profile(db: Session, resource: Resource) -> dict:
             dept = {"id": d.id, "name": d.name}
 
     teams = [
-        {"id": t.id, "name": t.name, "color": t.color or "#3b82f6"}
+        {"id": t.id, "name": t.name, "color": t.color or "#111827"}
         for t in resource.teams
     ] if resource.teams else []
 

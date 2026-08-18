@@ -18,7 +18,7 @@ interface AnalyticsData {
   activity: { date: string; count: number }[];
 }
 
-const BAR_COLORS = ["#0C66E4", "#10b981", "#f59e0b", "#7c3aed", "#f43f5e", "#06b6d4"];
+const BAR_COLORS = ["#ec4899", "#10b981", "#f59e0b", "#f43f5e", "#64748b", "#111827"];
 
 function toRows(obj: Record<string, number> | undefined) {
   return Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
@@ -77,8 +77,8 @@ function StakeholderAnalyticsPage() {
     { label: "Opponent", value: data.supportLevel?.Opponent ?? 0, colorHex: "#f43f5e" },
   ];
   const typeDonut = [
-    { label: "Internal", value: data.type?.Internal ?? 0, colorHex: "#0C66E4" },
-    { label: "External", value: data.type?.External ?? 0, colorHex: "#7c3aed" },
+    { label: "Internal", value: data.type?.Internal ?? 0, colorHex: "#111827" },
+    { label: "External", value: data.type?.External ?? 0, colorHex: "#ec4899" },
   ];
 
   return (

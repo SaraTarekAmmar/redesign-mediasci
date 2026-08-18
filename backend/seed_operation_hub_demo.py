@@ -112,15 +112,15 @@ def seed_demo_data():
         }
 
         departments = {
-            "Engineering": upsert(db, Department, {"name": "Engineering"}, {"description": "Product engineering, APIs, and infrastructure"}),
-            "Design": upsert(db, Department, {"name": "Design"}, {"description": "UX, product design, and prototyping"}),
-            "Operations": upsert(db, Department, {"name": "Operations"}, {"description": "Delivery management, QA, and support"}),
+            "Engineering": upsert(db, Department, {"name": "Engineering"}, {"description": "Product engineering, APIs, and infrastructure", "color": "#111827"}),
+            "Design": upsert(db, Department, {"name": "Design"}, {"description": "UX, product design, and prototyping", "color": "#ec4899"}),
+            "Operations": upsert(db, Department, {"name": "Operations"}, {"description": "Delivery management, QA, and support", "color": "#f59e0b"}),
         }
 
         teams = {
-            "Backend Team": upsert(db, Team, {"name": "Backend Team"}, {"department_id": departments["Engineering"].id, "description": "FastAPI, Python, SQL, and integrations", "is_active": True}),
-            "Frontend Team": upsert(db, Team, {"name": "Frontend Team"}, {"department_id": departments["Design"].id, "description": "React, TypeScript, and UI delivery", "is_active": True}),
-            "QA Team": upsert(db, Team, {"name": "QA Team"}, {"department_id": departments["Operations"].id, "description": "Test planning, automation, and release support", "is_active": True}),
+            "Backend Team": upsert(db, Team, {"name": "Backend Team"}, {"department_id": departments["Engineering"].id, "description": "FastAPI, Python, SQL, and integrations", "color": "#111827", "is_active": True}),
+            "Frontend Team": upsert(db, Team, {"name": "Frontend Team"}, {"department_id": departments["Design"].id, "description": "React, TypeScript, and UI delivery", "color": "#ec4899", "is_active": True}),
+            "QA Team": upsert(db, Team, {"name": "QA Team"}, {"department_id": departments["Operations"].id, "description": "Test planning, automation, and release support", "color": "#10b981", "is_active": True}),
         }
 
         skills = {

@@ -317,8 +317,8 @@ def build_gantt_payload(db: Session, plan_id: int) -> dict:
 
     status_colors = {
         "completed": "#22c55e",
-        "in_progress": "#3b82f6",
-        "review": "#a855f7",
+        "in_progress": "#ec4899",
+        "review": "#f59e0b",
         "blocked": "#ef4444",
         "not_started": "#64748b",
         "pending": "#64748b",

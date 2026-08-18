@@ -27,7 +27,7 @@ import {
 import { api } from "../lib/api";
 import { cn } from "../lib/utils";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#64748b"];
+const COLORS = ["#111827", "#10b981", "#f59e0b", "#ec4899", "#f43f5e", "#64748b", "#374151"];
 
 interface UserOption {
   id: string;
@@ -64,7 +64,7 @@ const normalizeTeam = (team: any): TeamRow => ({
     name: team.department.name ?? "",
   } : null,
   description: team?.description ?? "",
-  color: team?.color ?? "#3b82f6",
+  color: team?.color ?? "#111827",
   owner_id: team?.owner_id ?? team?.ownerId ?? null,
   is_active: team?.is_active ?? true,
   members_count: Number(team?.members_count ?? team?.membersCount ?? 0),
@@ -82,7 +82,7 @@ const blank = (): TeamRow => ({
   department_id: "",
   department: null,
   description: "",
-  color: "#3b82f6",
+  color: "#111827",
   owner_id: null,
   is_active: true,
   members_count: 0,
@@ -154,7 +154,7 @@ function TeamsPage() {
     department_id: team.department_id ? Number(team.department_id) : null,
     slug: team.slug.trim() || null,
     description: team.description?.trim() || null,
-    color: team.color || "#3b82f6",
+    color: team.color || "#111827",
     owner_id: team.owner_id ? Number(team.owner_id) : null,
   });
 
@@ -242,7 +242,13 @@ function TeamsPage() {
                   role="button"
                   tabIndex={0}
                   onClick={() => navigate(`/resources?team_id=${team.id}`)}
-                  onKeyDown={(e) => { if (e.key === "Enter") navigate(`/resources?team_id=${team.id}`); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(`/resources?team_id=${team.id}`);
+                    }
+                  }}
+                  aria-label={`${team.name}: ${t("teams.viewMembers", { defaultValue: "View team members in Resources" })}`}
                   className="relative group cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
                   title={t("teams.viewMembers", { defaultValue: "View team members in Resources" })}
                 >
@@ -250,7 +256,7 @@ function TeamsPage() {
                     <div className="flex items-center gap-3">
                       <span
                         className="flex h-10 w-10 items-center justify-center rounded-lg text-white"
-                        style={{ backgroundColor: team.color || "#3b82f6" }}
+                        style={{ backgroundColor: team.color || "#111827" }}
                       >
                         <Users className="h-5 w-5" />
                       </span>

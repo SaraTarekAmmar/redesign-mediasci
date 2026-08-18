@@ -74,7 +74,7 @@ def _fmt_department(dept, db: Session) -> dict:
         "id": dept.id,
         "name": dept.name,
         "description": dept.description,
-        "color": getattr(dept, "color", None) or "#3b82f6",
+        "color": getattr(dept, "color", None) or "#111827",
         "type": getattr(dept, "type", "department") or "department",
         "team_leader_id": dept.team_leader_id,
         "leaderId": str(dept.team_leader_id) if dept.team_leader_id else None,
@@ -144,7 +144,7 @@ def _fmt_team(team, db: Session) -> dict:
         "department_id": team.department_id,
         "slug": team.slug,
         "description": team.description,
-        "color": team.color or "#3b82f6",
+        "color": team.color or "#111827",
         "owner_id": team.owner_id,
         "is_active": bool(team.is_active),
         "members": preview_members,
@@ -492,7 +492,7 @@ def create_team(
         name=body.name.strip(),
         slug=slug,
         description=body.description,
-        color=body.color or "#3b82f6",
+        color=body.color or "#111827",
         owner_id=body.owner_id,
         department_id=body.department_id,
         is_active=bool(body.is_active if body.is_active is not None else True),
@@ -726,7 +726,7 @@ def get_skills_directory(
 
     return {
         "users": formatted_users,
-        "skills": [{"id": str(s.id), "name": s.name, "category": s.category or "general", "color": "#3b82f6"} for s in skills],
+        "skills": [{"id": str(s.id), "name": s.name, "category": s.category or "general", "color": "#64748b"} for s in skills],
         "departments": [{"id": str(d.id), "name": d.name} for d in depts],
     }
 
@@ -805,7 +805,7 @@ def _fmt_workforce_member(u: User, db: Session) -> dict:
         .filter(team_user.c.user_id == u.id, Team.deleted_at.is_(None))
         .all()
     )
-    teams = [{"id": t.id, "name": t.name, "color": t.color or "#3b82f6"} for t in team_rows]
+    teams = [{"id": t.id, "name": t.name, "color": t.color or "#111827"} for t in team_rows]
     skills = repo.get_user_skills(db, u.id)
 
     return {

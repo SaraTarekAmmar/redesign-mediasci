@@ -112,7 +112,7 @@ def _fmt_project_teams(p, db: Session) -> list[dict]:
         result.append({
             "id": team.id,
             "name": team.name,
-            "color": team.color or "#3b82f6",
+            "color": team.color or "#111827",
             "description": team.description,
             "slug": team.slug,
             "members_count": members_count,

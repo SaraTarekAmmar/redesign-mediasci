@@ -30,7 +30,7 @@ import {
 import { api } from "../lib/api";
 import { cn } from "../lib/utils";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#64748b"];
+const COLORS = ["#111827", "#10b981", "#f59e0b", "#ec4899", "#f43f5e", "#64748b", "#374151"];
 
 interface UserOption {
   id: string;
@@ -43,7 +43,7 @@ const normalizeDepartment = (dept: any): Department => ({
   name: dept?.name ?? "",
   type: dept?.type ?? "department",
   description: dept?.description ?? "",
-  color: dept?.color ?? "#3b82f6",
+  color: dept?.color ?? "#111827",
   leaderId: String(dept?.team_leader_id ?? dept?.leaderId ?? dept?.teamLeader?.id ?? ""),
   membersCount: Number(dept?.users_count ?? dept?.membersCount ?? dept?.members_count ?? 0),
 });
@@ -60,7 +60,7 @@ const blank = (): Department => ({
   type: "department",
   leaderId: "",
   membersCount: 0,
-  color: "#3b82f6"
+  color: "#111827"
 });
 
 function DepartmentsPage() {
@@ -110,7 +110,7 @@ function DepartmentsPage() {
   const payload = (d: Department) => ({
     name: d.name.trim(),
     type: d.type === "freelance" ? "freelance" : "department",
-    color: d.color || "#3b82f6",
+    color: d.color || "#111827",
     team_leader_id: d.leaderId || null
   });
 
@@ -185,7 +185,13 @@ function DepartmentsPage() {
                   role="button"
                   tabIndex={0}
                   onClick={() => navigate(`/resources?department_id=${d.id}`)}
-                  onKeyDown={(e) => { if (e.key === "Enter") navigate(`/resources?department_id=${d.id}`); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(`/resources?department_id=${d.id}`);
+                    }
+                  }}
+                  aria-label={`${d.name}: ${t("departments.viewMembers", { defaultValue: "View department resources" })}`}
                   className="relative group cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
                 >
                   <div className="flex items-start justify-between gap-2">

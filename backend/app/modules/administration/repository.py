@@ -435,7 +435,7 @@ def get_user_detailed_profile(db: Session, user_id: int) -> Optional[dict]:
         .filter(team_user.c.user_id == user_id, Team.deleted_at.is_(None))
         .all()
     )
-    teams = [{"id": t.id, "name": t.name, "color": t.color or "#3b82f6"} for t in team_rows]
+    teams = [{"id": t.id, "name": t.name, "color": t.color or "#111827"} for t in team_rows]
 
     # Skills
     skills = get_user_skills(db, user_id)
