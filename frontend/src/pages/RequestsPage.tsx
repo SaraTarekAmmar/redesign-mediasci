@@ -170,10 +170,10 @@ export default function RequestsPage() {
     }
   };
 
-  const hasEstimate = !!(selectedRequest?.estimated_hours || selectedRequest?.estimated_cost);
+  const hasEstimate = Boolean(selectedRequest?.estimated_hours);
   const isTerminalRequest = (request?: ClientRequest | null) => ["accepted", "approved", "rejected", "converted"].includes((request?.status ?? "pending").toLowerCase());
   const needsTriageCount = requests.filter((request) => !isTerminalRequest(request)).length;
-  const estimatedCount = requests.filter((request) => Boolean(request.estimated_hours || request.estimated_cost)).length;
+  const estimatedCount = requests.filter((request) => Boolean(request.estimated_hours)).length;
   const visibleRequests = requests.filter((request) => {
     const query = requestSearch.trim().toLowerCase();
     if (!query) return true;
@@ -332,7 +332,7 @@ export default function RequestsPage() {
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("requests.nextStepLabel", { defaultValue: "Next step" })}</p>
                     <p className="mt-1 text-sm font-medium text-foreground">
                       {isTerminalRequest(selectedRequest) && ["accepted", "approved", "converted"].includes((selectedRequest.status ?? "").toLowerCase())
-                        ? t("requests.approvedNextStep", { defaultValue: "This request is approved. Keep the estimate as the handoff record." })
+                        ? t("requests.approvedNextStep", { defaultValue: "This request is approved. Keep the effort estimate as the handoff record." })
                         : hasEstimate
                         ? t("requests.reviewEstimateNextStep", { defaultValue: "Review the estimate, then convert this request into a project when ready." })
                         : t("requests.estimateNextStep", { defaultValue: "Run Estimate Scope first to make the conversion decision with numbers." })}
@@ -351,17 +351,11 @@ export default function RequestsPage() {
                       </Button>
                     </div>
 
-                    <div className="grid gap-3 grid-cols-3">
+                    <div className="grid gap-3 grid-cols-2">
                       <div className="bg-card p-3 border rounded-lg text-center">
                         <p className="text-xs text-muted-foreground">{t("requests.effort")}</p>
                         <p className="text-lg font-bold text-foreground mt-1">
                           {selectedRequest.estimated_hours ? t("requests.hoursShort", { hours: Math.round(selectedRequest.estimated_hours) }) : "—"}
-                        </p>
-                      </div>
-                      <div className="bg-card p-3 border rounded-lg text-center">
-                        <p className="text-xs text-muted-foreground">{t("requests.estimatedCost")}</p>
-                        <p className="text-lg font-bold text-foreground mt-1">
-                          {selectedRequest.estimated_cost ? `$${Number(selectedRequest.estimated_cost).toLocaleString()}` : "—"}
                         </p>
                       </div>
                       <div className="bg-card p-3 border rounded-lg text-center flex flex-col items-center justify-center">
