@@ -1938,7 +1938,7 @@
   "proposal.revisions": "Revisions & Scope Metrics",
   "proposal.estimatedHours": "Estimated Hours",
   "proposal.budget": "Budget",
-  "proposal.selectToView": "Select a proposal to view revision versions and estimated costs.",
+  "proposal.selectToView": "Select a proposal to view revision history and scope details.",
   "proposal.createTitle": "Create B2B Proposal",
   "proposal.selectRequest": "Select Client Request",
   "proposal.selectRequestOption": "Select Request",

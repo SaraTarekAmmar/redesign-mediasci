@@ -21,7 +21,6 @@ interface RfpAnalysisResponse {
 interface ProposalDraftResponse {
   content: string;
   estimated_hours: number | null;
-  estimated_cost: number | null;
   source: "llm" | "template";
 }
 
@@ -41,8 +40,8 @@ export default function ProposalBuilderPage() {
   const [analysisResult, setAnalysisResult] = useState<RfpAnalysisResponse | null>(null);
 
   // Form States
-  const [proposalForm, setProposalForm] = useState({ client_request_id: "", title: "", content: "", estimated_hours: "", estimated_cost: "" });
-  const [versionForm, setVersionForm] = useState({ content: "", estimated_hours: "", estimated_cost: "" });
+  const [proposalForm, setProposalForm] = useState({ client_request_id: "", title: "", content: "", estimated_hours: "" });
+  const [versionForm, setVersionForm] = useState({ content: "", estimated_hours: "" });
 
   const loadData = async () => {
     setLoading(true);
@@ -85,7 +84,6 @@ export default function ProposalBuilderPage() {
           ...proposalForm,
           content: draft.content,
           estimated_hours: draft.estimated_hours != null ? String(draft.estimated_hours) : proposalForm.estimated_hours,
-          estimated_cost: draft.estimated_cost != null ? String(draft.estimated_cost) : proposalForm.estimated_cost,
         });
         toast.success(
           draft.source === "llm" ? t("proposalBuilder.aiDraft.readyLlm") : t("proposalBuilder.aiDraft.readyTemplate")
@@ -122,13 +120,12 @@ export default function ProposalBuilderPage() {
       const data = {
         ...proposalForm,
         estimated_hours: proposalForm.estimated_hours ? Number(proposalForm.estimated_hours) : null,
-        estimated_cost: proposalForm.estimated_cost ? Number(proposalForm.estimated_cost) : null,
       };
       const res = await api.post<Proposal>("/proposals", data);
       if (res) {
         toast.success(t("proposal.created"));
         setCreatingProposal(false);
-        setProposalForm({ client_request_id: "", title: "", content: "", estimated_hours: "", estimated_cost: "" });
+        setProposalForm({ client_request_id: "", title: "", content: "", estimated_hours: "" });
         loadData();
       }
     } catch {
@@ -143,13 +140,12 @@ export default function ProposalBuilderPage() {
       const data = {
         ...versionForm,
         estimated_hours: versionForm.estimated_hours ? Number(versionForm.estimated_hours) : null,
-        estimated_cost: versionForm.estimated_cost ? Number(versionForm.estimated_cost) : null,
       };
       const res = await api.post<ProposalVersion>(`/proposals/${selectedProposal.id}/versions`, data);
       if (res) {
         toast.success(t("proposal.versionSaved"));
         setCreatingVersion(false);
-        setVersionForm({ content: "", estimated_hours: "", estimated_cost: "" });
+        setVersionForm({ content: "", estimated_hours: "" });
         loadData();
       }
     } catch {
@@ -331,12 +327,6 @@ export default function ProposalBuilderPage() {
                               <span className="text-muted-foreground mr-1">{t("proposal.estimatedHours")}:</span>
                               <span className="font-semibold text-foreground">{v.estimated_hours || "—"}</span>
                             </div>
-                            <div>
-                              <span className="text-muted-foreground mr-1">{t("proposal.budget")}:</span>
-                              <span className="font-semibold text-foreground">
-                                {v.estimated_cost ? `$${Number(v.estimated_cost).toLocaleString()}` : "—"}
-                              </span>
-                            </div>
                           </div>
                         </div>
                       ))}
@@ -386,25 +376,14 @@ export default function ProposalBuilderPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{t("proposal.estimatedHours")}</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 120"
-                    value={proposalForm.estimated_hours}
-                    onChange={(e) => setProposalForm({ ...proposalForm, estimated_hours: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{t("proposal.totalBudget")}</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 15000"
-                    value={proposalForm.estimated_cost}
-                    onChange={(e) => setProposalForm({ ...proposalForm, estimated_cost: e.target.value })}
-                  />
-                </div>
+              <div className="space-y-1 sm:max-w-xs">
+                <label className="text-xs font-semibold text-foreground">{t("proposal.estimatedHours")}</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 120"
+                  value={proposalForm.estimated_hours}
+                  onChange={(e) => setProposalForm({ ...proposalForm, estimated_hours: e.target.value })}
+                />
               </div>
 
               <div className="space-y-1">
@@ -456,25 +435,14 @@ export default function ProposalBuilderPage() {
               <DialogTitle>{t("proposal.newVersionTitle")}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreateVersion} className="space-y-4 py-2">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{t("proposal.revisedHours")}</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 130"
-                    value={versionForm.estimated_hours}
-                    onChange={(e) => setVersionForm({ ...versionForm, estimated_hours: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{t("proposal.revisedBudget")}</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 16500"
-                    value={versionForm.estimated_cost}
-                    onChange={(e) => setVersionForm({ ...versionForm, estimated_cost: e.target.value })}
-                  />
-                </div>
+              <div className="space-y-1 sm:max-w-xs">
+                <label className="text-xs font-semibold text-foreground">{t("proposal.revisedHours")}</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 130"
+                  value={versionForm.estimated_hours}
+                  onChange={(e) => setVersionForm({ ...versionForm, estimated_hours: e.target.value })}
+                />
               </div>
 
               <div className="space-y-1">
