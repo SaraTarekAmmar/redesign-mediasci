@@ -53,7 +53,7 @@ export function ProjectSummaryPanel({ projectData }: ProjectSummaryPanelProps) {
           <div className="space-y-2">
             <p className="text-sm text-emerald-700 flex items-start gap-1.5">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
-              Budget utilization remains within planned parameters.
+              Delivery remains within the current execution plan.
             </p>
           </div>
         </div>

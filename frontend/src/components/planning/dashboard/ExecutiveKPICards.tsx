@@ -2,7 +2,7 @@ import React from "react";
 import {
   TrendingUp,
   Clock3,
-  DollarSign,
+  Activity,
   CalendarDays,
   ShieldAlert,
   Target,
@@ -12,7 +12,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Badge } from "../../ui/Badge";
-import { formatCurrency, formatDays, RadialGauge, DualRadialGauge } from "../SharedUI";
+import { formatDays, RadialGauge, DualRadialGauge } from "../SharedUI";
 
 export interface KPIData {
   healthScore: number;
@@ -20,7 +20,6 @@ export interface KPIData {
   plannedProgressPct: number;
   actualProgressPct: number;
   scheduleVarianceDays: number;
-  budgetVariance: number;
   forecastFinish?: string | null;
   forecastConfidence?: string | null;
   blockedMilestones: number;
@@ -35,7 +34,7 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
   const isAhead = data.scheduleVarianceDays < 0;
   const isDelayed = data.scheduleVarianceDays > 0;
   const hasProgress = data.plannedProgressPct > 0 || data.actualProgressPct > 0;
-  const isUnderBudget = data.budgetVariance <= 0;
+  const workRemainingPct = Math.max(0, 100 - data.actualProgressPct);
 
   const healthBadgeVariant =
     data.healthState === "Green"
@@ -146,26 +145,24 @@ export const ExecutiveKPICards: React.FC<ExecutiveKPICardsProps> = ({ data }) =>
         </p>
       </div>
 
-      {/* 4. Budget Variance */}
+      {/* 4. Work Remaining */}
       <div className="p-4 rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Budget Variance
+            Work Remaining
           </span>
           <div className="p-2 rounded-lg border border-foreground/15 bg-muted text-foreground">
-            <DollarSign className="w-4 h-4" />
+            <Activity className="w-4 h-4" />
           </div>
         </div>
         <div className="flex items-baseline justify-between">
-          <span className="text-2xl font-bold text-foreground">
-            {formatCurrency(Math.abs(data.budgetVariance))}
-          </span>
-          <Badge variant={isUnderBudget ? "success" : "warning"} className="text-xs">
-            {isUnderBudget ? "Under" : "Overrun"}
+          <span className="text-2xl font-bold text-foreground">{workRemainingPct}%</span>
+          <Badge variant={workRemainingPct === 0 ? "success" : "outline"} className="text-xs">
+            {workRemainingPct === 0 ? "Complete" : "Open"}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          {isUnderBudget ? "Under planned budget" : "Over planned budget variance"}
+          Delivery scope still open
         </p>
       </div>
 

@@ -8,7 +8,6 @@ import {
   BookOpen,
   Briefcase,
   Clock,
-  DollarSign,
   UserPlus,
   ArrowLeft,
   UserCheck,

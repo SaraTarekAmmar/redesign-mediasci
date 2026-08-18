@@ -10,7 +10,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { Badge } from "../../ui/Badge";
-import { formatCurrency, formatHours, formatShortDate, RadialGauge } from "../SharedUI";
+import { formatHours, formatShortDate, RadialGauge } from "../SharedUI";
 
 export interface MilestoneDrawerData {
   id: number;
@@ -23,8 +23,6 @@ export interface MilestoneDrawerData {
   actualEndDate?: string | null;
   plannedHours?: number;
   actualHours?: number;
-  plannedBudget?: number;
-  actualCost?: number;
   completionPercentage?: number;
   scheduleVarianceDays?: number;
   blocked?: boolean;
@@ -200,13 +198,6 @@ export const MilestoneDrawer: React.FC<MilestoneDrawerProps> = ({
               <span className="text-xs text-muted-foreground">Effort (Planned / Actual)</span>
               <p className="text-sm font-bold text-foreground mt-0.5">
                 {formatHours(milestone.plannedHours || 0)} / {formatHours(milestone.actualHours || 0)}
-              </p>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-border bg-card">
-              <span className="text-xs text-muted-foreground">Budget (Planned / Actual)</span>
-              <p className="text-sm font-bold text-foreground mt-0.5">
-                {formatCurrency(milestone.plannedBudget || 0)} / {formatCurrency(milestone.actualCost || 0)}
               </p>
             </div>
           </div>

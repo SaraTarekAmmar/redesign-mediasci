@@ -128,7 +128,6 @@ export const PlanComparisonPage: React.FC = () => {
       plannedProgressPct: Number(summary.planned_progress_pct ?? summary.completion_percentage ?? 0),
       actualProgressPct: Number(summary.completion_percentage ?? 0),
       scheduleVarianceDays: Number(summary.schedule_variance_days ?? 0),
-      budgetVariance: Number(summary.budget_variance ?? 0),
       forecastFinish: rawForecast ? formatShortDate(String(rawForecast)) : null,
       forecastConfidence: intelligenceData?.forecast?.confidence ?? null,
       blockedMilestones: Number(summary.total_blocked_work ?? summary.blocked_milestones ?? 0),
@@ -179,8 +178,6 @@ export const PlanComparisonPage: React.FC = () => {
       actualEndDate: target.actual_end_date,
       plannedHours: Number(target.planned_hours || 0),
       actualHours: Number(target.actual_hours || 0),
-      plannedBudget: Number(target.planned_budget || 0),
-      actualCost: Number(target.actual_cost || 0),
       completionPercentage: Number(target.completion_percentage || 0),
       scheduleVarianceDays: Number(target.schedule_variance_days || 0),
       blocked: Boolean(target.blocked),
@@ -201,8 +198,6 @@ export const PlanComparisonPage: React.FC = () => {
       actualProgress: Number(m.completion_percentage || m.actual_progress_pct || 0),
       plannedHours: Number(m.planned_hours || 0),
       actualHours: Number(m.actual_hours || 0),
-      plannedBudget: Number(m.planned_budget || 0),
-      actualCost: Number(m.actual_cost || 0),
     }));
   }, [intelligenceData]);
 

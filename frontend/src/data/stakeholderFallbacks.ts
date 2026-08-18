@@ -169,7 +169,6 @@ export function buildStakeholderImpactFallback() {
 
   return {
     impactData: {
-      budget: 58,
       schedule: 64,
       scope: 52,
       risk: 49,
@@ -221,7 +220,7 @@ export function buildStakeholderDetailFallback(id: string) {
     organization: stakeholder.organization || null,
     role: stakeholder.role || null,
     department: stakeholderTypeFor(stakeholder) === "Internal" ? "Operations" : null,
-    photoUrl: avatarFor(stakeholder.name, "#0C66E4"),
+    photoUrl: avatarFor(stakeholder.name, "#111827"),
     influenceLevel: stakeholder.influence,
     interestLevel: stakeholder.interest,
     communicationPreference: stakeholder.communicationPreference,
@@ -233,7 +232,6 @@ export function buildStakeholderDetailFallback(id: string) {
     engagementScore: interactionsCount,
     engagementLevel,
     impact: {
-      budgetImpact: levelScore[stakeholder.influence] * 20,
       scheduleImpact: levelScore[stakeholder.interest] * 20,
       scopeImpact: (levelScore[stakeholder.influence] + 1) * 15,
       riskImpact: supportLevel === "Opponent" ? 70 : 35,

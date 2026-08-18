@@ -4,7 +4,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import {
   Send, Link2, X, SlidersHorizontal, Sparkles, ChevronDown, Loader2, Trash2,
   CheckSquare, Clock, GitCommit, MessageSquare, History, Activity, Plus, FileText,
-  AlertTriangle, DollarSign, UserCheck, CheckCircle2, Circle, Eye, Download, Upload,
+  AlertTriangle, UserCheck, CheckCircle2, Circle, Eye, Download, Upload,
   Layers, Lock, Filter
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";

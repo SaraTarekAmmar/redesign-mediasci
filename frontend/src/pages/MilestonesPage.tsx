@@ -75,7 +75,6 @@ interface MilestoneRecord {
   actual_start_date?: string | null;
   actual_end_date?: string | null;
   planned_hours?: number;
-  planned_budget?: number;
   planned_progress?: number;
   status: string;
   owner_resource_id?: number | null;
@@ -175,7 +174,6 @@ interface MilestoneForm {
   actual_start_date: string;
   actual_end_date: string;
   planned_hours: string;
-  planned_budget: string;
   planned_progress: string;
   status: string;
   owner_resource_id: string;
@@ -227,7 +225,6 @@ const blankMilestone = (): MilestoneForm => ({
   actual_start_date: "",
   actual_end_date: "",
   planned_hours: "",
-  planned_budget: "",
   planned_progress: "0",
   status: "pending",
   owner_resource_id: "",
@@ -280,7 +277,6 @@ const toMilestoneForm = (milestone: MilestoneRecord): MilestoneForm => ({
   actual_start_date: toDateInput(milestone.actual_start_date),
   actual_end_date: toDateInput(milestone.actual_end_date),
   planned_hours: String(milestone.planned_hours ?? ""),
-  planned_budget: String(milestone.planned_budget ?? ""),
   planned_progress: String(milestone.planned_progress ?? 0),
   status: milestone.status || "pending",
   owner_resource_id: milestone.owner_resource_id ? String(milestone.owner_resource_id) : "",
@@ -451,7 +447,6 @@ function MilestonesPage({ projectId }: Props) {
         actual_start_date: milestoneForm.actual_start_date || null,
         actual_end_date: milestoneForm.actual_end_date || null,
         planned_hours: Number(milestoneForm.planned_hours) || 0,
-        planned_budget: Number(milestoneForm.planned_budget) || 0,
         planned_progress: Number(milestoneForm.planned_progress) || 0,
         status: milestoneForm.status || "pending",
         owner_resource_id: milestoneForm.owner_resource_id ? Number(milestoneForm.owner_resource_id) : null,
@@ -745,7 +740,6 @@ function MilestonesPage({ projectId }: Props) {
                   <InfoCard label={t("planning.plannedDates", { defaultValue: "Planned Dates" })} value={`${formatDate(selectedMilestone.planned_start_date)} → ${formatDate(selectedMilestone.planned_end_date)}`} />
                   <InfoCard label={t("planning.actualDates", { defaultValue: "Actual Dates" })} value={`${formatDate(selectedMilestone.actual_start_date)} → ${formatDate(selectedMilestone.actual_end_date)}`} />
                   <InfoCard label={t("planning.plannedHours", { defaultValue: "Planned Hours" })} value={String(selectedMilestone.planned_hours ?? 0)} />
-                  <InfoCard label={t("planning.plannedBudget", { defaultValue: "Planned Budget" })} value={String(selectedMilestone.planned_budget ?? 0)} />
                   <InfoCard label={t("planning.owner", { defaultValue: "Owner" })} value={resourceLabel(selectedMilestone.owner_resource_id ?? null)} />
                   <InfoCard label={t("planning.status", { defaultValue: "Status" })} value={selectedMilestone.status.replace(/_/g, " ")} />
                   <InfoCard
@@ -968,9 +962,6 @@ function MilestonesPage({ projectId }: Props) {
             </Field>
             <Field label={t("planning.plannedHours", { defaultValue: "Planned Hours" })}>
               <Input type="number" value={milestoneForm.planned_hours} onChange={(e) => setMilestoneForm((current) => ({ ...current, planned_hours: e.target.value }))} />
-            </Field>
-            <Field label={t("planning.plannedBudget", { defaultValue: "Planned Budget" })}>
-              <Input type="number" value={milestoneForm.planned_budget} onChange={(e) => setMilestoneForm((current) => ({ ...current, planned_budget: e.target.value }))} />
             </Field>
             <Field label={t("planning.plannedProgress", { defaultValue: "Planned Progress %" })}>
               <Input type="number" value={milestoneForm.planned_progress} onChange={(e) => setMilestoneForm((current) => ({ ...current, planned_progress: e.target.value }))} />

@@ -17,7 +17,6 @@ import { api } from "../lib/api";
 import { buildStakeholderDetailFallback } from "../data/stakeholderFallbacks";
 
 interface DetailImpact {
-  budgetImpact: number;
   scheduleImpact: number;
   scopeImpact: number;
   riskImpact: number;
@@ -185,9 +184,8 @@ function StakeholderDetailPage() {
 
   const impactFields = data.impact
     ? [
-        { label: "Budget", value: data.impact.budgetImpact, color: "bg-emerald-500" },
         { label: "Schedule", value: data.impact.scheduleImpact, color: "bg-amber-500" },
-        { label: "Scope", value: data.impact.scopeImpact, color: "bg-teal-500" },
+        { label: "Scope", value: data.impact.scopeImpact, color: "bg-muted-foreground/60" },
         { label: "Risk", value: data.impact.riskImpact, color: "bg-rose-500" },
         { label: "Comms", value: data.impact.communicationScore, color: "bg-primary" },
       ]

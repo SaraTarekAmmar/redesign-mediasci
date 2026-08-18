@@ -9,7 +9,6 @@ import { api } from "../lib/api";
 import { buildStakeholderImpactFallback } from "../data/stakeholderFallbacks";
 
 interface ImpactData {
-  budget: number;
   schedule: number;
   scope: number;
   risk: number;
@@ -73,7 +72,7 @@ function Kpi({ label, value }: { label: string; value: number }) {
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <p className="mt-1.5 text-2xl font-bold text-foreground">{Math.round(value)}%</p>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-        <div className="h-full bg-chart-1" style={{ width: `${Math.min(100, Math.round(value))}%` }} />
+        <div className="h-full bg-primary" style={{ width: `${Math.min(100, Math.round(value))}%` }} />
       </div>
     </div>
   );
@@ -130,8 +129,7 @@ function StakeholderImpactPage() {
           subtitle={t("stakeholders.impact.subtitle", { count: charts.engagementFreq.length })}
         />
 
-        <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-          <Kpi label={t("stakeholders.impact.avgBudget")} value={impactData.budget} />
+        <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Kpi label={t("stakeholders.impact.avgSchedule")} value={impactData.schedule} />
           <Kpi label={t("stakeholders.impact.avgScope")} value={impactData.scope} />
           <Kpi label={t("stakeholders.impact.avgRisk")} value={impactData.risk} />
@@ -213,7 +211,7 @@ function StakeholderImpactPage() {
             )}
           </Panel>
 
-          <Panel title={t("stakeholders.impact.recommendations")} action={<Sparkles className="h-4 w-4 text-teal-500" />}>
+          <Panel title={t("stakeholders.impact.recommendations")} action={<Sparkles className="h-4 w-4 text-primary" />}>
             {recommendations.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("stakeholders.impact.noRecommendations")}</p>
             ) : (

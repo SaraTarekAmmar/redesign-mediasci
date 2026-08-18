@@ -104,8 +104,8 @@ const FIELD_TYPE_GUIDE: Record<string, {
     exampleAr: "مثال: https://example.com",
   },
   currency: {
-    helperEn: "A money value used for cost, budget, or price.",
-    helperAr: "قيمة مالية للتكلفة أو الميزانية أو السعر.",
+    helperEn: "A money value for a contract rate, price, or agreed amount.",
+    helperAr: "قيمة مالية لسعر تعاقدي أو سعر بيع أو مبلغ متفق عليه.",
     exampleEn: "Example: 3,500 USD",
     exampleAr: "مثال: 3,500 دولار",
   },

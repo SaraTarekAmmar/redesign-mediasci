@@ -1,6 +1,6 @@
 import React from "react";
-import { TrendingUp, BarChart2, DollarSign, Activity } from "lucide-react";
-import { formatCurrency, formatHours } from "../SharedUI";
+import { TrendingUp, Activity } from "lucide-react";
+import { formatHours } from "../SharedUI";
 
 export interface ProgressChartData {
   milestoneName: string;
@@ -8,8 +8,6 @@ export interface ProgressChartData {
   actualProgress: number;
   plannedHours: number;
   actualHours: number;
-  plannedBudget: number;
-  actualCost: number;
 }
 
 interface ProgressChartsProps {
@@ -66,66 +64,40 @@ export const ProgressCharts: React.FC<ProgressChartsProps> = ({ data }) => {
         </div>
       </div>
 
-      {/* 2. Effort & Budget Burn Down Comparison */}
+      {/* 2. Effort Variance */}
       <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-teal-500" />
-            <h3 className="text-sm font-semibold text-foreground">
-              Effort & Budget Burn Summary
-            </h3>
+            <Activity className="w-5 h-5 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Effort Variance</h3>
           </div>
-          <span className="text-xs text-muted-foreground">Financial & Hours Burn</span>
+          <span className="text-xs text-muted-foreground">Actual vs planned hours</span>
         </div>
 
-        <div className="space-y-5 pt-2">
-          {data.slice(0, 5).map((item, idx) => (
-            <div key={idx} className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-2">
-              <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-foreground">{item.milestoneName}</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <div className="flex justify-between text-[11px] text-muted-foreground mb-0.5">
-                    <span>Hours Logged</span>
-                    <span>{formatHours(item.actualHours)} / {formatHours(item.plannedHours)}</span>
-                  </div>
-                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-primary h-full rounded-full"
-                      style={{
-                        width: `${
-                          item.plannedHours > 0
-                            ? Math.min((item.actualHours / item.plannedHours) * 100, 100)
-                            : 0
-                        }%`,
-                      }}
-                    />
-                  </div>
+        <div className="space-y-4 pt-2">
+          {data.slice(0, 5).map((item, idx) => {
+            const planned = Math.max(0, item.plannedHours);
+            const actual = Math.max(0, item.actualHours);
+            const variance = actual - planned;
+            const ratio = planned > 0 ? Math.min((actual / planned) * 100, 100) : 0;
+            return (
+              <div key={idx} className="space-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-semibold text-foreground">{item.milestoneName}</span>
+                  <span className={variance > 0 ? "shrink-0 font-semibold text-amber-700 dark:text-amber-300" : "shrink-0 font-semibold text-emerald-700 dark:text-emerald-300"}>
+                    {variance > 0 ? "+" : ""}{formatHours(variance)}
+                  </span>
                 </div>
-
-                <div>
-                  <div className="flex justify-between text-[11px] text-muted-foreground mb-0.5">
-                    <span>Budget Spent</span>
-                    <span>{formatCurrency(item.actualCost)} / {formatCurrency(item.plannedBudget)}</span>
-                  </div>
-                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-teal-500 h-full rounded-full"
-                      style={{
-                        width: `${
-                          item.plannedBudget > 0
-                            ? Math.min((item.actualCost / item.plannedBudget) * 100, 100)
-                            : 0
-                        }%`,
-                      }}
-                    />
-                  </div>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>Actual {formatHours(actual)}</span>
+                  <span>Plan {formatHours(planned)}</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div className={variance > 0 ? "h-full rounded-full bg-amber-500" : "h-full rounded-full bg-primary"} style={{ width: `${ratio}%` }} />
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

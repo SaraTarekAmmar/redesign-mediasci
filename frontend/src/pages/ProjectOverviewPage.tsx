@@ -85,7 +85,6 @@ interface PerformanceMilestone {
   actual_start_date?: string | null;
   actual_end_date?: string | null;
   planned_hours?: number;
-  planned_budget?: number;
   planned_progress?: number;
   deliverables_count?: number;
   completion_percentage?: number;
@@ -124,10 +123,6 @@ interface PerformanceResponse {
     actual_hours: number;
     remaining_hours: number;
     hours_variance: number;
-    planned_budget: number;
-    actual_cost: number;
-    remaining_budget: number;
-    budget_variance: number;
     blocked_milestones: number;
     open_risks: number;
     blocked_project: boolean;
@@ -143,7 +138,6 @@ interface PerformanceResponse {
   };
   baseline_comparison: {
     planning: { planned_hours: number; actual_hours: number; variance: number };
-    budget: { planned: number; actual: number; variance: number };
     dates: { planned_finish?: string | null; forecast_finish?: string | null; variance_days: number };
     resources: { planned_count: number; actual_count: number };
   };
@@ -314,7 +308,7 @@ function ProjectOverviewPage({ projectId }: Props) {
   const hasPlanning = Boolean(
     performance &&
     ((performance.milestones && performance.milestones.length > 0) ||
-     (performanceSummary && (performanceSummary.planned_hours > 0 || performanceSummary.planned_budget > 0)))
+     (performanceSummary && (performanceSummary.planned_hours > 0 || performanceSummary.actual_hours > 0)))
   );
 
   if (loading) {

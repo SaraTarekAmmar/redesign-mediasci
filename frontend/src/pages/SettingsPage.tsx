@@ -256,7 +256,7 @@ function SettingsPage() {
     };
   }, [activeProjectId]);
 
-  // Calendar / Budget baseline / Integration status — one call backs three tabs.
+  // Calendar and integration status are loaded alongside project metadata.
   useEffect(() => {
     let live = true;
     api.get<Client[]>("/clients")
