@@ -116,8 +116,12 @@ function StakeholderRegistrationPage() {
                 {filtered.map((r) => (
                   <tr
                     key={r.id}
-                    className="cursor-pointer border-b border-border last:border-0 hover:bg-accent/40"
+                    className="cursor-pointer border-b border-border last:border-0 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`Open stakeholder ${r.name}`}
                     onClick={() => navigate(`/stakeholders/${r.id}`)}
+                    onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/stakeholders/${r.id}`); } }}
                   >
                     <td className="px-4 py-3 font-medium text-foreground">{r.name}</td>
                     <td className="px-3 py-3 text-muted-foreground">{r.type}</td>

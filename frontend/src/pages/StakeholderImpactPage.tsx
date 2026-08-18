@@ -186,8 +186,12 @@ function StakeholderImpactPage() {
                 {alerts.map((a, i) => (
                   <div
                     key={i}
-                    className="cursor-pointer rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-xs text-foreground hover:bg-amber-500/10"
+                    className="cursor-pointer rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-left text-xs text-foreground hover:bg-amber-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`Open stakeholder alert for ${a.stakeholderId}`}
                     onClick={() => navigate(`/stakeholders/${a.stakeholderId}`)}
+                    onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/stakeholders/${a.stakeholderId}`); } }}
                   >
                     {a.message}
                   </div>
