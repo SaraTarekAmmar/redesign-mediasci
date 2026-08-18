@@ -132,7 +132,7 @@ function GlobalSprintsPage() {
         />
 
         <div className="mb-5 rounded-xl border border-border bg-card p-4">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm font-semibold text-foreground">Portfolio sprint pulse</p><p className="text-xs text-muted-foreground">Use this view to compare delivery focus across projects, then open a project sprint for detailed work.</p></div>
+          <p className="text-sm font-semibold text-foreground">Portfolio sprint pulse</p>
           <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-4">
             {pulse.map((item) => <div key={item.label} className="rounded-lg border border-border/70 bg-background px-3 py-2"><p className="text-[11px] text-muted-foreground">{item.label}</p><p className={`mt-1 text-xl font-semibold ${item.tone}`}>{item.value}</p></div>)}
           </div>
