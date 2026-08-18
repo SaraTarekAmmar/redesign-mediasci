@@ -176,7 +176,7 @@ function TriagePage() {
       <div className="mx-auto max-w-screen-2xl">
         <PageHeader
           title={t("triage.title")}
-          subtitle={`Review new work, add context, assign ownership, and move ready items into delivery. · ${t("triage.awaitingTriage", { count: issues.length })}`}
+          subtitle={t("triage.subtitle", { defaultValue: "Decide what is ready for delivery and what needs more context." })}
           actions={
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -360,7 +360,7 @@ function TriagePage() {
                               variant="ghost"
                               size="icon-sm"
                               aria-label={t("triage.move")}
-                              className="text-green-600 hover:text-green-700"
+                              className="text-emerald-600 hover:text-emerald-700"
                               onClick={() => handleConfirm(issue)}
                             >
                               <MoveRight className="h-4 w-4" />
